@@ -1,0 +1,29 @@
+
+.main-container {
+  max-width: 1460px;
+  padding: 0 10px;
+  margin: 0 auto;
+}
+
+a {
+  text-decoration: none;
+}
+
+.banner {
+  display: flex;
+  padding: 15px 0;
+  justify-content: center;
+  background: linear-gradient(97.81deg, #00438B 0%, #07C93E 0.01%, #1DA945 13.54%, #20A446 15.63%, #3C7B4E 32.81%, #00438B 58.85%, rgba(0, 67, 139, 0.76) 94.27%);
+}
+.banner .banner-content {
+  display: flex;
+  align-items: center;
+}
+.banner .banner-content h1 {
+  font-size: 36px;
+  font-family: 'Saira Semi Condensed', sans-serif;
+  font-weight: 600;
+  color: white;
+}
+
+

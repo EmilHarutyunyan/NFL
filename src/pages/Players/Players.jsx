@@ -1,0 +1,128 @@
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+// Slice
+import {
+  colleageAction,
+  getPlayers,
+  pageNav,
+  positionAction,
+  searchPlayers,
+  selectPlayers,
+} from "../../app/features/players/playersSlice.js";
+// Components
+import Title from "../../components/Title/Title";
+import MySelect from "../../components/MySelect/MySelect";
+import Search from "../../components/Search/Search";
+import Spinner from "../../components/Spinner/Spinner";
+import PlayerItem from "../../components/PlayerItem/PlayerItem";
+import Pagination from "../../components/Pagination/Pagination";
+// Styles
+import {
+  Wrapper,
+  PlayerSetting,
+  SearchWrap,
+  SelectWrap,
+} from "./Players.styles";
+import {
+  getColleges,
+  getPositions,
+  selectGroup,
+} from "../../app/features/group/groupSlice.js";
+import { NotFound } from "../../components/NotFound/NotFound.jsx";
+
+const Players = () => {
+  const shouldLog = useRef(true);
+  const initial = useRef(true);
+  const dispatch = useDispatch();
+  const players = useSelector(selectPlayers);
+  const groups = useSelector(selectGroup);
+ 
+
+  const [searchValue, setSearchValue] = useState("");
+  useEffect(() => {
+    if (shouldLog.current) {
+      shouldLog.current = false;
+      dispatch(getPlayers());
+      dispatch(getPositions());
+      dispatch(getColleges());
+    }
+    // eslint-disable-next-line
+  }, []);
+  useEffect(() => {
+    if (initial.current) {
+      initial.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      dispatch(searchPlayers(searchValue));
+    }, 500);
+    return () => {
+      clearTimeout(timer);
+    };
+    // eslint-disable-next-line
+  }, [setSearchValue, searchValue]);
+
+  return (
+    <Wrapper className="main-container">
+      <Title titleText="Players list" />
+      <PlayerSetting>
+        <SelectWrap>
+          <MySelect
+            label={groups.positions[0]}
+            name={players.position}
+            dataValue={groups.positions}
+            handleChange={(item) => dispatch(positionAction(item.value))}
+          />
+          
+          <MySelect
+            label={groups.colleges[0]}
+            name={players.colleage}
+            dataValue={groups.colleges}
+            handleChange={(item) => dispatch(colleageAction(item.value))}
+          />
+        </SelectWrap>
+        <SearchWrap>
+          <Search
+            value={searchValue}
+            // handleChange={(e) => {
+            //   if (!e.target.value) {
+            //     dispatch(getPlayers());
+            //     dispatch(setSearch(""));
+            //   } else {
+            //     dispatch(searchAction(e.target.value));
+            //   }
+            // }}
+            handleChange={(e) => {
+              setSearchValue(e.target.value);
+            }}
+          />
+        </SearchWrap>
+      </PlayerSetting>
+      {players.loading ? (
+        <Spinner />
+      ) : (
+        <div>
+          {players.results.length > 0 &&
+            players.results.map((player, idx) => {
+              return <PlayerItem player={player} key={idx} />;
+            })}
+          <Pagination
+            totalCount={players.count}
+            pageSize={players.limit}
+            currentPage={players.currentPage}
+            previous={players.previous}
+            next={players.next}
+            onPageChange={(page) => {
+              dispatch(pageNav(page));
+            }}
+          />
+        </div>
+      )}
+      {!players.loading && players.results.length === 0 && (
+        <NotFound/>
+      )}
+    </Wrapper>
+  );
+};
+
+export default Players;

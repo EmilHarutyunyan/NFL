@@ -1,0 +1,1 @@
+export const API_ENDPOINT = 'https://sports-heroku.herokuapp.com/api/v1/'
