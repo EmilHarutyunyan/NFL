@@ -174,6 +174,15 @@ export const playersSlice = createSlice({
     [pageNav.rejected]: (state, action) => {
       state.loading = false;
     },
+    [searchPlayers.fulfilled]: (state, action) => {
+      state.loading = false;
+    },
+    [searchPlayers.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [searchPlayers.rejected]: (state, action) => {
+      state.loading = false;
+    },
     [postitionPlayers.fulfilled]: (state, action) => {
       state.loading = false;
     },

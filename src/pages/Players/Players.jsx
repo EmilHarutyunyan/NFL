@@ -22,6 +22,7 @@ import {
   PlayerSetting,
   SearchWrap,
   SelectWrap,
+  TableWrap,
 } from "./Players.styles";
 import {
   getColleges,
@@ -84,14 +85,7 @@ const Players = () => {
         <SearchWrap>
           <Search
             value={searchValue}
-            // handleChange={(e) => {
-            //   if (!e.target.value) {
-            //     dispatch(getPlayers());
-            //     dispatch(setSearch(""));
-            //   } else {
-            //     dispatch(searchAction(e.target.value));
-            //   }
-            // }}
+            
             handleChange={(e) => {
               setSearchValue(e.target.value);
             }}
@@ -101,7 +95,7 @@ const Players = () => {
       {players.loading ? (
         <Spinner />
       ) : (
-        <div>
+        <TableWrap>
           {players.results.length > 0 &&
             players.results.map((player, idx) => {
               return <PlayerItem player={player} key={idx} />;
@@ -116,7 +110,7 @@ const Players = () => {
               dispatch(pageNav(page));
             }}
           />
-        </div>
+        </TableWrap>
       )}
       {!players.loading && players.results.length === 0 && (
         <NotFound/>

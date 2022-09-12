@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { device } from "../../themes/Breakpoints";
 
 export const Wrapper = styled.article`
   display: flex;
@@ -9,6 +10,9 @@ export const Wrapper = styled.article`
   margin-bottom: 12px;
   border-radius: 10px;
   gap:24px;
+  @media ${device.tabletL} {
+   width: 900px;
+  }
 
 `
 export const Table = styled.table`
@@ -49,5 +53,9 @@ export const Td = styled.td`
   font-size: 28px;
   line-height: 42px;
   color: #022142;
+  @media ${device.tabletL} {
+   width: 900px;
+   font-size: 25px;
+  }
 `;
 
