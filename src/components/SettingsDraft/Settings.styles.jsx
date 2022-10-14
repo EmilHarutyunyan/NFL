@@ -26,6 +26,12 @@ export const SettingItem = styled.div`
     align-items: center;
   }
 `;
+export const NumWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap:20px;
+  align-items: center;
+  `;
 export const NumItem = styled.div`
   width: 40px;
   height: 40px;
@@ -34,6 +40,16 @@ export const NumItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  
+  &.active-round  {
+    background: #004EA3;
+    span {
+      color: #FFFFFF;
+    }
+  }
+
+    
   span {
     color: #0e1118;
     font-size: 18px;

@@ -1,1 +1,1 @@
-export const API_ENDPOINT = 'https://sports-heroku.herokuapp.com/api/v1/'
+export const API_ENDPOINT = 'http://192.241.154.248:8000/api/v1/'

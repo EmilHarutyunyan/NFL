@@ -49,6 +49,7 @@ const Players = () => {
     }
     // eslint-disable-next-line
   }, []);
+  
   useEffect(() => {
     if (initial.current) {
       initial.current = false;

@@ -2,25 +2,41 @@ import { Switch } from "@mui/material";
 import React from "react";
 import Title from "../../components/Title/Title";
 import Nums from "./Nums";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import Box from '@mui/material/Box';
-import Slider from '@mui/material/Slider';
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import Box from "@mui/material/Box";
+import Slider from "@mui/material/Slider";
 
-
-import { SettingItem, Speed, NumItem } from "./Settings.styles";
-
+import { SettingItem, Speed, NumItem, NumWrapper } from "./Settings.styles";
+import { useDispatch, useSelector } from "react-redux";
+import { setRound } from "../../app/features/draftConfig/draftConfigSlice";
 
 const Settings = () => {
+  const dispatch = useDispatch();
+  const { round } = useSelector((state) => state.draftCongif);
+  const roundsArray = Array.from(Array(8).keys());
+
   return (
     <>
       <SettingItem>
         <Title titleText="Rounds" titleClassName="setting-title " />
-        <NumItem>
-          <Nums num="1" />
-        </NumItem>
+        <NumWrapper>
+          {roundsArray.map((_, idx) => {
+            const id = idx + 1;
+
+            return (
+              <NumItem
+                key={id}
+                className={`${id === +round ? "active-round" : ""}`}
+                onClick={() => dispatch(setRound(id))}
+              >
+                <Nums num={id} />
+              </NumItem>
+            );
+          })}
+        </NumWrapper>
       </SettingItem>
       <SettingItem>
         <Title titleText="Speed" titleClassName="setting-title " />
@@ -79,4 +95,4 @@ const Settings = () => {
     </>
   );
 };
-export default Settings
+export default Settings;

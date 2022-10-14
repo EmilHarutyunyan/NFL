@@ -14,6 +14,9 @@ export const Btn = styled.button`
     margin-top: 63px;
     cursor: pointer;
   }
+  &[disabled]{
+    opacity: 0.6;
+  }
   &.enter-draft-btn {
     background-color: #004ea3;
     padding: 5px 24px;
@@ -27,7 +30,7 @@ export const Btn = styled.button`
     display: block;
     margin-top: 40px;
     cursor: pointer;
-    opacity: 0.6;
+    
     img {
       margin-left: 13px;
     }

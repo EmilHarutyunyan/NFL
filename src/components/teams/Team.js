@@ -1,40 +1,50 @@
-import React,{useState, useEffect} from 'react'
+import React,{ useEffect, useRef} from 'react'
 import { TeamItem } from '../TeamItem';
 // import teamLogo from '../../components/assets/img/logo1.png';
-import axios from "axios";
+
 import './team.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
-
-export const Team = ({isChecked}) => {
-
-  const [data, setData] = useState([]);
-  const selectBorder = 'selectedBorder';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTeams } from '../../app/features/draftConfig/draftConfigSlice';
 
 
+export const Team = () => {
 
-  const getData = async ()=> {
-    const {data} = await axios.get(`https://sports-heroku.herokuapp.com/api/v1/rounds/?limit=32`);
+  const dispatch = useDispatch()
+  const initial = useRef(true);
+  const {teams,teamSelect} = useSelector((state) => state.draftCongif);
+  
+  
+  useEffect(() => {
+    if (initial.current) {
+      initial.current = false;
+      dispatch(getTeams());
 
-    setData([data]);
-  }
-  useEffect( ()=> {
-    getData();
-  }, [])
+    }
+    // eslint-disable-next-line
+  }, []);
+
+
+  // const
+
 
   const printContent =() => {
-    if(data.length) {
-    return data[0].results.map((item,i)=> (
+    if(teams?.length) {
+    return teams.map((item,i)=> {
+      const isChecked = teamSelect.findIndex(({id}) => id === item.id) !== -1
+      return (
           <TeamItem key={i + 1}
             id={i}
             num={i+1}
+            item={item}
             teamName={item.name}
             teamLogo={item.logo}
-            selectBorder={selectBorder}
             isChecked={isChecked}
           />
-    ))
+      )
+      })
     }else {
       return  (
         <Box sx={{ display: 'flex' }}>

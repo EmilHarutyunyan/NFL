@@ -20,7 +20,7 @@ const DraftValueChart = () => {
       <DraftValueContent>
         {[...Array(roundColumn).keys()].map((rt) => {
           return (
-            <RoundColumn>
+            <RoundColumn key={rt}>
               <RoundColumnHead>
                 <p>Round {rt + 1}</p>
               </RoundColumnHead>

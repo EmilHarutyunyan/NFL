@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import { Input } from '../../components/Input'
 import { Team } from '../../components/teams/Team'
 import Title from '../../components/Title/Title'
@@ -13,14 +13,16 @@ import {
   Steps,
   StepItem,
 } from "./DraftConfig.styles";
+import { useDispatch, useSelector } from 'react-redux';
+import { setAllTeams } from '../../app/features/draftConfig/draftConfigSlice';
+import { useNavigate } from 'react-router-dom';
 
 export const DraftConfiguration = () => {
-
-    const [isChecked, setIsChecked] = useState(false)
-
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
+    const {teamSelect} = useSelector((state) => state.draftCongif);
     const handleChange = (e) => {
-        setIsChecked(e.target.checked)
-       
+        dispatch(setAllTeams(e.target.checked))
     }
 
   return (
@@ -45,7 +47,7 @@ export const DraftConfiguration = () => {
               />
               Select All
             </label>
-            <Team isChecked={isChecked} />
+            <Team />
           </div>
           <div className="settings">
             <SettingsDraft />
@@ -55,7 +57,9 @@ export const DraftConfiguration = () => {
           btnText="Enter Draft"
           btnIcon={arrowLeft}
           btnClassName="enter-draft-btn"
-          btnDisable
+          btnDisable={!teamSelect.length}
+          onBtnClick={()=>navigate('/draft-player')}
+
         />
         <hr className="line" />
         <Steps>

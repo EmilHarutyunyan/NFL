@@ -9,6 +9,7 @@ import SignIn from '../pages/auth/SignIn/SignIn';
 import Players from '../pages/Players/Players';
 import { DraftConfiguration } from '../pages/DraftConfiguration/DraftConfiguration';
 import DraftValueChart from '../pages/DraftValueChart/DraftValueChart';
+import DraftPlayer from '../pages/DraftPlayer/DraftPlayer';
 
 const Router = () => {
   return (
@@ -18,6 +19,7 @@ const Router = () => {
           <Route index element={<Home />} />
           <Route path="select-draft" element={<SelectDraft />} />
           <Route path="draft-configuration" element={<DraftConfiguration />} />
+          <Route path="draft-player" element={<DraftPlayer />} />
           <Route path="/players" element={<Players />}/>
           <Route path="/draft-value-chart" element={<DraftValueChart />}/>
 
