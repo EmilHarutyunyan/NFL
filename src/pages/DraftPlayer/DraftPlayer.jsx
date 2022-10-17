@@ -4,7 +4,7 @@ import { selectDraftConfig } from '../../app/features/draftConfig/draftConfigSli
 import { ReactComponent as CircleSvg } from '../../assets/svg/circle.svg'
 import DraftPlayerChoose from '../../components/DraftPlayerChoose/DraftPlayerChoose'
 import DraftSimulator from '../../components/DraftSimulator/DraftSimulator'
-import DraftViewAsign from '../../components/DraftViewAsign/DraftViewAsign'
+import DraftViewAsign2 from '../../components/DraftViewAsign/DraftViewAsign2'
 
 // Styes
 import { Wrapper,Banner, DraftView, RenderCircle, DraftViewSimulator } from './DraftPlayer.styles'
@@ -25,7 +25,7 @@ const DraftPlayer = () => {
       </Banner>
       {/* Settings */}
       <DraftView>
-        <DraftViewAsign />
+        <DraftViewAsign2 />
         <DraftViewSimulator>
           {status !== 'green' ? <DraftPlayerChoose /> : <DraftSimulator /> }
         </DraftViewSimulator>

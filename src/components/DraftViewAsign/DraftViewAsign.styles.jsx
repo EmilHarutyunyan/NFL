@@ -34,6 +34,9 @@ export const Wrapper = styled.div`
     border-bottom: 1px solid #AFB4B9;
     background-color: #fff;
     padding: 12px 21px 12px 13px;
+    &.active {
+      border-left: 4px solid #2D7341;
+    }
   }
   .player-team-info {
     display: flex;

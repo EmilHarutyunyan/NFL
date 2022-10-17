@@ -9,17 +9,50 @@ import { Wrapper } from "./DraftViewAsign.styles";
 import { useSelector } from "react-redux";
 import { selectDraftConfig } from "../../app/features/draftConfig/draftConfigSlice";
 
+
+const Delayed = ({children,waitBefore=500}) => {
+  const [isShow,setIsShow] = useState(false)
+  useEffect(()=> {
+    const timer = setTimeout(() => {
+      setIsShow(true)
+    },waitBefore)
+    return () => clearTimeout(timer)
+  },[waitBefore])
+  return isShow ? <>{children}</> : <CircularProgress />
+}
+
+
 const DraftViewAsign = () => {
   const initialRef = useRef(true);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const { draftPlayers } = useSelector(selectDraftConfig);
-  const [renderTeam, setRenderTeam] = useState(true);
+  const { draftPlayers,teamSelect } = useSelector(selectDraftConfig);
+  const [asd,setAsd] = useState(0)
+  const [asd1,setAsd1] = useState(false)
   const [renderLoading, setRenderLoading] = useState(true)
+  const [order,setOrder] = useState({round: 1,combineOrder: 1})
+  const [combineTeamRound,setcombine] = useState([])
+
+  const teamRef = useRef(null)
+
   const combineTeam = (data) => {
+    
     const player = draftPlayers[0];
-    data.player = player;
+    const newDataResult = []
+
+    for (const item of data.results) {
+      if(item.id === 3) {
+        newDataResult.push(item)
+        continue
+      }
+      item.player = player
+      newDataResult.push(item)
+    }
+    data.results = newDataResult
+ 
     setData(data);
+    setAsd(1000)
+    
   };
   const handleData = async () => {
     setLoading(true);
@@ -37,20 +70,23 @@ const DraftViewAsign = () => {
     }
   }, []);
 
-  // const renderTimeout = () => {
-  //   return <>
-  //     <p className="player-name">{data.player.playerName}</p>
-  //     <p className="player-pos">{data.player.positionPlayer}</p>
-  //     <p className="player-colleg">{data.player.collegeName}</p>
-  //   </>
-  // }
 
-  function* g1() {
-    yield 2;
-    yield 3;
-    yield 4;
+  function timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+}
+    useEffect(()=> {
+      if(asd1 === false) return
+      async function fetchData() {
+        // You can await here
+        await timeout(3000)
+        console.log(teamRef)
+  
+        setAsd1(false)
+        combineTeam(data)
+      }
+      fetchData();
+    },[asd1])
 
-  }
 
   return (
     <Wrapper>
@@ -60,17 +96,40 @@ const DraftViewAsign = () => {
           <CircularProgress />
         </Box>
       ) : null}
-      <ul>
+      <ul ref={teamRef}>
         {data?.results?.map((team, idx) => {
-          const {
-            id,
-            round: { logo, id: idTeam },
-          } = team;
+          const {id,round: { logo, id: idTeam }} = team;
+          
+          if(data.results.length === idTeam && 0 === asd && asd1 === false) {
+            setAsd1(true)       
+          }
+          return <>{ team?.player ? 
+              <li key={idx} className="player-team">
+                <div className="pick">
+                  <p>Pick</p>
+                  <p>{idTeam}</p>
+                </div>
+                {/* <div className="player-click">One the Clock</div> */}
+                <div className="player-team-info">
+                  <img src={logo} alt="" />
+                  
+                <Delayed waitBefore={id*1000} key={id}>
+                {team?.player ? null : <div className="player-dashed">- - -</div>}
+                  {team?.player && (
+                    <>
+                    
+                      <p className="player-name">{team.player.playerName}</p>
+                      <p className="player-pos">{team.player.positionPlayer}</p>
+                      <p className="player-colleg">{team.player.collegeName}</p>
+                    </>
+                  )}
 
-
-
-
-          return (
+            </Delayed>
+                  
+                </div>
+              </li>
+           : 
+           
             <li key={idx} className="player-team">
               <div className="pick">
                 <p>Pick</p>
@@ -88,11 +147,11 @@ const DraftViewAsign = () => {
                     <p className="player-colleg">{data.player.collegeName}</p>
                   </>
                 )}
-                {renderLoading &&  (<CircularProgress />)}
+                {/* {renderLoading &&  (<CircularProgress />)} */}
                 
               </div>
             </li>
-          );
+            }</>
         })}
       </ul>
     </Wrapper>
