@@ -14,7 +14,7 @@ export const Team = () => {
 
   const dispatch = useDispatch()
   const initial = useRef(true);
-  const {teams,teamSelect} = useSelector((state) => state.draftCongif);
+  const {teams,teamSelect,teamSelectId} = useSelector((state) => state.draftCongif);
   
   
   useEffect(() => {
@@ -33,7 +33,7 @@ export const Team = () => {
   const printContent =() => {
     if(teams?.length) {
     return teams.map((item,i)=> {
-      const isChecked = teamSelect.findIndex(({id}) => id === item.id) !== -1
+      const isChecked = teamSelectId.findIndex((id) => id === item.id) !== -1
       return (
           <TeamItem key={i + 1}
             id={i}

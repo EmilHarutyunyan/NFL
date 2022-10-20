@@ -31,8 +31,8 @@ const DraftViewAsign = () => {
   const [asd1,setAsd1] = useState(false)
   const [renderLoading, setRenderLoading] = useState(true)
   const [order,setOrder] = useState({round: 1,combineOrder: 1})
-  const [combineTeamRound,setcombine] = useState([])
-
+  const [combineTeamRound,setcombine] = useState(teamSelect.map((el) => el.index))
+  console.log(teamSelect)
   const teamRef = useRef(null)
 
   const combineTeam = (data) => {

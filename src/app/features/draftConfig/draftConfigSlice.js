@@ -7,7 +7,8 @@ import { toggleArrObj } from "../../../utils/utils";
 const initialState = {
   teams:[],
   teamSelect: [],
-  round:"",
+  teamSelectId : [],
+  round:"1",
   possitionalNedd: false,
   bpaCalculated: "",
   userQuantity: 3,
@@ -114,20 +115,26 @@ export const draftConfigSlice = createSlice({
   initialState,
   reducers: {
     setTeams: (state, action) => {
-     
-      state.teamSelect = toggleArrObj(state.teamSelect,action.payload,item => item.id)
+      const teamSelectItems = toggleArrObj(state.teamSelect,action.payload,item => item.id)
+      state.teamSelect = teamSelectItems
+      state.teamSelectId = teamSelectItems.map((elem) => elem.id)
+      console.log(',action.payload :', action.payload);
+
       state.status = state.teamSelect.length > 0 ? 'green' : '';
     },
     setAllTeams: (state,action) => {
       state.teamSelect = action.payload ? state.teams : []
     },
     setRound: (state,action) => {
-      console.log(action.payload,"action.payload")
+      
       state.round = action.payload
     },
     setPositionPlayer: (state,action) => {
       state.positionPlayer = toggleArrObj(state.positionPlayer,action.payload,item => item)
     },
+    setTeamsRound : (state,action) =>{
+      state.teamSelectId = action.payload
+    }
   },
   extraReducers: {
     [getTeams.fulfilled]: (state, action) => {
@@ -146,6 +153,25 @@ export const draftConfigSlice = createSlice({
 
 export const selectDraftConfig = (state) => state.draftCongif;
 
-export const { setTeams,setAllTeams,setRound, setPositionPlayer } = draftConfigSlice.actions;
+
+export const { setTeams,setAllTeams,setRound, setPositionPlayer,setTeamsRound } = draftConfigSlice.actions;
+
+export const saveRound = (roundNum) => (dispatch, getState) => {
+  const {teamSelectId} = selectDraftConfig(getState());
+  if(teamSelectId.length) {
+    const roundsTeam = []
+    for(let value of teamSelectId) {
+      for(let i=1; i < roundNum; i++) {
+        roundsTeam.push(value + (i*32))
+      }
+    }
+    
+    console.log('roundsTeam :', roundsTeam);
+    dispatch(setTeamsRound([...teamSelectId,...roundsTeam]))
+
+  } 
+  dispatch(setRound(roundNum))
+  
+};
 
 export default draftConfigSlice.reducer;

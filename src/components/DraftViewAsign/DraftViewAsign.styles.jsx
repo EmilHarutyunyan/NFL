@@ -5,9 +5,14 @@ export const Wrapper = styled.div`
   max-width: 588px;
   height: 100%;
   max-height: 1450px;
+  
   ul {
     overflow-x: hidden;
     max-height: 1450px;
+    position: relative;
+  }
+  ul li {
+    position: relative;
   }
   .round {
     padding:15px 0px 15px 16px;
@@ -17,6 +22,9 @@ export const Wrapper = styled.div`
     line-height: 30px;
     background: #CAD2DA;
     border-radius: 4px 4px 0px 0px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
   .pick {
     display: flex;
@@ -43,10 +51,11 @@ export const Wrapper = styled.div`
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    img {
+   
+  }
+  img {
       width: 40px;
       height: 40px;
       object-fit: cover;
     }
-  }
 `

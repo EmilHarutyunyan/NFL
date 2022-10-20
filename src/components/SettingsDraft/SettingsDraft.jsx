@@ -11,7 +11,7 @@ import Slider from "@mui/material/Slider";
 
 import { SettingItem, Speed, NumItem, NumWrapper } from "./Settings.styles";
 import { useDispatch, useSelector } from "react-redux";
-import { setRound } from "../../app/features/draftConfig/draftConfigSlice";
+import { saveRound } from "../../app/features/draftConfig/draftConfigSlice";
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ const Settings = () => {
               <NumItem
                 key={id}
                 className={`${id === +round ? "active-round" : ""}`}
-                onClick={() => dispatch(setRound(id))}
+                onClick={() => dispatch(saveRound(id))}
               >
                 <Nums num={id} />
               </NumItem>
