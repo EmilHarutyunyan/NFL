@@ -1,16 +1,21 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectDraftConfig } from '../../app/features/draftConfig/draftConfigSlice'
 import { ReactComponent as CircleSvg } from '../../assets/svg/circle.svg'
 import DraftPlayerChoose from '../../components/DraftPlayerChoose/DraftPlayerChoose'
 import DraftSimulator from '../../components/DraftSimulator/DraftSimulator'
-import DraftViewAsign2 from '../../components/DraftViewAsign/DraftViewAsign2'
+import DraftViewAsign from '../../components/DraftViewAsign/DraftViewAsign'
 
 // Styes
-import { Wrapper,Banner, DraftView, RenderCircle, DraftViewSimulator } from './DraftPlayer.styles'
+import { Wrapper,Banner, DraftView, DraftViewSimulator, RenderCircle } from './DraftPlayer.styles'
 
 const DraftPlayer = () => {
-  const { status } = useSelector(selectDraftConfig);
+  const { countRender,teamSelectId,status } = useSelector(selectDraftConfig);
+  // const dispatch = useDispatch()
+  const [thisId,setThisId] = useState(0)
+  const [changeId,setChangeId] = useState(0)
+  const count = useMemo(() => countRender+1, [countRender])
+   
   return (
     <Wrapper className='main-container'>
       <Banner>
@@ -25,9 +30,9 @@ const DraftPlayer = () => {
       </Banner>
       {/* Settings */}
       <DraftView>
-        <DraftViewAsign2 />
+        <DraftViewAsign thisId={thisId} setThisId={setThisId} setChangeId={setChangeId} changeId={changeId} />
         <DraftViewSimulator>
-          {status !== 'green' ? <DraftPlayerChoose /> : <DraftSimulator /> }
+          {!teamSelectId.includes(count) && status !== 'pause' ? <DraftSimulator /> : <DraftPlayerChoose draftStatus={status} thisId={thisId} setThisId={setThisId} setChangeId={setChangeId} /> }
         </DraftViewSimulator>
       </DraftView>
       

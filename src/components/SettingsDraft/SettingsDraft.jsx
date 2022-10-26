@@ -16,7 +16,7 @@ import { saveRound } from "../../app/features/draftConfig/draftConfigSlice";
 const Settings = () => {
   const dispatch = useDispatch();
   const { round } = useSelector((state) => state.draftCongif);
-  const roundsArray = Array.from(Array(8).keys());
+  const roundsArray = Array.from(Array(7).keys());
 
   return (
     <>

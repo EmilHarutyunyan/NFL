@@ -1,13 +1,13 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { setTeams } from "../app/features/draftConfig/draftConfigSlice";
+import { saveTeams } from "../app/features/draftConfig/draftConfigSlice";
 
 export const TeamItem = ({ num, teamName, teamLogo, isChecked, item }) => {
   const dispatch = useDispatch();
   return (
     <div
       onClick={() => {
-        dispatch(setTeams(item));
+        dispatch(saveTeams(item));
       }}
       className={`team-item ${isChecked ? "active" : ""}`}
     >

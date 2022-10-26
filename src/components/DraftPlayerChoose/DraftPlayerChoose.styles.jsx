@@ -43,13 +43,37 @@ export const NumItem = styled.div`
   }
 `;
 
-export const DraftPlayerWrapper = styled.div``;
+
+
+export const DraftPlayerWrapper = styled.div`
+  .player-draft-btn-wrap {
+    margin-top: 30px;
+  }
+  .player-draft-btn {
+    background: #004ea3;
+    border-radius: 4px;
+    padding: 12px 24px;
+    font-weight: 400;
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    cursor: pointer;
+
+  }
+  .player-draft-btn:disabled,
+  .player-draft-btn[disabled] {
+    opacity: 0.5;
+  }
+`;
 
 export const DraftPlayerItems = styled.ul``;
 
 export const DraftPlayerItem = styled.li`
   border-bottom: 1px solid #afb4b9;
   padding-bottom: 16px;
+  
   .player-draft {
     padding: 0 30px;
     display: flex;
@@ -91,15 +115,5 @@ export const DraftPlayerItem = styled.li`
     font-size: 20px;
     line-height: 31px;
     color: #46484a;
-  }
-
-  .player-draft-btn {
-    background: #004ea3;
-    border-radius: 4px;
-    padding: 12px 24px;
-    font-weight: 400;
-    border: none;
-    color: #fff;
-    cursor: pointer;
   }
 `;

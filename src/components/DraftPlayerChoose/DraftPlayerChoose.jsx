@@ -5,14 +5,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { getPositions, selectGroup } from "../../app/features/group/groupSlice";
 import Nums from "../SettingsDraft/Nums";
 import {
+  delPauseId,
+  delTeamsRound,
   selectDraftConfig,
   setPositionPlayer,
+  setStatus,
 } from "../../app/features/draftConfig/draftConfigSlice";
 // Img
 import playerImg from "../../assets/img/player.png";
 import colleageImg from "../../assets/img/college.png";
 import infoImg from "../../assets/img/Info.png";
-
+import pauseImg from "../../assets/img/pause.png";
 // Styles
 import {
   Wrapper,
@@ -24,17 +27,17 @@ import {
   DraftPlayerItem,
 } from "./DraftPlayerChoose.styles";
 
-const DraftPlayerChoose = () => {
+const DraftPlayerChoose = ({draftStatus, setThisId, setChangeId,}) => {
+  
   const groups = useSelector(selectGroup);
-  const { positionPlayer, draftPlayers } =
-    useSelector(selectDraftConfig);
-
+  const { positionPlayer, draftPlayers,teamSelectId} = useSelector(selectDraftConfig);
+  const draftBtnDisable = draftStatus === 'pause' ? true : false
   const dispatch = useDispatch();
   const shouldLog = useRef(true);
   useEffect(() => {
-    if (shouldLog.current) {
+    if (shouldLog.current && groups.positions.length === 1) {
       shouldLog.current = false;
-      dispatch(getPositions());
+       dispatch(getPositions())
     }
     // eslint-disable-next-line
   }, []);
@@ -90,12 +93,28 @@ const DraftPlayerChoose = () => {
                     <img src={colleageImg} alt="" />
                     <h4 className="playyer-college">{item.collegeName}</h4>
                     <img src={infoImg} alt="" />
-                    <button className="player-draft-btn">Draft</button>
+                    <button className="player-draft-btn" disabled={draftBtnDisable} onClick={() => {
+                      setThisId(teamSelectId[0]);
+                      dispatch(delTeamsRound(teamSelectId[0]))
+                      setChangeId(teamSelectId[0]);
+                      }}>Draft</button> 
                   </div>
                 </DraftPlayerItem>
               );
             })}
         </DraftPlayerItems>
+        {draftBtnDisable && (
+          <div className="player-draft-btn-wrap">
+          <button className="player-draft-btn" onClick={() =>{
+            dispatch(setStatus('play'))
+            dispatch(delPauseId())
+          }}>
+              <img src={pauseImg} alt="play_pause" />
+              <span>Start Draft</span>
+          </button>
+        </div>
+        )}
+        
       </DraftPlayerWrapper>
     </Wrapper>
   );

@@ -13,6 +13,7 @@ export const Wrapper = styled.div`
   }
   ul li {
     position: relative;
+    height: 75px;
   }
   .round {
     padding:15px 0px 15px 16px;
@@ -21,10 +22,11 @@ export const Wrapper = styled.div`
     font-size: 20px;
     line-height: 30px;
     background: #CAD2DA;
-    border-radius: 4px 4px 0px 0px;
     position: sticky;
     top: 0;
     z-index: 1;
+    display: flex;
+    align-items: center;
   }
   .pick {
     display: flex;

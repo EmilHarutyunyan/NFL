@@ -5,100 +5,98 @@ import { API_ENDPOINT } from "../../../config/config";
 import { toggleArrObj } from "../../../utils/utils";
 
 const initialState = {
-  teams:[],
+  teams: [],
   teamSelect: [],
-  teamSelectId : [],
-  round:"1",
+  teamSelectId: [],
+  round: "1",
   possitionalNedd: false,
   bpaCalculated: "",
   userQuantity: 3,
   loading: false,
-  positionPlayer:[],
+  positionPlayer: [],
   draftPlayers: [
     {
-      id:1,
-      rank:'35',
-      adp:'42.1',
+      id: 1,
+      rank: "35",
+      adp: "42.1",
       img: "",
       playerName: "Christian Mccaffrey",
-      positionPlayer: 'QB',
-      collegeName:'Ohio State',
-      collegeImg: '',
+      positionPlayer: "QB",
+      collegeName: "Ohio State",
+      collegeImg: "",
     },
     {
-      id:1,
-      rank:'35',
-      adp:'42.1',
+      id: 1,
+      rank: "35",
+      adp: "42.1",
       img: "",
       playerName: "Christian Mccaffrey",
-      positionPlayer: 'QB',
-      collegeName:'Ohio State',
-      collegeImg: '',
+      positionPlayer: "QB",
+      collegeName: "Ohio State",
+      collegeImg: "",
     },
     {
-      id:1,
-      rank:'35',
-      adp:'42.1',
+      id: 1,
+      rank: "35",
+      adp: "42.1",
       img: "",
       playerName: "Christian Mccaffrey",
-      positionPlayer: 'QB',
-      collegeName:'Ohio State',
-      collegeImg: '',
+      positionPlayer: "QB",
+      collegeName: "Ohio State",
+      collegeImg: "",
     },
     {
-      id:1,
-      rank:'35',
-      adp:'42.1',
+      id: 1,
+      rank: "35",
+      adp: "42.1",
       img: "",
       playerName: "Christian Mccaffrey",
-      positionPlayer: 'QB',
-      collegeName:'Ohio State',
-      collegeImg: '',
+      positionPlayer: "QB",
+      collegeName: "Ohio State",
+      collegeImg: "",
     },
     {
-      id:1,
-      rank:'35',
-      adp:'42.1',
+      id: 1,
+      rank: "35",
+      adp: "42.1",
       img: "",
       playerName: "Christian Mccaffrey",
-      positionPlayer: 'QB',
-      collegeName:'Ohio State',
-      collegeImg: '',
+      positionPlayer: "QB",
+      collegeName: "Ohio State",
+      collegeImg: "",
     },
     {
-      id:1,
-      rank:'35',
-      adp:'42.1',
+      id: 1,
+      rank: "35",
+      adp: "42.1",
       img: "",
       playerName: "Christian Mccaffrey",
-      positionPlayer: 'QB',
-      collegeName:'Ohio State',
-      collegeImg: '',
+      positionPlayer: "QB",
+      collegeName: "Ohio State",
+      collegeImg: "",
     },
     {
-      id:1,
-      rank:'35',
-      adp:'42.1',
+      id: 1,
+      rank: "35",
+      adp: "42.1",
       img: "",
       playerName: "Christian Mccaffrey",
-      positionPlayer: 'QB',
-      collegeName:'Ohio State',
-      collegeImg: '',
+      positionPlayer: "QB",
+      collegeName: "Ohio State",
+      collegeImg: "",
     },
   ],
-  satus: ''
+  satus: "",
+  pauseId: [],
+  countRender: 0,
 };
-
 
 export const getTeams = createAsyncThunk(
   "draftConfig/getTeams",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-     
-      const res = await axios.get(
-        `${API_ENDPOINT}rounds/?limit=32`
-      );
-      return res.data
+      const res = await axios.get(`${API_ENDPOINT}rounds/?limit=32`);
+      return res.data;
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -109,69 +107,112 @@ export const getTeams = createAsyncThunk(
   }
 );
 
-
 export const draftConfigSlice = createSlice({
-  name: 'draftConfig',
+  name: "draftConfig",
   initialState,
   reducers: {
     setTeams: (state, action) => {
-      const teamSelectItems = toggleArrObj(state.teamSelect,action.payload,item => item.id)
-      state.teamSelect = teamSelectItems
-      state.teamSelectId = teamSelectItems.map((elem) => elem.id)
-      console.log(',action.payload :', action.payload);
-
-      state.status = state.teamSelect.length > 0 ? 'green' : '';
+      state.teamSelect = action.payload;
+      state.status = state.teamSelect.length > 0 ? "green" : "";
     },
-    setAllTeams: (state,action) => {
-      state.teamSelect = action.payload ? state.teams : []
+    setCountRender: (state, action) => {
+      state.countRender = action.payload;
     },
-    setRound: (state,action) => {
-      
-      state.round = action.payload
+    setAllTeams: (state, action) => {
+      state.teamSelect = action.payload ? state.teams : [];
     },
-    setPositionPlayer: (state,action) => {
-      state.positionPlayer = toggleArrObj(state.positionPlayer,action.payload,item => item)
+    setRound: (state, action) => {
+      state.round = action.payload;
     },
-    setTeamsRound : (state,action) =>{
-      state.teamSelectId = action.payload
-    }
+    setStatus: (state, action) => {
+      state.status = action.payload;
+    },
+    setPositionPlayer: (state, action) => {
+      state.positionPlayer = toggleArrObj(
+        state.positionPlayer,
+        action.payload,
+        (item) => item
+      );
+    },
+    setTeamsRound: (state, action) => {
+      state.teamSelectId = action.payload.sort(function(a, b){return a - b});
+    },
+    setPauseId: (state,action) => {
+      state.pauseId.push(action.payload);
+      state.teamSelectId = state.teamSelectId.push(action.payload).sort(function(a, b){return a - b});
+    },
+    delPauseId: (state,_) => {
+      state.teamSelectId = state.teamSelectId.filter(id => id !== state.pauseId[0])
+      state.pauseId = []
+    },
+    delTeamsRound: (state, action) => {
+      state.teamSelectId = state.teamSelectId.filter(
+        (item) => action.payload !== item
+      );
+    },
   },
   extraReducers: {
     [getTeams.fulfilled]: (state, action) => {
       state.loading = false;
-      state.teams = action.payload?.results
+      state.teams = action.payload?.results;
     },
     [getTeams.pending]: (state, action) => {
-     
       state.loading = true;
     },
     [getTeams.rejected]: (state, action) => {
       state.loading = false;
     },
-  }
-})
+  },
+});
 
 export const selectDraftConfig = (state) => state.draftCongif;
 
+export const {
+  setTeams,
+  setAllTeams,
+  setRound,
+  setPositionPlayer,
+  setTeamsRound,
+  setCountRender,
+  setStatus,
+  setPauseId,
+  delTeamsRound,
+  delPauseId
+} = draftConfigSlice.actions;
 
-export const { setTeams,setAllTeams,setRound, setPositionPlayer,setTeamsRound } = draftConfigSlice.actions;
+const teamRound = (round, teamSelectId) => {
+  const roundsTeam = [];
+  for (let value of teamSelectId) {
+    for (let i = 1; i < +round; i++) {
+      roundsTeam.push(value + i * 32);
+    }
+  }
+  return new Set([...roundsTeam, ...teamSelectId]);
+};
+export const saveTeams = (team) => (dispatch, getState) => {
+  const { round, teamSelect } = selectDraftConfig(getState());
+  const teamSelectItems = toggleArrObj(teamSelect, team, (item) => item.id);
+  const teamSelectItemsId = teamSelectItems.map((elem) => elem.id);
+  const roundsTeam =
+    +round > 1 ? teamRound(round, teamSelectItemsId) : teamSelectItemsId;
+
+  dispatch(setTeamsRound([...roundsTeam]));
+  dispatch(setTeams(teamSelectItems));
+};
+
+export const pauseRender = (id) => (dispatch, getState) => {
+  const { teamSelectId } = selectDraftConfig(getState());
+  dispatch(setStatus("pause"));
+  dispatch(setTeamsRound([...teamSelectId, id]));
+};
 
 export const saveRound = (roundNum) => (dispatch, getState) => {
-  const {teamSelectId} = selectDraftConfig(getState());
-  if(teamSelectId.length) {
-    const roundsTeam = []
-    for(let value of teamSelectId) {
-      for(let i=1; i < roundNum; i++) {
-        roundsTeam.push(value + (i*32))
-      }
-    }
-    
-    console.log('roundsTeam :', roundsTeam);
-    dispatch(setTeamsRound([...teamSelectId,...roundsTeam]))
-
-  } 
-  dispatch(setRound(roundNum))
-  
+  const { teamSelectId } = selectDraftConfig(getState());
+  if (teamSelectId.length) {
+    const roundsTeam = teamRound(roundNum, teamSelectId);
+    dispatch(setTeamsRound([...roundsTeam]));
+  }
+  dispatch(setRound(roundNum));
 };
 
 export default draftConfigSlice.reducer;
