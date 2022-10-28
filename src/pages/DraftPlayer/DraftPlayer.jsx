@@ -11,6 +11,7 @@ import { Wrapper,Banner, DraftView, DraftViewSimulator, RenderCircle } from './D
 
 const DraftPlayer = () => {
   const { countRender,teamSelectId,status } = useSelector(selectDraftConfig);
+  console.log('🚀 ~ file: DraftPlayer.jsx ~ line 14 ~ DraftPlayer ~ teamSelectId', teamSelectId)
   // const dispatch = useDispatch()
   const [thisId,setThisId] = useState(0)
   const [changeId,setChangeId] = useState(0)

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Input } from '../../components/Input'
 import { Team } from '../../components/teams/Team'
 import Title from '../../components/Title/Title'
@@ -14,7 +14,7 @@ import {
   StepItem,
 } from "./DraftConfig.styles";
 import { useDispatch, useSelector } from 'react-redux';
-import { setAllTeams } from '../../app/features/draftConfig/draftConfigSlice';
+import { setAllTeams, setResetRound } from '../../app/features/draftConfig/draftConfigSlice';
 import { useNavigate } from 'react-router-dom';
 
 export const DraftConfiguration = () => {
@@ -24,6 +24,11 @@ export const DraftConfiguration = () => {
     const handleChange = (e) => {
         dispatch(setAllTeams(e.target.checked))
     }
+    useEffect(()=> {
+      dispatch(setResetRound())
+      
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[])
 
   return (
     <DraftConfigWrap>

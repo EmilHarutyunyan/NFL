@@ -135,11 +135,21 @@ export const draftConfigSlice = createSlice({
       );
     },
     setTeamsRound: (state, action) => {
-      state.teamSelectId = action.payload.sort(function(a, b){return a - b});
+      const teamSelectSort = action.payload.sort(function(a, b){return a - b});
+      state.teamSelectId = teamSelectSort
     },
     setPauseId: (state,action) => {
-      state.pauseId.push(action.payload);
-      state.teamSelectId = state.teamSelectId.push(action.payload).sort(function(a, b){return a - b});
+      state.pauseId = [action.payload]
+      const teamSelectSort= [...state.teamSelectId,action.payload].sort(function(a, b){return a - b})
+      state.teamSelectId = teamSelectSort
+    },
+    setResetRound: (state,_) => {
+      state.teamSelectId = []
+      state.teamSelect = []
+      state.round = "1"
+      state.countRender = 0
+      state.positionPlayer = []
+      state.pauseId = []
     },
     delPauseId: (state,_) => {
       state.teamSelectId = state.teamSelectId.filter(id => id !== state.pauseId[0])
@@ -177,6 +187,7 @@ export const {
   setStatus,
   setPauseId,
   delTeamsRound,
+  setResetRound,
   delPauseId
 } = draftConfigSlice.actions;
 
@@ -205,6 +216,9 @@ export const pauseRender = (id) => (dispatch, getState) => {
   dispatch(setStatus("pause"));
   dispatch(setTeamsRound([...teamSelectId, id]));
 };
+export const resetRound = () => {
+
+}
 
 export const saveRound = (roundNum) => (dispatch, getState) => {
   const { teamSelectId } = selectDraftConfig(getState());

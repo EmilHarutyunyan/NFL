@@ -159,7 +159,7 @@ const DraftViewAsign = ({thisId, setChangeId, changeId}) => {
             : roundArr.current.push(roundIndex);
           return (
             <>
-              {roundCheck ? <li className="round">{roundIndex}</li> : null}
+              {roundCheck ? <li className="round" >{roundIndex}</li> : null}
               <li
                 key={id}
                 className={`${
@@ -170,7 +170,7 @@ const DraftViewAsign = ({thisId, setChangeId, changeId}) => {
               >
                 <div className="pick">
                   <p>Pick</p>
-                  <p>{idTeam}</p>
+                  <p>{id}</p>
                 </div>
 
                 <div className="player-team-info">
