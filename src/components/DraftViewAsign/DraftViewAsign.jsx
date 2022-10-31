@@ -1,15 +1,17 @@
-import axios from "axios";
+// import axios from "axios";
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
-import { API_ENDPOINT } from "../../config/config";
+// import { API_ENDPOINT } from "../../config/config";
 import CircularProgress from "@mui/material/CircularProgress";
 // Styles
 import { Wrapper } from "./DraftViewAsign.styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  delTeamsRound,
+  getTradeValue,
+  // delTeamsRound,
   selectDraftConfig,
   setCountRender,
+  setStatus,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { useMemo } from "react";
 
@@ -22,12 +24,14 @@ const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
     const timer = setTimeout(() => {
       setIsShow(true);
       if (scroll?.id) {
+        
         if (countRender <= scroll.id) {
           scroll.teamRef?.current?.scrollTo(0, (scroll.id - 1) * 75);
-     
+          
           dispatch(setCountRender(scroll.id));
+          dispatch(setStatus('green'));
         }
-      }
+      } 
     }, waitBefore);
     return () => clearTimeout(timer);
 
@@ -55,11 +59,11 @@ const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
 const DraftViewAsign = ({thisId, setChangeId, changeId}) => {
   const initialRef = useRef(true);
   const [isLoading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
-  const { draftPlayers, teamSelectId, round,pauseId } = useSelector(selectDraftConfig);
-  const dispatch = useDispatch();
+  const { draftPlayers, teamSelectId, round,pauseId,teamValue } = useSelector(selectDraftConfig);
+  const [data, setData] = useState(teamValue|| []);
   // const [changeId, setChangeId] = useState(0);
   // const [thisId, setThisId] = useState(0);
+  const dispatch = useDispatch()
   const roundArr = useRef([]);
 
   
@@ -103,9 +107,10 @@ const DraftViewAsign = ({thisId, setChangeId, changeId}) => {
   };
   const handleData = async () => {
     setLoading(true);
-    const { data } = await axios(
-      `${API_ENDPOINT}trade-value-history/?limit=${+round * 32}&offset=0`
-    );
+    // const { data } = await axios(
+    //   `${API_ENDPOINT}trade-value-history/?limit=${+round * 32}&offset=0`
+    // );
+    dispatch(getTradeValue())
 
     const newData = combineTeam(data, teamSelectId);
     setData(newData);
@@ -140,10 +145,10 @@ const DraftViewAsign = ({thisId, setChangeId, changeId}) => {
       <ul ref={teamRef}>
         {data?.results?.map((team, idx) => {
           const {
-            id,
+            index: id,
 
             round_index: roundIndex,
-            round: { logo, id: idTeam },
+            round: { logo },
           } = team;
           const isBelowThreshold = (currentValue) => currentValue > id;
           const checkTeam = teamSelectId.every(isBelowThreshold) ? id * 500 : 0;

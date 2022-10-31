@@ -14,6 +14,7 @@ const initialState = {
   userQuantity: 3,
   loading: false,
   positionPlayer: [],
+  teamValue: [],
   draftPlayers: [
     {
       id: 1,
@@ -107,6 +108,23 @@ export const getTeams = createAsyncThunk(
   }
 );
 
+export const getTradeValue = createAsyncThunk(
+  "draftConfig/getTradeValue",
+  async (_, { dispatch, rejectWithValue, getState }) => {
+    try {
+      const {draftCongif: {round}} = getState()
+      const res = await axios.get(`${API_ENDPOINT}trade-value-history/?limit=${+round * 32}&offset=0`);
+      return res.data;
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
 export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
@@ -170,6 +188,16 @@ export const draftConfigSlice = createSlice({
       state.loading = true;
     },
     [getTeams.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [getTradeValue.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.teamValue = action.payload?.results;
+    },
+    [getTradeValue.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getTradeValue.rejected]: (state, action) => {
       state.loading = false;
     },
   },

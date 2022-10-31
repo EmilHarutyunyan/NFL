@@ -31,7 +31,7 @@ const DraftPlayerChoose = ({draftStatus, setThisId, setChangeId,}) => {
   
   const groups = useSelector(selectGroup);
   const { positionPlayer, draftPlayers,teamSelectId} = useSelector(selectDraftConfig);
-  const draftBtnDisable = draftStatus === 'pause' ? true : false
+  const draftBtnDisable = draftStatus === 'red' ? true : false
   const dispatch = useDispatch();
   const shouldLog = useRef(true);
   useEffect(() => {
@@ -106,7 +106,7 @@ const DraftPlayerChoose = ({draftStatus, setThisId, setChangeId,}) => {
         {draftBtnDisable && (
           <div className="player-draft-btn-wrap">
           <button className="player-draft-btn" onClick={() =>{
-            dispatch(setStatus('play'))
+            dispatch(setStatus('green'))
             dispatch(delPauseId())
           }}>
               <img src={pauseImg} alt="play_pause" />
