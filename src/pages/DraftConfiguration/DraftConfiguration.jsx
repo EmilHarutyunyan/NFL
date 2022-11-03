@@ -25,6 +25,7 @@ export const DraftConfiguration = () => {
         dispatch(setAllTeams(e.target.checked))
     }
     useEffect(()=> {
+      
       dispatch(setResetRound())
       
     // eslint-disable-next-line react-hooks/exhaustive-deps

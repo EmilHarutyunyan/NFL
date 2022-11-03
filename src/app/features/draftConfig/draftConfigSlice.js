@@ -15,6 +15,7 @@ const initialState = {
   loading: false,
   positionPlayer: [],
   teamValue: [],
+  draftValue:[],
   draftPlayers: [
     {
       id: 1,
@@ -125,6 +126,22 @@ export const getTradeValue = createAsyncThunk(
   }
 );
 
+export const getDraftValue = createAsyncThunk(
+  "draftConfig/getDraftValue",
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await axios.get(`${API_ENDPOINT}trade-value/?limit=224`);
+      return res.data;
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
 export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
@@ -198,6 +215,16 @@ export const draftConfigSlice = createSlice({
       state.loading = true;
     },
     [getTradeValue.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [getDraftValue.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.draftValue = action.payload?.results;
+    },
+    [getDraftValue.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getDraftValue.rejected]: (state, action) => {
       state.loading = false;
     },
   },

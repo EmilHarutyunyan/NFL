@@ -13,6 +13,7 @@ import DraftPlayer from '../pages/DraftPlayer/DraftPlayer';
 import ProtectRouter from './ProtectRouter';
 import { useSelector } from 'react-redux';
 import { selectDraftConfig } from '../app/features/draftConfig/draftConfigSlice';
+import TeamNeeds from '../pages/TeamNeeds/TeamNeeds';
 
 const Router = () => {
   const {teamSelect} = useSelector(selectDraftConfig)
@@ -24,11 +25,10 @@ const Router = () => {
           <Route index element={<Home />} />
           <Route path="select-draft" element={<SelectDraft />} />
           <Route path="draft-configuration" element={<DraftConfiguration />} />
-
           <Route path="draft-player" element={<ProtectRouter access={teamSelect} redirect={'/draft-configuration'}><DraftPlayer /></ProtectRouter>} />
-          <Route path="/players" element={<Players />}/>
-          <Route path="/draft-value-chart" element={<DraftValueChart />}/>
-
+          <Route path="players" element={<Players />}/>
+          <Route path="draft-value-chart" element={<DraftValueChart />}/>
+          <Route path="team-needs" element={<TeamNeeds />} />
         </Route>
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />

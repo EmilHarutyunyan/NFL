@@ -14,7 +14,7 @@ export const Team = () => {
 
   const dispatch = useDispatch()
   const initial = useRef(true);
-  const {teams,teamSelect,teamSelectId} = useSelector((state) => state.draftCongif);
+  const {teams,teamSelectId} = useSelector((state) => state.draftCongif);
   
   
   useEffect(() => {
@@ -26,8 +26,6 @@ export const Team = () => {
     // eslint-disable-next-line
   }, []);
 
-
-  // const
 
 
   const printContent =() => {

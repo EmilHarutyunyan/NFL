@@ -13,6 +13,8 @@ export const DraftValueContent = styled.article`
   border-radius: 10px;
   display: flex;
   justify-content: space-between;
+  overflow-y: auto;
+  gap:5px;
 `;
 export const RoundColumn = styled.div`
   width: 100%;
