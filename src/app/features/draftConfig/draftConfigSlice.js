@@ -271,9 +271,6 @@ export const pauseRender = (id) => (dispatch, getState) => {
   dispatch(setStatus("pause"));
   dispatch(setTeamsRound([...teamSelectId, id]));
 };
-export const resetRound = () => {
-
-}
 
 export const saveRound = (roundNum) => (dispatch, getState) => {
   const { teamSelectId } = selectDraftConfig(getState());
