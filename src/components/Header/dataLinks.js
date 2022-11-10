@@ -2,7 +2,7 @@ export const links = [
   {
     id: 1,
     text: "Mock Draft Simulator",
-    url: "#",
+    url: "/select-draft",
   },
   {
     id: 2,

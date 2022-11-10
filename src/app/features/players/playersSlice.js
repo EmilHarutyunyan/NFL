@@ -19,13 +19,17 @@ const initialState = {
 
 export const getPlayers = createAsyncThunk(
   "players/getPlayers",
-  async (_, { dispatch, getState, rejectWithValue }) => {
+  async (setLimit, { dispatch, getState, rejectWithValue }) => {
     try {
-     
+      const {
+        players: { limit },
+      } = getState();
+      const playerLimit = setLimit ? setLimit : limit
       const res = await axios.get(
-        `${API_ENDPOINT}players/?limit=${18}&offset=${0}&search=&position=&school`
+        `${API_ENDPOINT}players/?limit=${playerLimit}&offset=${0}&search=&position=&school`
       );
-      dispatch(setPlayers(res.data));
+      const resData = { ...res.data, limit:playerLimit };
+      dispatch(setPlayers(resData));
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -89,12 +93,14 @@ export const postitionPlayers = createAsyncThunk(
     try {
 
       const {
-        players: { colleage },
+        players: { colleage,limit },
       } = getState();
+        console.log('🚀 ~ file: playersSlice.js ~ line 98 ~ limit', limit)
+      
       const res = await axios.get(
-        `${API_ENDPOINT}players/?limit=${18}&offset=${0}&search=&position=${position}&school=${colleage}`
+        `${API_ENDPOINT}players/?limit=${limit}&offset=${0}&search=&position=${position}&school=${colleage}`
       );
-      const resData = {...initialState,...res.data, position};
+      const resData = {...initialState,...res.data,limit,position};
 
       dispatch(setPlayers(resData));
     } catch (error) {
@@ -210,9 +216,12 @@ export const { setPlayers,setSearch,setPosition,setColleage } = playersSlice.act
 
 // Action Creator Thunk
 export const positionAction = (positionValue) => (dispatch, getState) => {
+  const {
+    players: { limit },
+  } = getState();
   if(positionValue === '') {
     dispatch(setPosition(""))
-    dispatch(getPlayers())
+    dispatch(getPlayers(limit))
   } else {
     dispatch(postitionPlayers(positionValue));
   }

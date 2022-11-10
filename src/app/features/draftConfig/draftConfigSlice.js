@@ -13,9 +13,10 @@ const initialState = {
   bpaCalculated: "",
   userQuantity: 3,
   loading: false,
-  positionPlayer: [],
+  positionPlayer: ['All'],
   teamValue: [],
   draftValue:[],
+  timeSpeed:2,
   draftPlayers: [
     {
       id: 1,
@@ -156,6 +157,9 @@ export const draftConfigSlice = createSlice({
     setAllTeams: (state, action) => {
       state.teamSelect = action.payload ? state.teams : [];
     },
+    setTimeSpeed: (state, action) => {
+      state.timeSpeed = action.payload
+    },
     setRound: (state, action) => {
       state.round = action.payload;
     },
@@ -163,11 +167,9 @@ export const draftConfigSlice = createSlice({
       state.status = action.payload;
     },
     setPositionPlayer: (state, action) => {
-      state.positionPlayer = toggleArrObj(
-        state.positionPlayer,
-        action.payload,
-        (item) => item
-      );
+      // state.positionPlayer = toggleArrObj(state.positionPlayer,action.payload,(item) => item);
+      state.positionPlayer = action.payload;
+     
     },
     setTeamsRound: (state, action) => {
       const teamSelectSort = action.payload.sort(function(a, b){return a - b});
@@ -183,7 +185,7 @@ export const draftConfigSlice = createSlice({
       state.teamSelect = []
       state.round = "1"
       state.countRender = 0
-      state.positionPlayer = []
+      // state.positionPlayer = []
       state.pauseId = []
     },
     delPauseId: (state,_) => {
@@ -240,6 +242,7 @@ export const {
   setTeamsRound,
   setCountRender,
   setStatus,
+  setTimeSpeed,
   setPauseId,
   delTeamsRound,
   setResetRound,

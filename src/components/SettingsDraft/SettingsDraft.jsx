@@ -1,5 +1,5 @@
 import { Switch } from "@mui/material";
-import React from "react";
+import React, { useCallback } from "react";
 import Title from "../../components/Title/Title";
 import Nums from "./Nums";
 import Radio from "@mui/material/Radio";
@@ -11,13 +11,17 @@ import Slider from "@mui/material/Slider";
 
 import { SettingItem, Speed, NumItem, NumWrapper } from "./Settings.styles";
 import { useDispatch, useSelector } from "react-redux";
-import { saveRound } from "../../app/features/draftConfig/draftConfigSlice";
+import { saveRound, selectDraftConfig, setTimeSpeed } from "../../app/features/draftConfig/draftConfigSlice";
+
 
 const Settings = () => {
   const dispatch = useDispatch();
-  const { round } = useSelector((state) => state.draftCongif);
+  const { round,timeSpeed } = useSelector(selectDraftConfig);
   const roundsArray = Array.from(Array(7).keys());
-
+  const handleSpeed = useCallback((e) => {
+   return dispatch(setTimeSpeed(e.target.value))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeSpeed]);
   return (
     <>
       <SettingItem>
@@ -43,7 +47,13 @@ const Settings = () => {
         <Speed>
           <Box width={300}>
             <Slider
-              defaultValue={50}
+              defaultValue={10}
+              step={1}
+              min={2}
+              max={5}
+              value={timeSpeed}
+              onChange={handleSpeed}
+
               aria-label="Default"
               valueLabelDisplay="auto"
             />

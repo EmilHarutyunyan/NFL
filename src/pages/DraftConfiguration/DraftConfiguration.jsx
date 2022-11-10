@@ -16,6 +16,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { setAllTeams, setResetRound } from '../../app/features/draftConfig/draftConfigSlice';
 import { useNavigate } from 'react-router-dom';
+import { setResetGroup } from '../../app/features/group/groupSlice';
 
 export const DraftConfiguration = () => {
     const navigate = useNavigate();
@@ -25,9 +26,8 @@ export const DraftConfiguration = () => {
         dispatch(setAllTeams(e.target.checked))
     }
     useEffect(()=> {
-      
       dispatch(setResetRound())
-      
+      dispatch(setResetGroup())
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 

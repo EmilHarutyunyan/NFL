@@ -23,7 +23,6 @@ const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
     const timer = setTimeout(() => {
       setIsShow(true);
       if (scroll?.id) {
-        console.log('scroll.id kjlkj:', scroll.id);
         if (countRender <= scroll.id) {
           scroll.teamRef?.current?.scrollTo(0, (scroll.id - 1) * 75);
           
@@ -65,7 +64,7 @@ const DraftViewAsign = ({thisId, setChangeId, changeId}) => {
   const initialRef = useRef(true);
   const [isLoading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const { draftPlayers, teamSelectId, round,pauseId } = useSelector(selectDraftConfig);
+  const { draftPlayers, teamSelectId, round,pauseId,timeSpeed } = useSelector(selectDraftConfig);
   // const [changeId, setChangeId] = useState(0);
   // const [thisId, setThisId] = useState(0);
   const roundArr = useRef([]);
@@ -153,9 +152,11 @@ const DraftViewAsign = ({thisId, setChangeId, changeId}) => {
             round_index: roundIndex,
             round: { logo },
           } = team;
+          
+          console.log('timeSpeed :', timeSpeed);
           const isBelowThreshold = (currentValue) => currentValue > id;
-          const checkTeam = teamSelectId.every(isBelowThreshold) ? id * 500 : 0;
-          const time = thisId ? +(id - thisId) * 1000 : checkTeam;
+          const checkTeam = teamSelectId.every(isBelowThreshold) ? id * timeSpeed * 1000 : 0;
+          const time = thisId ? +(id - thisId) * timeSpeed*1000 : checkTeam;
               // eslint-disable-next-line no-lone-blocks
               {/* const statusPause = status === 'pause' ? false : true */}
              

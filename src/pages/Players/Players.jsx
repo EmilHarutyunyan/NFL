@@ -37,7 +37,7 @@ const Players = () => {
   const dispatch = useDispatch();
   const players = useSelector(selectPlayers);
   const groups = useSelector(selectGroup);
- 
+  
 
   const [searchValue, setSearchValue] = useState("");
   useEffect(() => {

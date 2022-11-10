@@ -60,7 +60,11 @@ export const groupSlice = createSlice({
     },
     setColleges: (state,action)=>{
       state.colleges =  action.payload.position
-    }
+    },
+    setResetGroup: (state,_) => {
+      state.positions = ['All Positions'];
+      state.colleges = ['All Colleges'];
+    },
   },
   extraReducers: {
     [getPositions.fulfilled] : (state,action) =>{
@@ -92,6 +96,6 @@ export const groupSlice = createSlice({
 
 export const selectGroup = (state) => state.group;
 
-export const { setPositions, setColleges } = groupSlice.actions;
+export const { setPositions, setColleges,setResetGroup } = groupSlice.actions;
 
 export default groupSlice.reducer;
