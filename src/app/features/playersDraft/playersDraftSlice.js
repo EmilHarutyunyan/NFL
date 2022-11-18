@@ -6,31 +6,29 @@ import { API_ENDPOINT } from "../../../config/config";
 const initialState = {
   loading: false,
   count: 0,
-  next: null,
-  previous: null,
+  pageSize:6,
   currentPage: 1,
-  limit: 18,
+  limit: 700,
   offset: 0,
   results: [],
   search: "",
   position:"",
   colleage:"",
   playerChoose:[],
+  playerItems:[],
 };
 
-export const getPlayers = createAsyncThunk(
-  "players/getPlayers",
-  async (setLimit, { dispatch, getState, rejectWithValue }) => {
+export const getPlayersDraft = createAsyncThunk(
+  "playersDraft/getPlayersDraft",
+  async (_,{ dispatch, getState, rejectWithValue }) => {
+    
     try {
-      const {
-        players: { limit },
-      } = getState();
-      const playerLimit = setLimit ? setLimit : limit
       const res = await axios.get(
-        `${API_ENDPOINT}players/?limit=${playerLimit}&offset=${0}&search=&position=&school`
+        `${API_ENDPOINT}players/?limit=700&offset=${0}&search=&position=&school`
       );
-      const resData = { ...res.data, limit:playerLimit };
-      dispatch(setPlayers(resData));
+      const resData = { ...res.data };
+      
+      dispatch(setPlayersDraft(resData));
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -41,43 +39,19 @@ export const getPlayers = createAsyncThunk(
   }
 );
 
-export const pageNav = createAsyncThunk(
-  "players/pageNav",
-  async (currentPage, { dispatch, getState, rejectWithValue }) => {
-    try {
-      const {
-        players: { limit, search,position,colleage },
-      } = getState();
-      
-      const offset = (currentPage - 1) * limit;
-      
-      const res = await axios.get(
-        `${API_ENDPOINT}players/?limit=${limit}&offset=${offset}&search=${search}&position=${position}&school=${colleage}`
-      );
-      const resData = { ...res.data, currentPage, offset };
-      dispatch(setPlayers(resData));
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(error.message);
-      }
-    }
-  }
-);
 
-export const searchPlayers = createAsyncThunk(
-  "players/searchPlayers",
+export const searchPlayersDraft = createAsyncThunk(
+  "playersDraft/searchPlayersDraft",
   async (search, { dispatch,getState,rejectWithValue }) => {
     try {
       const {
-        players: { position,colleage },
+        playersDraft: { position,colleage },
       } = getState();
       const res = await axios.get(
         `${API_ENDPOINT}players/?limit=${18}&offset=${0}&search=${search}&position=${position}&school=${colleage}`
       );
       const resData = { ...res.data, search };
-      dispatch(setPlayers(resData));
+      dispatch(setPlayersDraft(resData));
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -88,22 +62,22 @@ export const searchPlayers = createAsyncThunk(
   }
 );
 
-export const postitionPlayers = createAsyncThunk(
-  "players/postitionPlayers",
+export const postitionPlayersDraft = createAsyncThunk(
+  "playersDraft/postitionPlayersDraft",
   async (position, { dispatch,getState,rejectWithValue }) => {
     try {
 
       const {
         players: { colleage,limit },
       } = getState();
-        console.log('🚀 ~ file: playersSlice.js ~ line 98 ~ limit', limit)
+        
       
       const res = await axios.get(
         `${API_ENDPOINT}players/?limit=${limit}&offset=${0}&search=&position=${position}&school=${colleage}`
       );
       const resData = {...initialState,...res.data,limit,position};
 
-      dispatch(setPlayers(resData));
+      dispatch(setPlayersDraft(resData));
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -114,18 +88,18 @@ export const postitionPlayers = createAsyncThunk(
   }
 );
 
-export const colleagePlayers = createAsyncThunk(
-  "players/postitionPlayers",
+export const colleagePlayersDraft = createAsyncThunk(
+  "playersDraft/colleagePlayersDraft",
   async (colleage, { dispatch,getState,rejectWithValue }) => {
     try {
       const {
-        players: { position },
+        playersDraft: { position },
       } = getState();
       const res = await axios.get(
         `${API_ENDPOINT}players/?limit=${18}&offset=${0}&search=&position=${position}&school=${colleage}`
       );
       const resData = { ...initialState,...res.data, colleage };
-      dispatch(setPlayers(resData));
+      dispatch(setPlayersDraft(resData));
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -136,11 +110,11 @@ export const colleagePlayers = createAsyncThunk(
   }
 );
 
-export const playersSlice = createSlice({
-  name: "players",
+export const playersDraftSlice = createSlice({
+  name: "playersDraft",
   initialState,
   reducers: {
-    setPlayers: (state, action) => {
+    setPlayersDraft: (state, action) => {
       state.limit = action.payload?.limit || state.limit;
       state.offset = action.payload?.offset || state.offset;
       state.currentPage = action.payload?.currentPage || state.currentPage;
@@ -152,88 +126,86 @@ export const playersSlice = createSlice({
       state.previous = action.payload.previous;
       state.results = action.payload.results;
     },
-    setSearch: (state, action) => {
+    setSearchPlayers: (state, action) => {
       state.search = action.payload
     },
-    setPosition: (state, action) => {
+    setPositionPlayersDraft: (state, action) => {
       state.position = action.payload
     },
-    setColleage: (state, action) => {
+    setColleagePlayers: (state, action) => {
       state.colleage = action.payload
     },
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload
+    },
+    setPlayerItems: (state,action) => {
+      state.playerItems = action.payload
+    }
   },
   extraReducers: {
-    [getPlayers.fulfilled]: (state, action) => {
+    [getPlayersDraft.fulfilled]: (state, action) => {
       state.loading = false;
     },
-    [getPlayers.pending]: (state, action) => {
+    [getPlayersDraft.pending]: (state, action) => {
+      
       state.loading = true;
     },
-    [getPlayers.rejected]: (state, action) => {
+    [getPlayersDraft.rejected]: (state, action) => {
       state.loading = false;
     },
-    [pageNav.fulfilled]: (state, action) => {
+    [searchPlayersDraft.fulfilled]: (state, action) => {
       state.loading = false;
     },
-    [pageNav.pending]: (state, action) => {
+    [searchPlayersDraft.pending]: (state, action) => {
       state.loading = true;
     },
-    [pageNav.rejected]: (state, action) => {
+    [searchPlayersDraft.rejected]: (state, action) => {
       state.loading = false;
     },
-    [searchPlayers.fulfilled]: (state, action) => {
+    [postitionPlayersDraft.fulfilled]: (state, action) => {
       state.loading = false;
     },
-    [searchPlayers.pending]: (state, action) => {
+    [postitionPlayersDraft.pending]: (state, action) => {
       state.loading = true;
     },
-    [searchPlayers.rejected]: (state, action) => {
+    [postitionPlayersDraft.rejected]: (state, action) => {
       state.loading = false;
     },
-    [postitionPlayers.fulfilled]: (state, action) => {
+    [colleagePlayersDraft.fulfilled]: (state, action) => {
       state.loading = false;
     },
-    [postitionPlayers.pending]: (state, action) => {
+    [colleagePlayersDraft.pending]: (state, action) => {
       state.loading = true;
     },
-    [postitionPlayers.rejected]: (state, action) => {
-      state.loading = false;
-    },
-    [colleagePlayers.fulfilled]: (state, action) => {
-      state.loading = false;
-    },
-    [colleagePlayers.pending]: (state, action) => {
-      state.loading = true;
-    },
-    [colleagePlayers.rejected]: (state, action) => {
+    [colleagePlayersDraft.rejected]: (state, action) => {
       state.loading = false;
     },
     
   },
 });
 
-export const selectPlayers = (state) => state.players;
-export const { setPlayers,setSearch,setPosition,setColleage } = playersSlice.actions;
+export const selectPlayersDraft = (state) => state.playersDraft;
+export const { setPlayersDraft,setSearchPlayers,setPositionPlayersDraft,setColleagePlayers,setCurrentPage,setPlayerItems } = playersDraftSlice.actions;
 
 // Action Creator Thunk
 export const positionAction = (positionValue) => (dispatch, getState) => {
   const {
-    players: { limit },
+    playersDraft: { limit },
   } = getState();
   if(positionValue === '') {
-    dispatch(setPosition(""))
-    dispatch(getPlayers(limit))
+    dispatch(setPositionPlayersDraft(""))
+    dispatch(getPlayersDraft(limit))
   } else {
-    dispatch(postitionPlayers(positionValue));
+    dispatch(postitionPlayersDraft(positionValue));
   }
 };
 
 export const colleageAction = (colleageValue) => (dispatch, getState) => {
   if(colleageValue === '') {
-    dispatch(setColleage(""))
-    dispatch(getPlayers())
+    dispatch(setColleagePlayers(""))
+    dispatch(getPlayersDraft())
   } else {
-    dispatch(colleagePlayers(colleageValue));
+    dispatch(colleagePlayersDraft(colleageValue));
   }
 };
-export default playersSlice.reducer;
+export default playersDraftSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Search from "../Search/Search";
 import TexasImg from "../../assets/img/texans.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,11 +8,13 @@ import {
   delPauseId,
   delTeamsRound,
   selectDraftConfig,
-  setPositionPlayer,
+  setDraftPlayersAction,
   setStatus,
+  setTeamRemoveId,
+  setTradeValue,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import {
-  getPlayers, pageNav, positionAction, searchPlayers, selectPlayers,
+  setPlayers,
 } from "../../app/features/players/playersSlice.js";
 // Img
 import playerImg from "../../assets/img/player.png";
@@ -32,40 +34,101 @@ import {
 
 import Spinner from "../Spinner/Spinner";
 import Pagination from "../Pagination/Pagination";
+import { selectPlayersDraft, setCurrentPage, setPlayerItems, setPositionPlayersDraft, setSearchPlayers } from "../../app/features/playersDraft/playersDraftSlice";
 
-
-const DraftPlayerChoose = ({draftStatus, setThisId, setChangeId,}) => {
+const PageSize = 6;
+const DraftPlayerChoose = ({playersDraft,draftStatus, setThisId, setChangeId,}) => {
   
   const groups = useSelector(selectGroup);
-  const players = useSelector(selectPlayers);
-  const { positionPlayer, teamSelectId} = useSelector(selectDraftConfig);
+  const {draftPlayers,tradeValue} = useSelector(selectDraftConfig);
+  const dispatch = useDispatch()
+  const { teamSelectId} = useSelector(selectDraftConfig);
+  const { position} = useSelector(selectPlayersDraft);
   const draftBtnDisable = draftStatus === 'red' ? true : false
-  const dispatch = useDispatch();
   const shouldLog = useRef(true);
   const initial = useRef(true);
   const [searchValue, setSearchValue] = useState("");
-  useEffect(() => {
-    if (shouldLog.current && groups.positions.length === 1) {
-      shouldLog.current = false;
-       dispatch(getPositions())
-       dispatch(getPlayers(6));
+
+  const currentTableData = useMemo(() => {
+    const firstPageIndex = (playersDraft.currentPage - 1) * PageSize;
+    const lastPageIndex = firstPageIndex + PageSize;
+    
+    if(draftPlayers.length > 0) {
+      const draftPlayerId = draftPlayers.map(item => item.player.id)
+      let playersData = playersDraft.results.filter(player => !draftPlayerId.includes(player.id))
+      if(playersDraft.search) {
+        playersData = playersDraft.results.filter(player => {
+          const name = player.player.toLowerCase()
+          return name.includes(playersDraft.search)
+        })
+      }
+      if(playersDraft.position && playersDraft.position !== "All") {
+        playersData = playersDraft.results.filter(player => {
+          const position = player.position
+           return position.includes(playersDraft.position)
+      })
+      }
+
+      const playersDataSlice = playersData.slice(firstPageIndex, lastPageIndex)
+      return {playersData, playersDataSlice};
+    } else {
+      return playersDraft.results.slice(firstPageIndex, lastPageIndex);
     }
-    // eslint-disable-next-line
-  }, []);
-  
+ 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playersDraft.currentPage,playersDraft.search,playersDraft.position]);
+
   useEffect(() => {
     if (initial.current) {
       initial.current = false;
       return;
     }
+    
     const timer = setTimeout(() => {
-      dispatch(searchPlayers(searchValue));
+
+      dispatch(setSearchPlayers(searchValue))
     }, 500);
     return () => {
       clearTimeout(timer);
     };
     // eslint-disable-next-line
   }, [setSearchValue, searchValue]);
+
+  useEffect(()=> {
+    dispatch(setPlayerItems(currentTableData.playersData))
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[currentTableData])
+
+  useEffect(() => {
+    if (shouldLog.current && groups.positions.length === 1) {
+      shouldLog.current = false;
+       dispatch(getPositions())
+    }
+    // eslint-disable-next-line
+  }, []);
+  
+
+
+  const playerConcat = (playerItem,teamId) => {
+    
+    const teamItem = structuredClone(tradeValue.results[teamId - 1])
+    teamItem["player"] = playerItem
+
+    const newTradeValue = tradeValue.results.map((item) => {
+      if(item.index === teamItem.index) {
+        return teamItem
+      }
+      return item
+    })
+    
+    console.log('newTradeValue :', newTradeValue);
+    dispatch(setTradeValue({...tradeValue,results:newTradeValue}))
+    dispatch(setDraftPlayersAction(teamItem))
+
+    dispatch(setPlayerItems(currentTableData.playersData))
+ 
+  }
   return (
     <Wrapper>
       <SelectTeam>
@@ -93,16 +156,12 @@ const DraftPlayerChoose = ({draftStatus, setThisId, setChangeId,}) => {
               <NumItem
                 key={id}
                 onClick={() => {
-                  if('All' !== item.split(" ")[0]) {
-                    dispatch(positionAction(item))
-                  } else {
-                    dispatch(positionAction(""))
-                  }
-                  dispatch(setPositionPlayer(item.split(" ")[0]))
+                  
+                  dispatch(setPositionPlayersDraft(item.split(" ")[0]))
                   }
                 }
                 className={
-                  positionPlayer === (item.split(" ")[0]) ? "active" : null
+                  position === (item.split(" ")[0]) ? "active" : null
                 }
               >
                 <Nums num={item.split(" ")[0]} />
@@ -113,51 +172,55 @@ const DraftPlayerChoose = ({draftStatus, setThisId, setChangeId,}) => {
       <DraftPlayerWrapper>
         <DraftPlayerItems>
         
-            {players.loading ? (
-        <Spinner />
-              ) :(
-
+    {playersDraft.loading ? (<Spinner />):(
         <>
-        {players.results.length > 0 &&
-            players.results.map((item, idx) => {
+        {playersDraft.results.length > 0 &&
+          
+          currentTableData.playersDataSlice.map((item, idx) => {
 
-              return (
-                <DraftPlayerItem key={idx}>
-                  <div className="player-draft">
-                    <div className="player-rank">
-                      <p>Rank</p>
-                      <span>{item.ranking}</span>
-                    </div>
-                    <div className="player-adp">
-                      <p>ADP</p>
-                      <span>{item?.adp}</span>
-                    </div>
-                    <img src={playerImg} alt="" />
-                    <h4 className="player-name">{item.player}</h4>
-                    <h4 className="player-position">{item.position}</h4>
-                    <img src={colleageImg} alt="" />
-                    <h4 className="playyer-college">{item.school}</h4>
-                    <img src={infoImg} alt="" />
-                    <button className="player-draft-btn" disabled={draftBtnDisable} onClick={() => {
-                      setThisId(teamSelectId[0]);
-                      dispatch(delTeamsRound(teamSelectId[0]))
-                      setChangeId(teamSelectId[0]);
-                      }}>Draft</button> 
+            return (
+              <DraftPlayerItem key={idx}>
+                <div className="player-draft">
+                  <div className="player-rank">
+                    <p>Rank</p>
+                    <span>{item.ranking}</span>
                   </div>
-                </DraftPlayerItem>
-              );
-            })}
-          <Pagination
-            totalCount={players.count}
-            pageSize={players.limit}
-            currentPage={players.currentPage}
-            previous={players.previous}
-            next={players.next}
+                  <div className="player-adp">
+                    <p>ADP</p>
+                    <span>{item?.adp}</span>
+                  </div>
+                  <img src={playerImg} alt="" />
+                  <h4 className="player-name">{item.player}</h4>
+                  <h4 className="player-position">{item.position}</h4>
+                  <img src={colleageImg} alt="" />
+                  <h4 className="playyer-college">{item.school}</h4>
+                  <img src={infoImg} alt="" />
+                  <button className="player-draft-btn" disabled={draftBtnDisable} onClick={() => {
+                    const playerItem = item
+                    const teamId = teamSelectId[0]
+                    playerConcat(playerItem,teamId)
+                    dispatch(delTeamsRound(teamId))
+                    dispatch(setTeamRemoveId(teamSelectId[0]))
+                    setThisId(teamSelectId[0]);
+                    setChangeId(teamSelectId[0]);
+                    
+                    }}>Draft</button> 
+                </div>
+              </DraftPlayerItem>
+            );
+          })}
+       
+        <Pagination
+            totalCount={currentTableData.playersData.length}
+            pageSize={PageSize}
+            currentPage={playersDraft.currentPage}
+            previous={playersDraft.previous}
+            next={playersDraft.next}
             onPageChange={(page) => {
-              dispatch(pageNav(page));
+              dispatch(setCurrentPage(page));
             }}
           />
-        </>
+      </>
       )}
         </DraftPlayerItems>
         {draftBtnDisable && (

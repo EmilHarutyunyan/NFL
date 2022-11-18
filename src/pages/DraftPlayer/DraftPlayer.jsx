@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectDraftConfig, setStatus } from '../../app/features/draftConfig/draftConfigSlice'
+import { getPlayersDraft, selectPlayersDraft } from '../../app/features/playersDraft/playersDraftSlice'
 import { ReactComponent as CircleSvg } from '../../assets/svg/circle.svg'
 import DraftPlayerChoose from '../../components/DraftPlayerChoose/DraftPlayerChoose'
 import DraftSimulator from '../../components/DraftSimulator/DraftSimulator'
@@ -12,8 +13,10 @@ import { Wrapper,Banner, DraftView, DraftViewSimulator, RenderCircle } from './D
 const DraftPlayer = () => {
   const { countRender,teamSelectId,status } = useSelector(selectDraftConfig);
   const dispatch = useDispatch()
+  const playersDraft = useSelector(selectPlayersDraft)
   const [thisId,setThisId] = useState(0)
   const [changeId,setChangeId] = useState(0)
+  const initialRef = useRef(true)
   const count = useMemo(() => {
     if(countRender+1 === teamSelectId[0]) {
       dispatch(setStatus('orange'))
@@ -23,6 +26,14 @@ const DraftPlayer = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countRender])
    
+  useEffect(()=> {
+    if(initialRef.current) {
+      initialRef.current = false
+      
+      dispatch(getPlayersDraft());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
   return (
     <Wrapper className='main-container'>
       <Banner>
@@ -35,11 +46,11 @@ const DraftPlayer = () => {
           <RenderCircle status={status}><CircleSvg /></RenderCircle>
         </div>
       </Banner>
-      {/* Settings */}
+
       <DraftView>
-        <DraftViewAsign thisId={thisId} setThisId={setThisId} setChangeId={setChangeId} changeId={changeId} />
+        <DraftViewAsign thisId={thisId} setThisId={setThisId} setChangeId={setChangeId} changeId={changeId} players={playersDraft}/>
         <DraftViewSimulator>
-          {!teamSelectId.includes(count) && status !== 'red' ? <DraftSimulator /> : <DraftPlayerChoose draftStatus={status} thisId={thisId} setThisId={setThisId} setChangeId={setChangeId} /> }
+          {!teamSelectId.includes(count) && status !== 'red' ? <DraftSimulator /> : <DraftPlayerChoose playersDraft={playersDraft} draftStatus={status} thisId={thisId} setThisId={setThisId} setChangeId={setChangeId} /> }
         </DraftViewSimulator>
       </DraftView>
       

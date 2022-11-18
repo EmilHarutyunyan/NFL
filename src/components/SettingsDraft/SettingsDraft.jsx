@@ -47,9 +47,9 @@ const Settings = () => {
         <Speed>
           <Box width={300}>
             <Slider
-              defaultValue={10}
+              defaultValue={2}
               step={1}
-              min={2}
+              min={1}
               max={5}
               value={timeSpeed}
               onChange={handleSpeed}

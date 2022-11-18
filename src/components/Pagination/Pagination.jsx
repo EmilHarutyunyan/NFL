@@ -10,10 +10,11 @@ const Pagination = ({
   pageSize,
   previous,
   next
-},props) => {
+}) => {
 
   
-console.log('🚀 ~ file: Pagination.jsx ~ line 14 ~ props', props)
+
+  
 
   const paginationRange = usePagination({
     currentPage,
@@ -21,11 +22,10 @@ console.log('🚀 ~ file: Pagination.jsx ~ line 14 ~ props', props)
     siblingCount,
     pageSize,
   });
-  console.log('🚀 ~ file: Pagination.jsx ~ line 20 ~ paginationRange', paginationRange)
 
-if (currentPage === 0 || paginationRange.length < 2) {
-    return null;
-  }
+// if (currentPage === 0 || paginationRange.length < 2) {
+//     return null;
+//   }
 
   const onNext = () => {
     onPageChange(currentPage + 1);
@@ -40,6 +40,7 @@ if (currentPage === 0 || paginationRange.length < 2) {
   return (
     <Wrapper>
       <Ul
+      className="xoski"
       >
         <Li
           

@@ -45,8 +45,6 @@ const DraftValueChart = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
-  console.log('draftValue :', draftValue);
-
   return (
     <Wrapper className="main-container">
       <Title titleText="Draft Value Chart" />

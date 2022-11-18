@@ -8,91 +8,43 @@ const initialState = {
   teams: [],
   teamSelect: [],
   teamSelectId: [],
+  teamRemoveId:[],
   round: "1",
   possitionalNedd: false,
   bpaCalculated: "",
   userQuantity: 3,
   loading: false,
   positionPlayer: ['All'],
-  teamValue: [],
   draftValue:[],
   timeSpeed:2,
-  draftPlayers: [
-    {
-      id: 1,
-      rank: "35",
-      adp: "42.1",
-      img: "",
-      playerName: "Christian Mccaffrey",
-      positionPlayer: "QB",
-      collegeName: "Ohio State",
-      collegeImg: "",
-    },
-    {
-      id: 1,
-      rank: "35",
-      adp: "42.1",
-      img: "",
-      playerName: "Christian Mccaffrey",
-      positionPlayer: "QB",
-      collegeName: "Ohio State",
-      collegeImg: "",
-    },
-    {
-      id: 1,
-      rank: "35",
-      adp: "42.1",
-      img: "",
-      playerName: "Christian Mccaffrey",
-      positionPlayer: "QB",
-      collegeName: "Ohio State",
-      collegeImg: "",
-    },
-    {
-      id: 1,
-      rank: "35",
-      adp: "42.1",
-      img: "",
-      playerName: "Christian Mccaffrey",
-      positionPlayer: "QB",
-      collegeName: "Ohio State",
-      collegeImg: "",
-    },
-    {
-      id: 1,
-      rank: "35",
-      adp: "42.1",
-      img: "",
-      playerName: "Christian Mccaffrey",
-      positionPlayer: "QB",
-      collegeName: "Ohio State",
-      collegeImg: "",
-    },
-    {
-      id: 1,
-      rank: "35",
-      adp: "42.1",
-      img: "",
-      playerName: "Christian Mccaffrey",
-      positionPlayer: "QB",
-      collegeName: "Ohio State",
-      collegeImg: "",
-    },
-    {
-      id: 1,
-      rank: "35",
-      adp: "42.1",
-      img: "",
-      playerName: "Christian Mccaffrey",
-      positionPlayer: "QB",
-      collegeName: "Ohio State",
-      collegeImg: "",
-    },
-  ],
+  draftPlayers: [],
   satus: "",
   pauseId: [],
   countRender: 0,
+  tradeValue: []
 };
+
+export const getHistoryBoard = createAsyncThunk(
+  "draftConfig/getHistoryBoard",
+  async (_, { dispatch, rejectWithValue }) => {
+    const {draft,player,round_index} = [];
+    try {
+      const res = await axios.post(`${API_ENDPOINT}history-board/`,{
+        draft,
+        player,
+        round_index
+      
+      });
+      return res.data;
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
 
 export const getTeams = createAsyncThunk(
   "draftConfig/getTeams",
@@ -143,6 +95,8 @@ export const getDraftValue = createAsyncThunk(
   }
 );
 
+
+
 export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
@@ -166,6 +120,10 @@ export const draftConfigSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
+    setDraftPlayers: (state, action) => {
+      state.draftPlayers.push(action.payload);
+    },
+
     setPositionPlayer: (state, action) => {
       // state.positionPlayer = toggleArrObj(state.positionPlayer,action.payload,(item) => item);
       state.positionPlayer = action.payload;
@@ -182,11 +140,18 @@ export const draftConfigSlice = createSlice({
     },
     setResetRound: (state,_) => {
       state.teamSelectId = []
+      state.teamRemoveId = []
       state.teamSelect = []
       state.round = "1"
       state.countRender = 0
       // state.positionPlayer = []
       state.pauseId = []
+    },
+    setTeamRemoveId: (state,action) => {
+      state.teamRemoveId =[action.payload]
+    },
+    setTradeValue: (state,action) => {
+      state.tradeValue = action.payload
     },
     delPauseId: (state,_) => {
       state.teamSelectId = state.teamSelectId.filter(id => id !== state.pauseId[0])
@@ -211,7 +176,7 @@ export const draftConfigSlice = createSlice({
     },
     [getTradeValue.fulfilled]: (state, action) => {
       state.loading = false;
-      state.teamValue = action.payload?.results;
+      state.tradeValue = action.payload?.results;
     },
     [getTradeValue.pending]: (state, action) => {
       state.loading = true;
@@ -246,6 +211,9 @@ export const {
   setPauseId,
   delTeamsRound,
   setResetRound,
+  setTradeValue,
+  setDraftPlayers,
+  setTeamRemoveId,
   delPauseId
 } = draftConfigSlice.actions;
 
@@ -283,5 +251,18 @@ export const saveRound = (roundNum) => (dispatch, getState) => {
   }
   dispatch(setRound(roundNum));
 };
+export const setDraftPlayersAction = (player) => (dispatch, getState) => {
+
+  const { draftPlayers } = selectDraftConfig(getState());
+  const checkPlayer = draftPlayers.some((item) => item.player.id === player.player.id)
+  
+  if(!checkPlayer) {
+    dispatch(setDraftPlayers(player));
+  }
+  // const playersItems = toggleArrObj(draftPlayers, player, (item) => item.id);
+  // console.log('🚀 ~ file: draftConfigSlice.js ~ line 248 ~ setDraftPlayersAction ~ playersItems', playersItems)
+  
+};
+
 
 export default draftConfigSlice.reducer;
