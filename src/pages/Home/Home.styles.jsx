@@ -9,22 +9,23 @@ export const HomeWrap = styled.section`
   padding-bottom: 100px;
   padding-left: 10px;
   padding-right: 10px;
+  min-height: calc(100vh - 198px);
   img {
     max-width: 179px;
     width: 100%;
-    margin-bottom: 60px;
   }
   h1 {
-    font-size: 65px;
+    font-size: 55px;
     color: #004ea3;
     font-family: "Saira Semi Condensed", sans-serif;
     font-weight: 600;
-    margin-bottom: 80px;
+
   }
   p {
-    font-size: 32px;
+    font-size: 30px;
     font-family: "Saira Semi Condensed", sans-serif;
     font-weight: 400;
+    line-height: 35px;
     color: #46484a;
     margin-bottom: 13px;
   }

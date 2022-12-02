@@ -11,6 +11,10 @@ export const SelectTeam = styled.div`
     display: flex;
     align-items: center;
     gap: 30px;
+    img {
+      width: 60px;
+      margin-bottom: 15px;
+    }
   }
 `;
 export const NumWrapper = styled.div`
@@ -60,6 +64,7 @@ export const DraftPlayerWrapper = styled.div`
     align-items: center;
     margin: 0 auto;
     cursor: pointer;
+    justify-content: center;
 
   }
   .player-draft-btn:disabled,
@@ -68,12 +73,19 @@ export const DraftPlayerWrapper = styled.div`
   }
 `;
 
-export const DraftPlayerItems = styled.ul``;
+export const DraftPlayerItems = styled.ul`
+width: 100%;
+
+`;
 
 export const DraftPlayerItem = styled.li`
   border-bottom: 1px solid #afb4b9;
   padding-bottom: 16px;
-  
+
+  .player-td {
+    text-align: center;
+    width: calc(100% / 7);
+  }
   .player-draft {
     padding: 0 30px;
     display: flex;

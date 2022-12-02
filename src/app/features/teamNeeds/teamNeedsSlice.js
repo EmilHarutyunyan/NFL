@@ -5,6 +5,7 @@ import { API_ENDPOINT } from "../../../config/config";
 
 const initialState = {
   teamNeeds:[],
+
   loading: false
 };
 
@@ -14,6 +15,21 @@ export const getTeamNeeds = createAsyncThunk(
   async (_, { dispatch, rejectWithValue }) => {
     try {
       const res = await axios.get(`${API_ENDPOINT}team-neads/?limit=32`);
+      return res.data;
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+export const setHistoryBoard = createAsyncThunk(
+  "teamNeeds/setHistoryBoard",
+  async (data, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await axios.post(`${API_ENDPOINT}history-board/`,data);
       return res.data;
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -40,6 +56,16 @@ export const teamNeedsSlice = createSlice({
       state.loading = true;
     },
     [getTeamNeeds.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [setHistoryBoard.fulfilled]: (state, action) => {
+      state.loading = false;
+      console.log(action.payload.results);
+    },
+    [setHistoryBoard.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [setHistoryBoard.rejected]: (state, action) => {
       state.loading = false;
     },
   }

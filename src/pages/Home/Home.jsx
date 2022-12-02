@@ -14,7 +14,7 @@ const Home = () => {
       </p>
       <p>Take full control of your favorite team's every move</p>
       <Link to="/select-draft">
-        <Button btnClassName="start-draft" btnText={"Start a mack draft"} />
+        <Button btnClassName="start-draft" btnText={"Start a mock draft"} />
       </Link>
     </HomeWrap>
   );

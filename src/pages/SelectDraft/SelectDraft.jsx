@@ -9,7 +9,7 @@ function SelectDraft() {
         <h1>Select Draft Mode</h1>
         <SelectLinks>
           <Link to="/draft-configuration">Single Player</Link>
-          <Link to="#">Multy-User</Link>
+          <Link to="#">Multi-User</Link>
         </SelectLinks>
       </Wrap>
     );

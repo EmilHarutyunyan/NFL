@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Input } from '../../components/Input'
 import { Team } from '../../components/teams/Team'
 import Title from '../../components/Title/Title'
@@ -21,18 +21,20 @@ import { setResetGroup } from '../../app/features/group/groupSlice';
 export const DraftConfiguration = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
+    const draftConfigRef = useRef(null)
     const {teamSelect} = useSelector((state) => state.draftCongif);
     const handleChange = (e) => {
         dispatch(setAllTeams(e.target.checked))
     }
-    useEffect(()=> {
+    useEffect(()=> { 
+      draftConfigRef.current?.scrollIntoView({ behavior: "smooth" });
       dispatch(setResetRound())
       dispatch(setResetGroup())
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
   return (
-    <DraftConfigWrap>
+    <DraftConfigWrap ref={draftConfigRef}>
       <DraftContainer className="main-container line">
         <DraftHeading>
           <Title titleText="Draft Configuration" titleClassName="title" />

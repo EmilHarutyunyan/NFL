@@ -5,6 +5,7 @@ import { API_ENDPOINT } from "../../../config/config";
 
 const initialState = {
   loading: false,
+  status: false,
   count: 0,
   pageSize:6,
   currentPage: 1,
@@ -125,6 +126,7 @@ export const playersDraftSlice = createSlice({
       state.next = action.payload.next;
       state.previous = action.payload.previous;
       state.results = action.payload.results;
+      state.status = true;
     },
     setSearchPlayers: (state, action) => {
       state.search = action.payload
@@ -140,6 +142,28 @@ export const playersDraftSlice = createSlice({
     },
     setPlayerItems: (state,action) => {
       state.playerItems = action.payload
+    },
+    setNewPlayers : (state,action) => {
+      state.results = action.payload;
+      state.limit = action.payload.length
+    },
+    resPlayersDraft: (state, action) => {
+      state.loading = initialState.loading;
+      state.status = initialState.status;
+      state.colleage = initialState.colleage;
+      state.count= initialState.count;
+      state.currentPage = initialState.currentPage;
+      state.limit = initialState.limit;
+      state.offset = initialState.offset;
+      state.pageSize = initialState.pageSize;
+      state.playerChoose = initialState.playerChoose;
+      state.playerItems = initialState.playerItems;
+      state.position  = initialState.position;
+      state.results = initialState.results;
+      state.search = initialState.search
+
+
+            
     }
   },
   extraReducers: {
@@ -185,7 +209,7 @@ export const playersDraftSlice = createSlice({
 });
 
 export const selectPlayersDraft = (state) => state.playersDraft;
-export const { setPlayersDraft,setSearchPlayers,setPositionPlayersDraft,setColleagePlayers,setCurrentPage,setPlayerItems } = playersDraftSlice.actions;
+export const { setPlayersDraft,setSearchPlayers,setPositionPlayersDraft,setColleagePlayers,setCurrentPage,setPlayerItems,setNewPlayers,resPlayersDraft } = playersDraftSlice.actions;
 
 // Action Creator Thunk
 export const positionAction = (positionValue) => (dispatch, getState) => {
@@ -208,4 +232,17 @@ export const colleageAction = (colleageValue) => (dispatch, getState) => {
     dispatch(colleagePlayersDraft(colleageValue));
   }
 };
+export const delPlayersDraft = (players) => (dispatch,getState) => {
+
+  const {
+    playersDraft: { results },
+  } = getState();
+  
+  const playersId = players.map(player => player.id)
+  const playerData = results.filter((itme) => !playersId.includes(itme.id))
+  dispatch(setNewPlayers(playerData))
+  
+      
+}
+
 export default playersDraftSlice.reducer;

@@ -1,13 +1,11 @@
-import axios from "axios";
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
-import { API_ENDPOINT } from "../../config/config";
 import CircularProgress from "@mui/material/CircularProgress";
 // Styles
 import { Wrapper } from "./DraftViewAsign.styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  // delTeamsRound,
+  getTradeValue,
   selectDraftConfig,
   setCountRender,
   setDraftPlayersAction,
@@ -15,6 +13,7 @@ import {
   setTradeValue,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { useMemo } from "react";
+import { delPlayersDraft } from "../../app/features/playersDraft/playersDraftSlice";
 
 
 const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
@@ -64,120 +63,86 @@ const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
 
 const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
   const dispatch = useDispatch()
-  const { teamSelectId, round,pauseId,timeSpeed,tradeValue,teamRemoveId } = useSelector(selectDraftConfig);
-  const initialRef = useRef(true);
-  const [isLoading, setLoading] = useState(false);
-  const [data, setData] = useState(tradeValue || []);
-  // const [changeId, setChangeId] = useState(0);
-  // const [thisId, setThisId] = useState(0);
+  const { teamSelectId, pauseId,timeSpeed,tradeValue,loading } = useSelector(selectDraftConfig);
+
   const roundArr = useRef([]);
 
-  
-
   const teamRef = useRef(null);
-  const combineTeamMemo = useMemo(
-    () => (data, teamSelectId) => {
+
+
+  const combineTeam = useMemo( () => (data, teamSelectId,players) => {
+    let playersItems = players.results
     const newDataResult = [];
+    const playersData = []
     let i = 0
-    debugger
-    if(players.results.length) {
-      for (const item of tradeValue.results) {
+    if(players.results.length && teamSelectId.length > 0) {
+      for (const item of data.results) {
         let teamItem = structuredClone(item)
         if (teamSelectId.includes(teamItem.index)) {
           newDataResult.push(teamItem);
-          i++;
           continue;
         }
-        
-        console.log("players.results[i]",players.results[i])
-        if(!teamSelectId.includes(teamItem.index) && teamSelectId.length) {
-          if((!teamItem.player && item.index < teamSelectId[0])) {
-           
-            teamItem["player"] = players.results[i];
-            if(players.results[i]) {
+        if(!teamItem.player && !teamSelectId.includes(teamItem.index)   ) {
+          if(teamItem.index < teamSelectId[0]) {
+            teamItem["player"] = playersItems[i];
+            playersData.push(playersItems[i])
             dispatch(setDraftPlayersAction(teamItem))
-            
-            
-          }
-        }
-        }
+            i++;
 
-        if(!teamItem.player && teamSelectId.length === 0) {
-          teamItem["player"] = players.results[i];
-          if(players.results[i]) {
-          dispatch(setDraftPlayersAction(teamItem))
-        }
-
-        }
-        if(!teamRemoveId.includes(teamItem.index) || teamRemoveId.length===0) {
-          i++;
+          } 
+    
         }
         newDataResult.push(teamItem);
-       
       }
-      
-      return {...data,results: newDataResult};
-    }
-  },
+    } 
+    else if(teamSelectId.length === 0) {
+      for (const item of data.results) {
+        let teamItem = structuredClone(item)
+        if(!teamItem.player) {
+            teamItem["player"] = playersItems[i];
+            playersData.push(playersItems[i])
+            dispatch(setDraftPlayersAction(teamItem))
+            i++;
   
+        }
+        newDataResult.push(teamItem); 
+      }
+    }
+    const tradeValue = {...data,results: newDataResult}
+    return {tradeValue,playersData};
+  },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [teamSelectId]
   );
 
-  const combineTeam = (data, teamSelectId) => {
-    const newDataResult = [];
-    let i = 0
-    if(players.results.length) {
-      
-      for (const item of data.results) {
-        if (teamSelectId.includes(item.index)) {
-          newDataResult.push(item);
-          i++;
-          continue;
-        }
-        if(!teamSelectId.includes(item.index) && item.index < teamSelectId[0]) {
-          item.player = players.results[i];
-          if(players.results[i]) {
-            dispatch(setDraftPlayersAction(item))
-            
-          }
-        }
-        i++;
-        newDataResult.push(item);
-       
-      }
-      return {...data,results: newDataResult};
-    }
-    
-  };
-  const handleData = async () => {
-    
-    setLoading(true);
-    const { data } = await axios(
-      `${API_ENDPOINT}trade-value-history/?limit=${+round * 32}&offset=0`
-      );
-      
-   
-    const newData = combineTeam(data, teamSelectId);
-    dispatch(setTradeValue(newData))
-    setData(newData);
-    setLoading(false);
-  };
-
+  
   useEffect(() => {
-    if (initialRef.current && players.results) {
-      //   initialRef.current = false;
-      handleData();
+    if (players.status && players.results) {
+      dispatch(getTradeValue());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [players?.results]);
+  }, [players.status]);
+
+
+  useEffect(()=> {
+    if(tradeValue?.mounting) {
+      const newData = combineTeam(tradeValue, teamSelectId,players);
+      dispatch(setTradeValue(newData.tradeValue))
+      dispatch(delPlayersDraft(newData.playersData))
+      // setLoading(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[tradeValue.mounting])
+
 
 
   useEffect(() => {
     if (changeId) {
-      console.log("asd")
-      const newData = combineTeamMemo(data, teamSelectId);
-      setData(newData);
+      if(pauseId.length === 0) {
+        const newData = combineTeam(tradeValue, teamSelectId,players);
+        dispatch(setTradeValue(newData.tradeValue))
+        dispatch(delPlayersDraft(newData.playersData))
+      }
     }
 
     return () => {
@@ -189,9 +154,9 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
 
   return (
     <Wrapper>
-      {isLoading ? <CircularProgress /> : null}
+      {loading ? <CircularProgress /> : null}
       <ul ref={teamRef}>
-        {data?.results?.map((team, idx) => {
+        {tradeValue?.results?.map((team, idx) => {
           const {
             index: id,
 
@@ -202,9 +167,6 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
           const isBelowThreshold = (currentValue) => currentValue > id;
           const checkTeam = teamSelectId.every(isBelowThreshold) ? id * (1000/timeSpeed/id) : 0;
           const time = thisId ? +(id - thisId) * (1000/timeSpeed) : checkTeam;
-              // eslint-disable-next-line no-lone-blocks
-              {/* const statusPause = status === 'pause' ? false : true */}
-             
           if (id === 1) {
             roundArr.current = [];
           }
@@ -213,7 +175,7 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
             : roundArr.current.push(roundIndex);
           return (
             <>
-              {roundCheck ? <li className="round" >{roundIndex}</li> : null}
+              {roundCheck ? <li className="round" key={Math.random()} >{roundIndex}</li> : null}
               <li
                 key={id}
                 className={`${
@@ -229,6 +191,7 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
 
                 <div className="player-team-info">
                   <img src={logo} alt="" />
+                  
                   {!!checkTeam && team?.player ? null : (
                     <>
                       {teamSelectId.includes(id) && pauseId[0] !== id ? (

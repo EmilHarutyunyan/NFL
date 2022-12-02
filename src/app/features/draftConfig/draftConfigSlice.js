@@ -8,32 +8,31 @@ const initialState = {
   teams: [],
   teamSelect: [],
   teamSelectId: [],
-  teamRemoveId:[],
+  teamRemoveId: [],
   round: "1",
   possitionalNedd: false,
   bpaCalculated: "",
   userQuantity: 3,
   loading: false,
-  positionPlayer: ['All'],
-  draftValue:[],
-  timeSpeed:2,
+  positionPlayer: ["All"],
+  draftValue: [],
+  timeSpeed: 2,
   draftPlayers: [],
   satus: "",
   pauseId: [],
   countRender: 0,
-  tradeValue: []
+  tradeValue: { mounting: false },
 };
 
 export const getHistoryBoard = createAsyncThunk(
   "draftConfig/getHistoryBoard",
   async (_, { dispatch, rejectWithValue }) => {
-    const {draft,player,round_index} = [];
+    const { draft, player, round_index } = [];
     try {
-      const res = await axios.post(`${API_ENDPOINT}history-board/`,{
+      const res = await axios.post(`${API_ENDPOINT}history-board/`, {
         draft,
         player,
-        round_index
-      
+        round_index,
       });
       return res.data;
     } catch (error) {
@@ -66,8 +65,12 @@ export const getTradeValue = createAsyncThunk(
   "draftConfig/getTradeValue",
   async (_, { dispatch, rejectWithValue, getState }) => {
     try {
-      const {draftCongif: {round}} = getState()
-      const res = await axios.get(`${API_ENDPOINT}trade-value-history/?limit=${+round * 32}&offset=0`);
+      const {
+        draftCongif: { round },
+      } = getState();
+      const res = await axios.get(
+        `${API_ENDPOINT}trade-value-history/?limit=${+round * 32}&offset=0`
+      );
       return res.data;
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -95,8 +98,6 @@ export const getDraftValue = createAsyncThunk(
   }
 );
 
-
-
 export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
@@ -112,7 +113,7 @@ export const draftConfigSlice = createSlice({
       state.teamSelect = action.payload ? state.teams : [];
     },
     setTimeSpeed: (state, action) => {
-      state.timeSpeed = action.payload
+      state.timeSpeed = action.payload;
     },
     setRound: (state, action) => {
       state.round = action.payload;
@@ -127,35 +128,51 @@ export const draftConfigSlice = createSlice({
     setPositionPlayer: (state, action) => {
       // state.positionPlayer = toggleArrObj(state.positionPlayer,action.payload,(item) => item);
       state.positionPlayer = action.payload;
-     
     },
     setTeamsRound: (state, action) => {
-      const teamSelectSort = action.payload.sort(function(a, b){return a - b});
-      state.teamSelectId = teamSelectSort
+      const teamSelectSort = action.payload.sort(function (a, b) {
+        return a - b;
+      });
+      state.teamSelectId = teamSelectSort;
     },
-    setPauseId: (state,action) => {
-      state.pauseId = [action.payload]
-      const teamSelectSort= [...state.teamSelectId,action.payload].sort(function(a, b){return a - b})
-      state.teamSelectId = teamSelectSort
+    setPauseId: (state, action) => {
+      state.pauseId = [action.payload];
+      const teamSelectSort = [...state.teamSelectId, action.payload].sort(
+        function (a, b) {
+          return a - b;
+        }
+      );
+      state.teamSelectId = teamSelectSort;
     },
-    setResetRound: (state,_) => {
-      state.teamSelectId = []
-      state.teamRemoveId = []
-      state.teamSelect = []
-      state.round = "1"
-      state.countRender = 0
-      // state.positionPlayer = []
-      state.pauseId = []
+    setResetRound: (state, _) => {
+      state.teamSelectId = [];
+      state.teamRemoveId = [];
+      state.teamSelect = [];
+      state.round = "1";
+      state.countRender = 0;
+      state.positionPlayer = [];
+      state.pauseId = [];
+      state.draftValue = [];
+      state.timeSpeed = 2;
+      state.positionPlayer = ["All"];
+      state.possitionalNedd = false;
+      state.teams = [];
+      state.loading = false;
+      state.draftPlayers = [];
+      state.status = "";
+      state.tradeValue = { mounting: false };
     },
-    setTeamRemoveId: (state,action) => {
-      state.teamRemoveId =[action.payload]
+    setTeamRemoveId: (state, action) => {
+      state.teamRemoveId = [action.payload];
     },
-    setTradeValue: (state,action) => {
-      state.tradeValue = action.payload
+    setTradeValue: (state, action) => {
+      state.tradeValue = action.payload;
     },
-    delPauseId: (state,_) => {
-      state.teamSelectId = state.teamSelectId.filter(id => id !== state.pauseId[0])
-      state.pauseId = []
+    delPauseId: (state, _) => {
+      state.teamSelectId = state.teamSelectId.filter(
+        (id) => id !== state.pauseId[0]
+      );
+      state.pauseId = [];
     },
     delTeamsRound: (state, action) => {
       state.teamSelectId = state.teamSelectId.filter(
@@ -176,7 +193,7 @@ export const draftConfigSlice = createSlice({
     },
     [getTradeValue.fulfilled]: (state, action) => {
       state.loading = false;
-      state.tradeValue = action.payload?.results;
+      state.tradeValue = { mounting: true, ...action.payload };
     },
     [getTradeValue.pending]: (state, action) => {
       state.loading = true;
@@ -214,7 +231,7 @@ export const {
   setTradeValue,
   setDraftPlayers,
   setTeamRemoveId,
-  delPauseId
+  delPauseId,
 } = draftConfigSlice.actions;
 
 const teamRound = (round, teamSelectId) => {
@@ -252,17 +269,14 @@ export const saveRound = (roundNum) => (dispatch, getState) => {
   dispatch(setRound(roundNum));
 };
 export const setDraftPlayersAction = (player) => (dispatch, getState) => {
-
   const { draftPlayers } = selectDraftConfig(getState());
-  const checkPlayer = draftPlayers.some((item) => item.player.id === player.player.id)
-  
-  if(!checkPlayer) {
+  const checkPlayer = draftPlayers.some(
+    (item) => item.player.id === player.player.id
+  );
+
+  if (!checkPlayer) {
     dispatch(setDraftPlayers(player));
   }
-  // const playersItems = toggleArrObj(draftPlayers, player, (item) => item.id);
-  // console.log('🚀 ~ file: draftConfigSlice.js ~ line 248 ~ setDraftPlayersAction ~ playersItems', playersItems)
-  
 };
-
 
 export default draftConfigSlice.reducer;

@@ -16,11 +16,12 @@ export const getPositions = createAsyncThunk(
     try {
     
       const res = await axios.get(
-        `${API_ENDPOINT}group/position/`
+        `${API_ENDPOINT}position-name/`
       );
-      
-      
-      return res.data;
+      const data = res.data.results.map(item => item.name)
+     console.log({position:data})
+      return {position:data};
+
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
