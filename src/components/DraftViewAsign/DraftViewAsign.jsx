@@ -71,6 +71,7 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
 
 
   const combineTeam = useMemo( () => (data, teamSelectId,players) => {
+    
     let playersItems = players.results
     const newDataResult = [];
     const playersData = []
@@ -126,6 +127,7 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
 
   useEffect(()=> {
     if(tradeValue?.mounting) {
+      
       const newData = combineTeam(tradeValue, teamSelectId,players);
       dispatch(setTradeValue(newData.tradeValue))
       dispatch(delPlayersDraft(newData.playersData))

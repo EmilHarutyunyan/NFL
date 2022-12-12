@@ -14,7 +14,7 @@ import {
   StepItem,
 } from "./DraftConfig.styles";
 import { useDispatch, useSelector } from 'react-redux';
-import { setAllTeams, setResetRound } from '../../app/features/draftConfig/draftConfigSlice';
+import { selectAllTeams, setResetRound } from '../../app/features/draftConfig/draftConfigSlice';
 import { useNavigate } from 'react-router-dom';
 import { setResetGroup } from '../../app/features/group/groupSlice';
 
@@ -24,7 +24,7 @@ export const DraftConfiguration = () => {
     const draftConfigRef = useRef(null)
     const {teamSelect} = useSelector((state) => state.draftCongif);
     const handleChange = (e) => {
-        dispatch(setAllTeams(e.target.checked))
+        dispatch(selectAllTeams(e.target.checked))
     }
     useEffect(()=> { 
       draftConfigRef.current?.scrollIntoView({ behavior: "smooth" });

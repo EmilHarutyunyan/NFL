@@ -4,7 +4,7 @@ import { device } from "../../themes/Breakpoints";
 export const HomeWrap = styled.section`
   max-width: 880px;
   width: 100%;
-  margin: 67px auto 0;
+  margin: 0 auto;
   text-align: center;
   padding-bottom: 100px;
   padding-left: 10px;

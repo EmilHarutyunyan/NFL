@@ -19,7 +19,6 @@ export const getPositions = createAsyncThunk(
         `${API_ENDPOINT}position-name/`
       );
       const data = res.data.results.map(item => item.name)
-     console.log({position:data})
       return {position:data};
 
     } catch (error) {

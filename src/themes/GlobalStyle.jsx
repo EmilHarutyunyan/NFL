@@ -28,7 +28,6 @@ export const GlobalStyle = createGlobalStyle`
     /* Handle */
     ::-webkit-scrollbar-thumb {
       border-radius: 8px;
-      /* background:#1B90D2 */
       background: linear-gradient(0deg, #00438B 0%, #07C93E 0.01%, #1DA945 13.54%, #20A446 15.63%, #3C7B4E 32.81%, #00438B 58.85%, rgba(0, 67, 139, 0.76) 94.27%);
     }
 

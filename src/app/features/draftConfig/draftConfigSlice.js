@@ -110,7 +110,7 @@ export const draftConfigSlice = createSlice({
       state.countRender = action.payload;
     },
     setAllTeams: (state, action) => {
-      state.teamSelect = action.payload ? state.teams : [];
+      state.teamSelect = action.payload;
     },
     setTimeSpeed: (state, action) => {
       state.timeSpeed = action.payload;
@@ -243,9 +243,26 @@ const teamRound = (round, teamSelectId) => {
   }
   return new Set([...roundsTeam, ...teamSelectId]);
 };
+
+
+
+// Actions Creator
+export const selectAllTeams = (check) => (dispatch, getState) => {
+  const { teams, round } = selectDraftConfig(getState());
+ 
+  const teamSelectItemsId = teams.map((elem) => elem.id);
+  const roundsTeam =
+    +round > 1 ? teamRound(round, teamSelectItemsId) : teamSelectItemsId;
+
+  dispatch(setTeamsRound(check ? [...roundsTeam] : []));
+  dispatch(setAllTeams(check ? teams : []))
+
+  // dispatch(saveTeams(teams))
+}
+
 export const saveTeams = (team) => (dispatch, getState) => {
   const { round, teamSelect } = selectDraftConfig(getState());
-  const teamSelectItems = toggleArrObj(teamSelect, team, (item) => item.id);
+  const teamSelectItems = toggleArrObj(teamSelect, team, (item) => item.id)
   const teamSelectItemsId = teamSelectItems.map((elem) => elem.id);
   const roundsTeam =
     +round > 1 ? teamRound(round, teamSelectItemsId) : teamSelectItemsId;

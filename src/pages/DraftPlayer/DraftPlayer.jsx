@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectDraftConfig, setResetRound, setStatus } from '../../app/features/draftConfig/draftConfigSlice'
+import { getPositions } from '../../app/features/group/groupSlice'
 import { getPlayersDraft, resPlayersDraft, selectPlayersDraft } from '../../app/features/playersDraft/playersDraftSlice'
 import { setHistoryBoard } from '../../app/features/teamNeeds/teamNeedsSlice'
 import { ReactComponent as CircleSvg } from '../../assets/svg/circle.svg'
 import DraftPlayerChoose from '../../components/DraftPlayerChoose/DraftPlayerChoose'
 import DraftSimulator from '../../components/DraftSimulator/DraftSimulator'
 import DraftViewAsign from '../../components/DraftViewAsign/DraftViewAsign'
+import { StepItem, Steps } from '../DraftConfiguration/DraftConfig.styles'
 
 // Styes
 import { Wrapper,Banner, DraftView, DraftViewSimulator, RenderCircle } from './DraftPlayer.styles'
@@ -15,6 +17,7 @@ const DraftPlayer = () => {
   const { countRender,teamSelectId,status,tradeValue } = useSelector(selectDraftConfig);
   const dispatch = useDispatch()
   const playersDraft = useSelector(selectPlayersDraft)
+  
   const [thisId,setThisId] = useState(0)
   const [changeId,setChangeId] = useState(0)
 
@@ -25,8 +28,10 @@ const DraftPlayer = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [countRender])
+
   useEffect(()=> {
     dispatch(getPlayersDraft());
+    dispatch(getPositions())
     return () => {
       dispatch(resPlayersDraft())
       dispatch(setResetRound())
@@ -53,9 +58,9 @@ const DraftPlayer = () => {
       }) 
       dispatch(setHistoryBoard(data))
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[countRender])
-
+  
   return (
     <Wrapper className='main-container'>
       <Banner>
@@ -75,7 +80,21 @@ const DraftPlayer = () => {
           {!teamSelectId.includes(count) && status !== 'red' ? <DraftSimulator /> : playersDraft.results.length > 0 ? <DraftPlayerChoose playersDraft={playersDraft} draftStatus={status} thisId={thisId} setThisId={setThisId} setChangeId={setChangeId} /> : null }
         </DraftViewSimulator>
       </DraftView>
-      
+      <hr className="line" />
+        <Steps>
+          <StepItem>
+            <span>1</span>
+            <p>Select Your Team (s), Setup Your Draft</p>
+          </StepItem>
+          <StepItem >
+            <span  className="active-step">2</span>
+            <p>Draft For Your Team</p>
+          </StepItem>
+          <StepItem>
+            <span>3</span>
+            <p>Share your Draft</p>
+          </StepItem>
+        </Steps>
     </Wrapper>
   )
 }

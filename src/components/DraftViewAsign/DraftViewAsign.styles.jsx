@@ -10,6 +10,27 @@ export const Wrapper = styled.div`
     overflow-x: hidden;
     max-height: 1450px;
     position: relative;
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1; 
+      border-radius: 8px;
+    }
+ 
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      border-radius: 8px;
+      /* background:#1B90D2 */
+      background: #20A446;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+     
+    }
   }
   ul li {
     position: relative;

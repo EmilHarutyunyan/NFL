@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Search from "../Search/Search";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getPositions, selectGroup, setResetGroup } from "../../app/features/group/groupSlice";
+import { selectGroup } from "../../app/features/group/groupSlice";
 import Nums from "../SettingsDraft/Nums";
 import {
   delPauseId,
@@ -37,22 +37,18 @@ const DraftPlayerChoose = ({playersDraft,draftStatus, setThisId, setChangeId,}) 
 
   
   const groups = useSelector(selectGroup);
-  const {draftPlayers,tradeValue,countRender} = useSelector(selectDraftConfig);
-  console.log('tradeValue :', tradeValue.results[countRender].round  );
+  const {draftPlayers,tradeValue,countRender,round} = useSelector(selectDraftConfig);
   const dispatch = useDispatch()
   const { teamSelectId} = useSelector(selectDraftConfig);
   const { position} = useSelector(selectPlayersDraft);
   const draftBtnDisable = draftStatus === 'red' ? true : false
-  const shouldLog = useRef(true);
   const initial = useRef(true);
   const [searchValue, setSearchValue] = useState("");
 
   const currentTableData = useMemo(() => {
-  
-    const firstPageIndex = (playersDraft.currentPage - 1) * PageSize;
-  
-    const lastPageIndex = firstPageIndex + PageSize;
     
+    const firstPageIndex = (playersDraft.currentPage - 1) * PageSize;
+    const lastPageIndex = firstPageIndex + PageSize;
     if(draftPlayers.length > 0) {
       let playersData = playersDraft.results
       if(playersDraft.search) {
@@ -70,7 +66,8 @@ const DraftPlayerChoose = ({playersDraft,draftStatus, setThisId, setChangeId,}) 
 
       const playersDataSlice = playersData.slice(firstPageIndex, lastPageIndex)
       return {playersData, playersDataSlice};
-    } else {
+    } 
+    else {
       const playersDataSlice = playersDraft.results.slice(firstPageIndex, lastPageIndex)
       const playersData= playersDraft.results
       return {playersData, playersDataSlice}
@@ -102,14 +99,7 @@ const DraftPlayerChoose = ({playersDraft,draftStatus, setThisId, setChangeId,}) 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[currentTableData])
 
-  useEffect(() => {
-    if (shouldLog.current && groups.positions.length === 1) {
-      shouldLog.current = false;
-       dispatch(getPositions())
-    }
-    return () =>  dispatch(setResetGroup())
-    // eslint-disable-next-line
-  }, []);
+
   
 
 
@@ -133,15 +123,20 @@ const DraftPlayerChoose = ({playersDraft,draftStatus, setThisId, setChangeId,}) 
  
   }
   return (
+    <>
+    {playersDraft.loading ? (<Spinner />):(
     <Wrapper>
       <SelectTeam>
         <div className="team">
+        {tradeValue?.results && <>
           <img src={tradeValue?.results[countRender].round.logo} alt="" width={60}/>
           <h2>{tradeValue?.results[countRender].round.name}</h2>
+
+        </>}
         </div>
         <div className="team-info">
           <p>Remaning piks</p>
-          <p>2,34</p>
+          <p>{round}</p>
         </div>
       </SelectTeam>
       <Search 
@@ -149,18 +144,19 @@ const DraftPlayerChoose = ({playersDraft,draftStatus, setThisId, setChangeId,}) 
             
         handleChange={(e) => {
           setSearchValue(e.target.value);
+
         }}
       />
       <NumWrapper>
         {groups?.positions &&
           groups.positions.map((item, idx) => {
-          console.log('item :', item);
+          
             const id = idx + 1;
             return (
               <NumItem
                 key={id}
                 onClick={() => {
-                  
+                  dispatch(setCurrentPage(1));
                   dispatch(setPositionPlayersDraft(item.split(" ")[0]))
                   }
                 }
@@ -176,7 +172,6 @@ const DraftPlayerChoose = ({playersDraft,draftStatus, setThisId, setChangeId,}) 
       <DraftPlayerWrapper>
         <DraftPlayerItems>
         
-    {playersDraft.loading ? (<Spinner />):(
         <>
         {playersDraft.results.length > 0 &&
           
@@ -201,11 +196,14 @@ const DraftPlayerChoose = ({playersDraft,draftStatus, setThisId, setChangeId,}) 
                   <button className="player-td player-draft-btn" disabled={draftBtnDisable} onClick={() => {
                     const playerItem = item
                     const teamId = teamSelectId[0]
+                    dispatch(setCurrentPage(1));
+                    dispatch(setPositionPlayersDraft('All'));
                     playerConcat(playerItem,teamId)
                     dispatch(delTeamsRound(teamId))
                     dispatch(setTeamRemoveId(teamSelectId[0]))
                     setThisId(teamSelectId[0]);
                     setChangeId(teamSelectId[0]);
+
                     
                     }}>Draft</button> 
                 </div>
@@ -224,7 +222,7 @@ const DraftPlayerChoose = ({playersDraft,draftStatus, setThisId, setChangeId,}) 
             }}
           />
       </>
-      )}
+    
         </DraftPlayerItems>
         {draftBtnDisable && (
           <div className="player-draft-btn-wrap">
@@ -240,6 +238,8 @@ const DraftPlayerChoose = ({playersDraft,draftStatus, setThisId, setChangeId,}) 
         
       </DraftPlayerWrapper>
     </Wrapper>
+    )}
+    </>
   );
 };
 

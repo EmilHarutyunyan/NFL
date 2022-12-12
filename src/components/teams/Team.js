@@ -21,7 +21,6 @@ export const Team = () => {
     if (initial.current) {
       initial.current = false;
       dispatch(getTeams());
-
     }
     // eslint-disable-next-line
   }, []);
