@@ -96,7 +96,7 @@ export const postitionPlayers = createAsyncThunk(
       const {
         players: { colleage,limit },
       } = getState();
-        console.log('🚀 ~ file: playersSlice.js ~ line 98 ~ limit', limit)
+       
       
       const res = await axios.get(
         `${API_ENDPOINT}players/?limit=${limit}&offset=${0}&search=&position=${position}&school=${colleage}`

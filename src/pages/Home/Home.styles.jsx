@@ -10,6 +10,9 @@ export const HomeWrap = styled.section`
   padding-left: 10px;
   padding-right: 10px;
   min-height: calc(100vh - 198px);
+  button {
+    font-size: 18px;
+  }
   img {
     max-width: 179px;
     width: 100%;

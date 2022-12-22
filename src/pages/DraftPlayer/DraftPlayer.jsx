@@ -14,24 +14,33 @@ import { StepItem, Steps } from '../DraftConfiguration/DraftConfig.styles'
 import { Wrapper,Banner, DraftView, DraftViewSimulator, RenderCircle } from './DraftPlayer.styles'
 
 const DraftPlayer = () => {
-  const { countRender,teamSelectId,status,tradeValue } = useSelector(selectDraftConfig);
+  const { countRender,teamSelectId,status,tradeValue,teams,round } = useSelector(selectDraftConfig);
+  // const [ordering,setOrdering] = useState("")
   const dispatch = useDispatch()
   const playersDraft = useSelector(selectPlayersDraft)
-  
   const [thisId,setThisId] = useState(0)
   const [changeId,setChangeId] = useState(0)
 
   const count = useMemo(() => {
     if(countRender+1 === teamSelectId[0]) {
+      
+      const findTemas = teams.find((team) => {
+        if((teamSelectId[0] - (+round - 1) * 32) === team.id) {
+          return team ;
+        }
+      })
+      findTemas && dispatch(getPlayersDraft(findTemas.name));
       dispatch(setStatus('orange'))
       return countRender+1
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [countRender])
 
+  
   useEffect(()=> {
     dispatch(getPlayersDraft());
-    dispatch(getPositions())
+    // dispatch(getPositions())
+   
     return () => {
       dispatch(resPlayersDraft())
       dispatch(setResetRound())
@@ -40,7 +49,7 @@ const DraftPlayer = () => {
   },[])
   useEffect(() => {
     if(countRender === tradeValue?.results?.length) {
-      console.log('tradeValue?.results', tradeValue?.results[0]);
+      
       const  data = {items: []}
       tradeValue?.results.forEach(item => {
         const {round_index,count=null,tm,round,player
@@ -75,7 +84,7 @@ const DraftPlayer = () => {
       </Banner>
 
       <DraftView>
-        <DraftViewAsign thisId={thisId} setThisId={setThisId} setChangeId={setChangeId} changeId={changeId} players={playersDraft}/>
+        <DraftViewAsign thisId={countRender} setThisId={setThisId} setChangeId={setChangeId} changeId={changeId} players={playersDraft}/>
         <DraftViewSimulator>
           {!teamSelectId.includes(count) && status !== 'red' ? <DraftSimulator /> : playersDraft.results.length > 0 ? <DraftPlayerChoose playersDraft={playersDraft} draftStatus={status} thisId={thisId} setThisId={setThisId} setChangeId={setChangeId} /> : null }
         </DraftViewSimulator>

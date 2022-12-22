@@ -17,19 +17,30 @@ const initialState = {
   colleage:"",
   playerChoose:[],
   playerItems:[],
+  teamsPlayersData: []
 };
 
 export const getPlayersDraft = createAsyncThunk(
   "playersDraft/getPlayersDraft",
-  async (_,{ dispatch, getState, rejectWithValue }) => {
+  async (ordName="",{ dispatch, getState, rejectWithValue }) => {
     
     try {
       const res = await axios.get(
-        `${API_ENDPOINT}players/?limit=700&offset=${0}&search=&position=&school`
+        `${API_ENDPOINT}players/?limit=700&offset=${0}&search=&position=&school&ordering=-${ordName}`
       );
+      const {
+        playersDraft: { playerChoose },
+      } = getState();
       const resData = { ...res.data };
-      
+
+      // Filter Choose Players
+      if(playerChoose.length) {
+        const playerChooseId = playerChoose.map(el => el.id)
+        const resDataResult = resData.results.filter(player =>  !playerChooseId.includes(player.id))
+        resData.results = resDataResult
+      }
       dispatch(setPlayersDraft(resData));
+      
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -101,6 +112,7 @@ export const colleagePlayersDraft = createAsyncThunk(
       );
       const resData = { ...initialState,...res.data, colleage };
       dispatch(setPlayersDraft(resData));
+      
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -116,6 +128,7 @@ export const playersDraftSlice = createSlice({
   initialState,
   reducers: {
     setPlayersDraft: (state, action) => {
+     
       state.limit = action.payload?.limit || state.limit;
       state.offset = action.payload?.offset || state.offset;
       state.currentPage = action.payload?.currentPage || state.currentPage;
@@ -147,7 +160,14 @@ export const playersDraftSlice = createSlice({
       state.results = action.payload;
       state.limit = action.payload.length
     },
+    setTeamsPlayersData: (state, action) => {
+      state.teamsPlayersData = action.payload;
+    },
+    setPlayerChoose: (state, action) => {
+      state.playerChoose= action.payload;
+    },
     resPlayersDraft: (state, action) => {
+      
       state.loading = initialState.loading;
       state.status = initialState.status;
       state.colleage = initialState.colleage;
@@ -160,14 +180,13 @@ export const playersDraftSlice = createSlice({
       state.playerItems = initialState.playerItems;
       state.position  = initialState.position;
       state.results = initialState.results;
-      state.search = initialState.search
-
-
-            
+      state.search = initialState.search    
+      state.teamsPlayersData = initialState.teamsPlayersData;
     }
   },
   extraReducers: {
     [getPlayersDraft.fulfilled]: (state, action) => {
+      
       state.loading = false;
     },
     [getPlayersDraft.pending]: (state, action) => {
@@ -209,7 +228,7 @@ export const playersDraftSlice = createSlice({
 });
 
 export const selectPlayersDraft = (state) => state.playersDraft;
-export const { setPlayersDraft,setSearchPlayers,setPositionPlayersDraft,setColleagePlayers,setCurrentPage,setPlayerItems,setNewPlayers,resPlayersDraft } = playersDraftSlice.actions;
+export const { setPlayersDraft,setSearchPlayers,setPositionPlayersDraft,setColleagePlayers,setCurrentPage,setPlayerItems,setNewPlayers,resPlayersDraft,setPlayerChoose } = playersDraftSlice.actions;
 
 // Action Creator Thunk
 export const positionAction = (positionValue) => (dispatch, getState) => {
@@ -233,15 +252,12 @@ export const colleageAction = (colleageValue) => (dispatch, getState) => {
   }
 };
 export const delPlayersDraft = (players) => (dispatch,getState) => {
-
-  const {
-    playersDraft: { results },
-  } = getState();
-  
+  const { playersDraft: { results,playerChoose } } = getState();
+  // const delPlayers = [...players,...playerChoose]
+  dispatch(setPlayerChoose([...players,...playerChoose]))
   const playersId = players.map(player => player.id)
   const playerData = results.filter((itme) => !playersId.includes(itme.id))
   dispatch(setNewPlayers(playerData))
-  
       
 }
 

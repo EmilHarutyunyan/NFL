@@ -64,11 +64,10 @@ const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
 const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
   const dispatch = useDispatch()
   const { teamSelectId, pauseId,timeSpeed,tradeValue,loading } = useSelector(selectDraftConfig);
-
+  const divRef = useRef(null)
   const roundArr = useRef([]);
 
   const teamRef = useRef(null);
-
 
   const combineTeam = useMemo( () => (data, teamSelectId,players) => {
     
@@ -118,7 +117,7 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
 
   
   useEffect(() => {
-    if (players.status && players.results) {
+    if (players.status && players.results && players.results.length) {
       dispatch(getTradeValue());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -127,10 +126,10 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
 
   useEffect(()=> {
     if(tradeValue?.mounting) {
-      
       const newData = combineTeam(tradeValue, teamSelectId,players);
       dispatch(setTradeValue(newData.tradeValue))
       dispatch(delPlayersDraft(newData.playersData))
+      divRef.current?.scrollIntoView({ behavior: "smooth" });
       // setLoading(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -148,15 +147,15 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
     }
 
     return () => {
-      setChangeId(0);
+      setChangeId(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamSelectId]);
 
 
   return (
-    <Wrapper>
-      {loading ? <CircularProgress /> : null}
+    <Wrapper ref={divRef}>
+      { players.length > 0 && loading ? <CircularProgress /> : null}
       <ul ref={teamRef}>
         {tradeValue?.results?.map((team, idx) => {
           const {
@@ -168,7 +167,8 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
           
           const isBelowThreshold = (currentValue) => currentValue > id;
           const checkTeam = teamSelectId.every(isBelowThreshold) ? id * (1000/timeSpeed/id) : 0;
-          const time = thisId ? +(id - thisId) * (1000/timeSpeed) : checkTeam;
+          const time = thisId ? + (id - thisId) * (1000/timeSpeed) : checkTeam;
+          
           if (id === 1) {
             roundArr.current = [];
           }

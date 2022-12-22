@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { Input } from '../../components/Input'
-import { Team } from '../../components/teams/Team'
+import { Team } from '../../components/Teams/Team'
 import Title from '../../components/Title/Title'
 // import './config.css'
 import Button from '../../components/Buttons/Button';
@@ -29,7 +29,6 @@ export const DraftConfiguration = () => {
     useEffect(()=> { 
       draftConfigRef.current?.scrollIntoView({ behavior: "smooth" });
       dispatch(setResetRound())
-      dispatch(setResetGroup())
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 

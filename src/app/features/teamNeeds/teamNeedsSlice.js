@@ -60,7 +60,7 @@ export const teamNeedsSlice = createSlice({
     },
     [setHistoryBoard.fulfilled]: (state, action) => {
       state.loading = false;
-      console.log(action.payload.results);
+     
     },
     [setHistoryBoard.pending]: (state, action) => {
       state.loading = true;

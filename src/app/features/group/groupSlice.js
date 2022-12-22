@@ -3,7 +3,23 @@ import axios from "axios";
 import { API_ENDPOINT } from "../../../config/config";
 
 export const initialState = {
-  positions:['All Positions'],
+  positions:[
+    "All Positions",
+    "QB",
+    "WR",
+    "TE",
+    "RB",
+    "OT",
+    "CB",
+    "S",
+    "DT",
+    "EDGE",
+    "LB",
+    "C",
+    "OG",
+    "P",
+    "K"
+],
   colleges:['All Colleges'],
   loading: true
 }
