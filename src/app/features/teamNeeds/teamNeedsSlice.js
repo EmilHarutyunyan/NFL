@@ -29,7 +29,7 @@ export const setHistoryBoard = createAsyncThunk(
   "teamNeeds/setHistoryBoard",
   async (data, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post(`${API_ENDPOINT}history-board/`,data);
+      const res = await axios.post(`${API_ENDPOINT}draft/history/`,data);
       return res.data;
     } catch (error) {
       if (error.response && error.response.data.message) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectDraftConfig, setResetRound, setStatus } from '../../app/features/draftConfig/draftConfigSlice'
-import { getPositions } from '../../app/features/group/groupSlice'
+// import { getPositions } from '../../app/features/group/groupSlice'
 import { getPlayersDraft, resPlayersDraft, selectPlayersDraft } from '../../app/features/playersDraft/playersDraftSlice'
 import { setHistoryBoard } from '../../app/features/teamNeeds/teamNeedsSlice'
 import { ReactComponent as CircleSvg } from '../../assets/svg/circle.svg'
@@ -14,7 +14,7 @@ import { StepItem, Steps } from '../DraftConfiguration/DraftConfig.styles'
 import { Wrapper,Banner, DraftView, DraftViewSimulator, RenderCircle } from './DraftPlayer.styles'
 
 const DraftPlayer = () => {
-  const { countRender,teamSelectId,status,tradeValue,teams,round } = useSelector(selectDraftConfig);
+  const { countRender,teamSelectId,status,tradeValue,teams,round,draftPlayers } = useSelector(selectDraftConfig);
   // const [ordering,setOrdering] = useState("")
   const dispatch = useDispatch()
   const playersDraft = useSelector(selectPlayersDraft)
@@ -24,11 +24,7 @@ const DraftPlayer = () => {
   const count = useMemo(() => {
     if(countRender+1 === teamSelectId[0]) {
       
-      const findTemas = teams.find((team) => {
-        if((teamSelectId[0] - (+round - 1) * 32) === team.id) {
-          return team ;
-        }
-      })
+      const findTemas = teams.find((team) => (teamSelectId[0] - (+round - 1) * 32) === team.id)
       findTemas && dispatch(getPlayersDraft(findTemas.name));
       dispatch(setStatus('orange'))
       return countRender+1
@@ -51,20 +47,21 @@ const DraftPlayer = () => {
     if(countRender === tradeValue?.results?.length) {
       
       const  data = {items: []}
-      tradeValue?.results.forEach(item => {
-        const {round_index,count=null,tm,round,player
-        } = item
+      draftPlayers.forEach(item => {
+        const {round_index,count=null,tm,round,player,upPlayers} = item
         const dataItem = {
           round_index:+round_index.split(" ")[0],
           count,
           team:tm,
           draft:round.id,
           player:player.id,
-          position:player.position
+          position:player.position,
+          upPlayers
         }
 
         data.items.push(dataItem)
       }) 
+     console.log(data)
       dispatch(setHistoryBoard(data))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

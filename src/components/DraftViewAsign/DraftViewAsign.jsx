@@ -30,11 +30,11 @@ const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
           dispatch(setCountRender(scroll.id));
           dispatch(setStatus('green'));
         } else {
-          console.log('scroll.id orange:', scroll.id);
+          // console.log('scroll.id orange:', scroll.id);
          
         } 
       } else {
-        console.log('scroll.id orange:', scroll.id);
+        // console.log('scroll.id orange:', scroll.id);
       }
 
     }, waitBefore);
@@ -75,6 +75,7 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
     const newDataResult = [];
     const playersData = []
     let i = 0
+    
     if(players.results.length && teamSelectId.length > 0) {
       for (const item of data.results) {
         let teamItem = structuredClone(item)
@@ -85,8 +86,10 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
         if(!teamItem.player && !teamSelectId.includes(teamItem.index)   ) {
           if(teamItem.index < teamSelectId[0]) {
             teamItem["player"] = playersItems[i];
+
             playersData.push(playersItems[i])
             dispatch(setDraftPlayersAction(teamItem))
+            
             i++;
 
           } 

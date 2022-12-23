@@ -10,7 +10,6 @@ import {
   selectDraftConfig,
   setDraftPlayersAction,
   setStatus,
-  setTeamRemoveId,
   setTradeValue,
 } from "../../app/features/draftConfig/draftConfigSlice";
 // Img
@@ -48,7 +47,7 @@ const DraftPlayerChoose = ({
   setChangeId,
 }) => {
   const groups = useSelector(selectGroup);
-  const { draftPlayers, tradeValue, countRender, round, status,teams,teamSelectId,teamSelect } =
+  const { draftPlayers, tradeValue, countRender, round, status,teams,teamSelectId } =
     useSelector(selectDraftConfig);
   const dispatch = useDispatch();
 
@@ -113,7 +112,7 @@ const DraftPlayerChoose = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTableData]);
 
-  const playerConcat = (playerItem, teamId,upPlayer={}) => {
+  const playerConcat = (playerItem, teamId,upPlayers={}) => {
     const teamItem = structuredClone(tradeValue.results[teamId - 1]);
     teamItem["player"] = playerItem;
 
@@ -129,28 +128,35 @@ const DraftPlayerChoose = ({
     dispatch(setPlayerItems(playersData));
     dispatch(delPlayersDraft([playerItem]));
     dispatch(setTradeValue({ ...tradeValue, results: newTradeValue }));
-    dispatch(setDraftPlayersAction({...teamItem,upPlayer}));
+    dispatch(setDraftPlayersAction({...teamItem,upPlayers}));
   };
   
   const playerChoose = (item,idx) => {
     let team = (teamSelectId[0] - (+round - 1) * 32)
-  
+    let playerItem = {...item}
+    let pricentPlayers = []
+    
     if(+round > 1) {
       for(let i = 0; i < +round; ++i) {
         if(teamSelectId[0] - 32*i <= 32 && teamSelectId[0] - 32*i >= 1) {
           team = teamSelectId[0] - 32*i
-          break
+          break;
         } 
       }
     }
-    const pricentValue = pricentPick(teams[team - 1].adp,item.value)
-    const pricentPlayers = upUsersCals(playerItems.slice(0,idx+1),pricentValue)
+    const teamName = teams[team - 1].name
+    if(teams[team - 1].adp  >= item[teamName]) {
+      const pricentValue = pricentPick(teams[team - 1].adp,item[teamName])
+      
+      pricentPlayers = upUsersCals(playerItems.slice(0,idx+1),pricentValue,teamName)
+      playerItem = {...item,[teamName]:item.value + pricentValue}
+    }
+
     
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft("All"));
-    playerConcat(item, teamSelectId[0], pricentPlayers);
+    playerConcat(playerItem, teamSelectId[0], pricentPlayers,);
     dispatch(delTeamsRound(teamSelectId[0]));
-    // dispatch(setTeamRemoveId(teamSelectId[0]));
     setThisId(teamSelectId[0]);
     setChangeId(true);
     
