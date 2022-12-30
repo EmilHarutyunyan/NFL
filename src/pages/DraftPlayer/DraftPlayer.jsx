@@ -18,6 +18,7 @@ const DraftPlayer = () => {
   // const [ordering,setOrdering] = useState("")
   const dispatch = useDispatch()
   const playersDraft = useSelector(selectPlayersDraft)
+  console.log('playersDraft :', playersDraft);
   const [thisId,setThisId] = useState(0)
   const [changeId,setChangeId] = useState(0)
 
@@ -43,6 +44,7 @@ const DraftPlayer = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
+
   useEffect(() => {
     if(countRender === tradeValue?.results?.length) {
       

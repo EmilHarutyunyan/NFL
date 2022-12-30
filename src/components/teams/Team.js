@@ -30,7 +30,7 @@ export const Team = () => {
   const printContent =() => {
     if(teams?.length) {
     return teams.map((item,i)=> {
-      const isChecked = teamSelectId.findIndex((id) => id === item.id) !== -1
+      const isChecked = teamSelectId.findIndex((index) => index === item.index) !== -1
       return (
           <TeamItem key={i + 1}
             id={i}

@@ -26,7 +26,7 @@ export const upUsersCals = (players, pricentValuePlayer, key) => {
   return players.map((player, idx) => {
     const pricentValue = +((midPoint * (players.length - idx - 1)).toFixed(2));
     if(idx === (players.length - 1)) {
-      return { ...player, value: +(player[key] + pricentValuePlayer), pricentValuePlayer };
+      return { ...player, value: +(player[key] + pricentValuePlayer), pricentValue:pricentValuePlayer };
     }
     return { ...player, value: +(player[key] - pricentValue), pricentValue: -pricentValue};
   });

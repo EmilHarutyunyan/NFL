@@ -16,7 +16,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAllTeams, setResetRound } from '../../app/features/draftConfig/draftConfigSlice';
 import { useNavigate } from 'react-router-dom';
-import { setResetGroup } from '../../app/features/group/groupSlice';
+
 
 export const DraftConfiguration = () => {
     const navigate = useNavigate();

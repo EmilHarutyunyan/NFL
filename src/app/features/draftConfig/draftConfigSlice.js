@@ -49,7 +49,7 @@ export const getTeams = createAsyncThunk(
   "draftConfig/getTeams",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.get(`${API_ENDPOINT}rounds/?limit=32`);
+      const res = await axios.get(`${API_ENDPOINT}rounds/?limit=33`);
       return res.data;
     } catch (error) {
       if (error.response && error.response.data.message) {

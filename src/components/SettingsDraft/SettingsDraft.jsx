@@ -9,19 +9,27 @@ import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 
-import { SettingItem, Speed, NumItem, NumWrapper } from "./Settings.styles";
+import { SettingItem, Speed, NumItem, NumWrapper, SettingMarks } from "./Settings.styles";
 import { useDispatch, useSelector } from "react-redux";
-import { saveRound, selectDraftConfig, setTimeSpeed } from "../../app/features/draftConfig/draftConfigSlice";
-
+import {
+  saveRound,
+  selectDraftConfig,
+  setTimeSpeed,
+} from "../../app/features/draftConfig/draftConfigSlice";
 
 const Settings = () => {
   const dispatch = useDispatch();
-  const { round,timeSpeed } = useSelector(selectDraftConfig);
+  const { round, timeSpeed } = useSelector(selectDraftConfig);
   const roundsArray = Array.from(Array(7).keys());
-  const handleSpeed = useCallback((e) => {
-   return dispatch(setTimeSpeed(e.target.value))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeSpeed]);
+
+  const handleSpeed = useCallback(
+    (e) => {
+      return dispatch(setTimeSpeed(e.target.value));
+      
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [timeSpeed]
+  );
   return (
     <>
       <SettingItem>
@@ -42,10 +50,10 @@ const Settings = () => {
           })}
         </NumWrapper>
       </SettingItem>
-      <SettingItem>
+      <SettingItem className="setting-speed">
         <Title titleText="Speed" titleClassName="setting-title " />
         <Speed>
-          <Box width={300}>
+          <Box sx={{ width: '100%' }}>
             <Slider
               defaultValue={2}
               step={1}
@@ -53,10 +61,13 @@ const Settings = () => {
               max={5}
               value={timeSpeed}
               onChange={handleSpeed}
-
               aria-label="Default"
               valueLabelDisplay="auto"
             />
+            <SettingMarks>
+              <span>Slow</span>
+              <span>Fast</span>
+            </SettingMarks>
           </Box>
         </Speed>
       </SettingItem>

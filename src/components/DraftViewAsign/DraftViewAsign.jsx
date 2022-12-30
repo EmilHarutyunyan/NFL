@@ -161,11 +161,13 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
       { players.length > 0 && loading ? <CircularProgress /> : null}
       <ul ref={teamRef}>
         {tradeValue?.results?.map((team, idx) => {
+        
+
           const {
             index: id,
 
             round_index: roundIndex,
-            round: { logo },
+            round: { logo  },
           } = team;
           
           const isBelowThreshold = (currentValue) => currentValue > id;
@@ -195,7 +197,7 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
                 </div>
 
                 <div className="player-team-info">
-                  <img src={logo} alt="" />
+                  <img src={logo ? logo : ''} alt="" />
                   
                   {!!checkTeam && team?.player ? null : (
                     <>

@@ -89,7 +89,7 @@ const DraftPlayerChoose = ({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playersDraft.currentPage, playersDraft.search, playersDraft.position]);
+  }, [playersDraft.currentPage, playersDraft.search, playersDraft.position,playersDraft.results]);
 
   useEffect(() => {
     if (initial.current) {
@@ -134,8 +134,9 @@ const DraftPlayerChoose = ({
   const playerChoose = (item,idx) => {
     let team = (teamSelectId[0] - (+round - 1) * 32)
     let playerItem = {...item}
+    debugger
     let pricentPlayers = []
-    
+    debugger
     if(+round > 1) {
       for(let i = 0; i < +round; ++i) {
         if(teamSelectId[0] - 32*i <= 32 && teamSelectId[0] - 32*i >= 1) {
@@ -147,8 +148,19 @@ const DraftPlayerChoose = ({
     const teamName = teams[team - 1].name
     if(teams[team - 1].adp  >= item[teamName]) {
       const pricentValue = pricentPick(teams[team - 1].adp,item[teamName])
+      let playerItemsSlice = []
       
-      pricentPlayers = upUsersCals(playerItems.slice(0,idx+1),pricentValue,teamName)
+      for(let i = 0; i < playerItems.length; ++i){ 
+        if(playerItems[i].id === playerItem.id) {
+          playerItemsSlice.push(playerItems[i])
+          break
+        } else {
+          playerItemsSlice.push(playerItems[i])
+        }
+
+      }
+      console.log(playerItemsSlice)
+      pricentPlayers = upUsersCals(playerItemsSlice,pricentValue,teamName)
       playerItem = {...item,[teamName]:item.value + pricentValue}
     }
 
@@ -175,8 +187,8 @@ const DraftPlayerChoose = ({
                   <img
                     src={
                       status === "red"
-                        ? tradeValue?.results[countRender - 1].round.logo
-                        : tradeValue?.results[countRender].round.logo
+                        ? tradeValue?.results[countRender - 1].round?.logo
+                        : tradeValue?.results[countRender].round?.logo
                     }
                     alt=""
                     width={60}
