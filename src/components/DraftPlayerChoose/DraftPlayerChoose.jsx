@@ -47,8 +47,15 @@ const DraftPlayerChoose = ({
   setChangeId,
 }) => {
   const groups = useSelector(selectGroup);
-  const { draftPlayers, tradeValue, countRender, round, status,teams,teamSelectId } =
-    useSelector(selectDraftConfig);
+  const {
+    draftPlayers,
+    tradeValue,
+    countRender,
+    round,
+    status,
+    teams,
+    teamSelectId,
+  } = useSelector(selectDraftConfig);
   const dispatch = useDispatch();
 
   const { position, playerItems } = useSelector(selectPlayersDraft);
@@ -56,7 +63,6 @@ const DraftPlayerChoose = ({
   const draftBtnDisable = draftStatus === "red" ? true : false;
   const initial = useRef(true);
   const [searchValue, setSearchValue] = useState("");
-
 
   const currentTableData = useMemo(() => {
     const firstPageIndex = (playersDraft.currentPage - 1) * PageSize;
@@ -89,7 +95,12 @@ const DraftPlayerChoose = ({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playersDraft.currentPage, playersDraft.search, playersDraft.position,playersDraft.results]);
+  }, [
+    playersDraft.currentPage,
+    playersDraft.search,
+    playersDraft.position,
+    playersDraft.results,
+  ]);
 
   useEffect(() => {
     if (initial.current) {
@@ -112,7 +123,7 @@ const DraftPlayerChoose = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTableData]);
 
-  const playerConcat = (playerItem, teamId,upPlayers={}) => {
+  const playerConcat = (playerItem, teamId, upPlayers = {}) => {
     const teamItem = structuredClone(tradeValue.results[teamId - 1]);
     teamItem["player"] = playerItem;
 
@@ -128,52 +139,48 @@ const DraftPlayerChoose = ({
     dispatch(setPlayerItems(playersData));
     dispatch(delPlayersDraft([playerItem]));
     dispatch(setTradeValue({ ...tradeValue, results: newTradeValue }));
-    dispatch(setDraftPlayersAction({...teamItem,upPlayers}));
+    dispatch(setDraftPlayersAction({ ...teamItem, upPlayers }));
   };
-  
-  const playerChoose = (item,idx) => {
-    let team = (teamSelectId[0] - (+round - 1) * 32)
-    let playerItem = {...item}
-    debugger
-    let pricentPlayers = []
-    debugger
-    if(+round > 1) {
-      for(let i = 0; i < +round; ++i) {
-        if(teamSelectId[0] - 32*i <= 32 && teamSelectId[0] - 32*i >= 1) {
-          team = teamSelectId[0] - 32*i
+
+  const playerChoose = (item, idx) => {
+    let team = teamSelectId[0] - (+round - 1) * 32;
+    let playerItem = { ...item };
+
+    let pricentPlayers = [];
+
+    if (+round > 1) {
+      for (let i = 0; i < +round; ++i) {
+        if (teamSelectId[0] - 32 * i <= 32 && teamSelectId[0] - 32 * i >= 1) {
+          team = teamSelectId[0] - 32 * i;
           break;
-        } 
-      }
-    }
-    const teamName = teams[team - 1].name
-    if(teams[team - 1].adp  >= item[teamName]) {
-      const pricentValue = pricentPick(teams[team - 1].adp,item[teamName])
-      let playerItemsSlice = []
-      
-      for(let i = 0; i < playerItems.length; ++i){ 
-        if(playerItems[i].id === playerItem.id) {
-          playerItemsSlice.push(playerItems[i])
-          break
-        } else {
-          playerItemsSlice.push(playerItems[i])
         }
-
       }
-      console.log(playerItemsSlice)
-      pricentPlayers = upUsersCals(playerItemsSlice,pricentValue,teamName)
-      playerItem = {...item,[teamName]:item.value + pricentValue}
+    }
+    const teamName = teams[team - 1].name;
+    if (teams[team - 1].adp >= item[teamName]) {
+      const pricentValue = pricentPick(teams[team - 1].adp, item[teamName]);
+      let playerItemsSlice = [];
+
+      for (let i = 0; i < playerItems.length; ++i) {
+        if (playerItems[i].id === playerItem.id) {
+          playerItemsSlice.push(playerItems[i]);
+          break;
+        } else {
+          playerItemsSlice.push(playerItems[i]);
+        }
+      }
+      console.log(playerItemsSlice);
+      pricentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
+      playerItem = { ...item, [teamName]: item.value + pricentValue };
     }
 
-    
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft("All"));
-    playerConcat(playerItem, teamSelectId[0], pricentPlayers,);
+    playerConcat(playerItem, teamSelectId[0], pricentPlayers);
     dispatch(delTeamsRound(teamSelectId[0]));
     setThisId(teamSelectId[0]);
     setChangeId(true);
-    
-    
-  }
+  };
   return (
     <>
       {playersDraft.loading ? (
@@ -263,7 +270,7 @@ const DraftPlayerChoose = ({
                           <button
                             className="player-td player-draft-btn"
                             disabled={draftBtnDisable}
-                            onClick={()=>playerChoose(item,idx)}
+                            onClick={() => playerChoose(item, idx)}
                           >
                             Draft
                           </button>

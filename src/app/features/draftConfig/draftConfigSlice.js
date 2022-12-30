@@ -8,6 +8,7 @@ const initialState = {
   teams: [],
   teamSelect: [],
   teamSelectId: [],
+  teanSelectIdRound:[],
   teamRemoveId: [],
   round: "1",
   possitionalNedd: false,
@@ -263,10 +264,9 @@ export const selectAllTeams = (check) => (dispatch, getState) => {
 
 export const saveTeams = (team) => (dispatch, getState) => {
   const { round, teamSelect } = selectDraftConfig(getState());
-  const teamSelectItems = toggleArrObj(teamSelect, team, (item) => item.id)
-  const teamSelectItemsId = teamSelectItems.map((elem) => elem.id);
-  const roundsTeam =
-    +round > 1 ? teamRound(round, teamSelectItemsId) : teamSelectItemsId;
+  const teamSelectItems = toggleArrObj(teamSelect, team, (item) => item.index)
+  const teamSelectItemsId = teamSelectItems.map((elem) => elem.index);
+  const roundsTeam = +round > 1 ? teamRound(round, teamSelectItemsId) : teamSelectItemsId;
 
   dispatch(setTeamsRound([...roundsTeam]));
   dispatch(setTeams(teamSelectItems));

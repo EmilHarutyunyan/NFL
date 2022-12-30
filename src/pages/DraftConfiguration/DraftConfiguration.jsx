@@ -1,10 +1,7 @@
-import React, { useEffect, useRef } from 'react'
-import { Input } from '../../components/Input'
-import { Team } from '../../components/Teams/Team'
-import Title from '../../components/Title/Title'
+import React, { useEffect, useRef } from "react";
+import { Team } from "../../components/Teams/Team";
+import Title from "../../components/Title/Title";
 // import './config.css'
-import Button from '../../components/Buttons/Button';
-import arrowLeft from  '../../assets/img/arrow-left.png'
 import SettingsDraft from "../../components/SettingsDraft/SettingsDraft";
 import {
   DraftConfigWrap,
@@ -13,24 +10,26 @@ import {
   Steps,
   StepItem,
 } from "./DraftConfig.styles";
-import { useDispatch, useSelector } from 'react-redux';
-import { selectAllTeams, setResetRound } from '../../app/features/draftConfig/draftConfigSlice';
-import { useNavigate } from 'react-router-dom';
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectAllTeams,
+  setResetRound,
+} from "../../app/features/draftConfig/draftConfigSlice";
+import { Switch } from "@mui/material";
 
 export const DraftConfiguration = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch()
-    const draftConfigRef = useRef(null)
-    const {teamSelect} = useSelector((state) => state.draftCongif);
-    const handleChange = (e) => {
-        dispatch(selectAllTeams(e.target.checked))
-    }
-    useEffect(()=> { 
-      draftConfigRef.current?.scrollIntoView({ behavior: "smooth" });
-      dispatch(setResetRound())
+
+  const dispatch = useDispatch();
+  const draftConfigRef = useRef(null);
+  const { teamSelect } = useSelector((state) => state.draftCongif);
+  const handleChange = (e) => {
+    dispatch(selectAllTeams(e.target.checked));
+  };
+  useEffect(() => {
+    draftConfigRef.current?.scrollIntoView({ behavior: "smooth" });
+    dispatch(setResetRound());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[])
+  }, []);
 
   return (
     <DraftConfigWrap ref={draftConfigRef}>
@@ -47,34 +46,23 @@ export const DraftConfiguration = () => {
             />
             <p>Draft order is simulated</p>
             <label className="select-all" htmlFor="selectAll">
-              <Input
-                type="checkbox"
-                id="selectAll"
-                handleChange={handleChange}
-              />
-              Select All
+                Select All
+                <Switch  onChange={handleChange}/>
             </label>
             <Team />
           </div>
           <div className="settings">
-            <SettingsDraft />
+            <SettingsDraft teamSelect={teamSelect}/>
           </div>
         </div>
-        <Button
-          btnText="Enter Draft"
-          btnIcon={arrowLeft}
-          btnClassName="enter-draft-btn"
-          btnDisable={!teamSelect.length}
-          onBtnClick={()=>navigate('/draft-player')}
 
-        />
         <hr className="line" />
         <Steps>
           <StepItem>
             <span className="active-step">1</span>
             <p>Select Your Team (s), Setup Your Draft</p>
           </StepItem>
-          <StepItem >
+          <StepItem>
             <span>2</span>
             <p>Draft For Your Team</p>
           </StepItem>
@@ -86,4 +74,4 @@ export const DraftConfiguration = () => {
       </DraftContainer>
     </DraftConfigWrap>
   );
-  }
+};

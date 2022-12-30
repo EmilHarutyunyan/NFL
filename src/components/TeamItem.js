@@ -7,6 +7,7 @@ export const TeamItem = ({ num, teamName, teamLogo, isChecked, item }) => {
   return (
     <div
       onClick={() => {
+        
         dispatch(saveTeams(item));
       }}
       className={`team-item ${isChecked ? "active" : ""}`}
