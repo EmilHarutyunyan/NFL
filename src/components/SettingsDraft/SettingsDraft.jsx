@@ -106,7 +106,7 @@ const Settings = ({teamSelect}) => {
               min={1}
               max={8}
               value={timeSpeed}
-              onChange={handleSpeed}
+              // onChange={handleSpeed}
               aria-label="Default"
               valueLabelDisplay="auto"
             />
@@ -127,7 +127,7 @@ const Settings = ({teamSelect}) => {
               min={1}
               max={16}
               value={timeSpeed}
-              onChange={handleSpeed}
+              // onChange={handleSpeed}
               aria-label="Default"
               valueLabelDisplay="auto"
             />
@@ -151,8 +151,8 @@ const Settings = ({teamSelect}) => {
               step={1}
               min={1}
               max={4}
-              value={timeSpeed}
-              onChange={handleSpeed}
+              value={2}
+              // onChange={handleSpeed}
               aria-label="Default"
               valueLabelDisplay="auto"
             />

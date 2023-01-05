@@ -241,7 +241,6 @@ const teamRound = (round, teamSelectId) => {
   for (let value of teamSelectId) {
     for (let i = 1; i < +round; i++) {
       roundsTeam.push(value + i * 32);
-
     }
   }
   return new Set([...roundsTeam, ...teamSelectId]);
@@ -252,14 +251,11 @@ const teamRound = (round, teamSelectId) => {
 // Actions Creator
 export const selectAllTeams = (check) => (dispatch, getState) => {
   const { teams, round } = selectDraftConfig(getState());
- 
   const teamSelectItemsId = teams.map((elem) => elem.id);
   const roundsTeam = +round > 1 ? teamRound(round, teamSelectItemsId) : teamSelectItemsId;
-
   dispatch(setTeamsRound(check ? [...roundsTeam] : []));
   dispatch(setAllTeams(check ? teams : []))
 
-  // dispatch(saveTeams(teams))
 }
 
 export const saveTeams = (team) => (dispatch, getState) => {
