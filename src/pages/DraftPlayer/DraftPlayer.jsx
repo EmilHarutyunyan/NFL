@@ -16,7 +16,6 @@ import { ReactComponent as CircleSvg } from "../../assets/svg/circle.svg";
 import DraftPlayerChoose from "../../components/DraftPlayerChoose/DraftPlayerChoose";
 import DraftSimulator from "../../components/DraftSimulator/DraftSimulator";
 import DraftViewAsign from "../../components/DraftViewAsign/DraftViewAsign";
-import { StepItem, Steps } from "../DraftConfiguration/DraftConfig.styles";
 
 // Styes
 import {
@@ -40,7 +39,6 @@ const DraftPlayer = () => {
   // const [ordering,setOrdering] = useState("")
   const dispatch = useDispatch();
   const playersDraft = useSelector(selectPlayersDraft);
-  console.log("playersDraft :", playersDraft);
   const [thisId, setThisId] = useState(0);
   const [changeId, setChangeId] = useState(0);
 
@@ -54,11 +52,12 @@ const DraftPlayer = () => {
           selectId = teamSelectId[0] - 32 * i;
         }
       }
-      const findTemas = teams.find((team) => selectId === team.id);
-      findTemas && dispatch(getPlayersDraft(findTemas.name));
+      // const findTemas = teams.find((team) => selectId === team.id);
+      // findTemas && dispatch(getPlayersDraft(findTemas.name));
       dispatch(setStatus("orange"));
       return countRender + 1;
     }
+   
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countRender]);
 
@@ -74,6 +73,7 @@ const DraftPlayer = () => {
   }, []);
 
   useEffect(() => {
+     dispatch(getPlayersDraft(teams[countRender].name));
     if (countRender === tradeValue?.results?.length) {
       const data = { items: [] };
       draftPlayers.forEach((item) => {
@@ -97,7 +97,7 @@ const DraftPlayer = () => {
 
         data.items.push(dataItem);
       });
-      console.log(data);
+      
       dispatch(setHistoryBoard(data));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,20 +141,6 @@ const DraftPlayer = () => {
         </DraftViewSimulator>
       </DraftView>
       <hr className="line" />
-      <Steps>
-        <StepItem>
-          <span>1</span>
-          <p>Select Your Team (s), Setup Your Draft</p>
-        </StepItem>
-        <StepItem>
-          <span className="active-step">2</span>
-          <p>Draft For Your Team</p>
-        </StepItem>
-        <StepItem>
-          <span>3</span>
-          <p>Share your Draft</p>
-        </StepItem>
-      </Steps>
     </Wrapper>
   );
 };

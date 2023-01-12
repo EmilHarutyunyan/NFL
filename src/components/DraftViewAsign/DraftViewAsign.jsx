@@ -9,11 +9,13 @@ import {
   selectDraftConfig,
   setCountRender,
   setDraftPlayersAction,
+  setFirstTradeValue,
   setStatus,
   setTradeValue,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { useMemo } from "react";
 import { delPlayersDraft } from "../../app/features/playersDraft/playersDraftSlice";
+import { roundTeam } from "../../utils/utils";
 
 
 const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
@@ -28,7 +30,7 @@ const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
           scroll.teamRef?.current?.scrollTo(0, (scroll.id - 1) * 75);
           
           dispatch(setCountRender(scroll.id));
-          dispatch(setStatus('green'));
+          // dispatch(setStatus('green'));
         } else {
           // console.log('scroll.id orange:', scroll.id);
          
@@ -63,7 +65,8 @@ const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
 
 const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
   const dispatch = useDispatch()
-  const { teamSelectId, pauseId,timeSpeed,tradeValue,loading } = useSelector(selectDraftConfig);
+  const { teamSelectId, pauseId, timeSpeed, tradeValue, loading, round,teams } =
+    useSelector(selectDraftConfig);
   const divRef = useRef(null)
   const roundArr = useRef([]);
 
@@ -86,12 +89,9 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
         if(!teamItem.player && !teamSelectId.includes(teamItem.index)   ) {
           if(teamItem.index < teamSelectId[0]) {
             teamItem["player"] = playersItems[i];
-
             playersData.push(playersItems[i])
             dispatch(setDraftPlayersAction(teamItem))
-            
             i++;
-
           } 
     
         }
@@ -106,7 +106,6 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
             playersData.push(playersItems[i])
             dispatch(setDraftPlayersAction(teamItem))
             i++;
-  
         }
         newDataResult.push(teamItem); 
       }
@@ -121,7 +120,12 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
   
   useEffect(() => {
     if (players.status && players.results && players.results.length) {
-      dispatch(getTradeValue());
+      let tradeValue = {
+        count: roundTeam(round, teams).length,
+        mounting: true,
+        results: roundTeam(round, teams),
+      };
+      dispatch(setFirstTradeValue(tradeValue));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [players.status]);
@@ -162,6 +166,7 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
       <ul ref={teamRef}>
         {tradeValue?.results?.map((team, idx) => {
         
+        
 
           const {
             index: id,
@@ -182,7 +187,11 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
             : roundArr.current.push(roundIndex);
           return (
             <>
-              {roundCheck ? <li className="round" key={Math.random()} >{roundIndex}</li> : null}
+              {roundCheck ? (
+                <li className="round" key={Math.random()}>
+                  {roundIndex}
+                </li>
+              ) : null}
               <li
                 key={id}
                 className={`${
@@ -197,13 +206,13 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
                 </div>
 
                 <div className="player-team-info">
-                  <img src={logo ? logo : ''} alt="" />
-                  
+                  <img src={logo ? logo : ""} alt="" />
+
                   {!!checkTeam && team?.player ? null : (
                     <>
                       {teamSelectId.includes(id) && pauseId[0] !== id ? (
                         <>
-                          <div className="player-click">One the Clock</div>
+                          <div className="player-click">One The Pik</div>
                         </>
                       ) : (
                         <>

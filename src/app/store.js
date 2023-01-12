@@ -5,14 +5,16 @@ import groupReducer from './features/group/groupSlice';
 import draftConfigReducer from "./features/draftConfig/draftConfigSlice"
 import teamNeedsReducer from "./features/teamNeeds/teamNeedsSlice"
 import playersDraftReducer from "./features/playersDraft/playersDraftSlice"
+import teamListReducer from "./features/teamList/teamListSlice"
 
 export const store = configureStore({
   reducer: {
-    user:userReducer,
+    user: userReducer,
     players: playersReducer,
-    group:groupReducer,
-    draftCongif: draftConfigReducer,
-    teamNeeds:teamNeedsReducer,
-    playersDraft:playersDraftReducer
+    group: groupReducer,
+    draftConfig: draftConfigReducer,
+    teamNeeds: teamNeedsReducer,
+    playersDraft: playersDraftReducer,
+    teamList: teamListReducer
   },
 });

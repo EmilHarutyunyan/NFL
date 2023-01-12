@@ -12,10 +12,11 @@ import {
   setStatus,
   setTradeValue,
 } from "../../app/features/draftConfig/draftConfigSlice";
-// Img
 
+// Img
 import infoImg from "../../assets/img/Info.png";
 import pauseImg from "../../assets/img/pause.png";
+
 // Styles
 import {
   Wrapper,
@@ -39,7 +40,7 @@ import {
 } from "../../app/features/playersDraft/playersDraftSlice";
 import { pricentPick, upUsersCals } from "../../utils/utils";
 
-const PageSize = 6;
+const PageSize = 10;
 const DraftPlayerChoose = ({
   playersDraft,
   draftStatus,
@@ -79,7 +80,7 @@ const DraftPlayerChoose = ({
       if (playersDraft.position && playersDraft.position !== "All") {
         playersData = playersDraft.results.filter((player) => {
           const position = player.position;
-          return position.includes(playersDraft.position);
+          return position.toLowerCase() === playersDraft.position.toLowerCase();
         });
       }
 
@@ -169,7 +170,7 @@ const DraftPlayerChoose = ({
           playerItemsSlice.push(playerItems[i]);
         }
       }
-      console.log(playerItemsSlice);
+   
       pricentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
       playerItem = { ...item, [teamName]: item.value + pricentValue };
     }
@@ -207,10 +208,6 @@ const DraftPlayerChoose = ({
                   </h2>
                 </>
               )}
-            </div>
-            <div className="team-info">
-              <p>Remaning piks</p>
-              <p>{round}</p>
             </div>
           </SelectTeam>
           <Search

@@ -11,10 +11,11 @@ export const SelectTeam = styled.div`
     display: flex;
     align-items: center;
     gap: 30px;
-    img {
-      width: 60px;
-      margin-bottom: 15px;
-    }
+    margin-bottom: 20px;
+  }
+  .team img {
+    width: 80px;
+    height: 80px;
   }
 `;
 export const NumWrapper = styled.div`
@@ -37,6 +38,7 @@ export const NumItem = styled.div`
 
   &.active {
     border: 2px solid #004ea3;
+    border
   }
 
   span {
@@ -79,19 +81,21 @@ width: 100%;
 `;
 
 export const DraftPlayerItem = styled.li`
-  border-bottom: 1px solid #afb4b9;
+  border-bottom: 1px solid #e8ebef;
   padding-bottom: 16px;
-
+  background-color: ${(props) => (props.backColor ? `${props.backColor}` : "")};
+  :first-child {
+    margin-top: 20px;
+  }
   .player-td {
     text-align: center;
     width: calc(100% / 7);
   }
   .player-draft {
-    padding: 0 30px;
+    padding: 16px;
     display: flex;
     align-items: center;
     gap: 30px;
-    margin-top: 40px;
   }
   .player-rank,
   .player-adp {
@@ -116,10 +120,10 @@ export const DraftPlayerItem = styled.li`
     color: #004ea3;
   }
   .player-position {
-    background: #2d7341;
+    border: 1px solid #004ea3;
     border-radius: 4px;
     padding: 5px 16px;
-    color: #ffffff;
+    color: #0e1118;
   }
   .player-college {
     font-style: normal;

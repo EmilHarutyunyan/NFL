@@ -8,6 +8,11 @@ export const HeaderInner = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+   & img {
+      display: block;
+      object-fit: cover;
+      width: 52px;
+    }
 `;
 
 export const Nav = styled.nav`

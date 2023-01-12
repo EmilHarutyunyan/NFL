@@ -4,6 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
+
 const MySelect = ({
   label,
   name = "",
@@ -43,21 +44,20 @@ const MySelect = ({
         sx={{ ...styleForm, borderRadius: "none" }}
         MenuProps={MenuProps}
       >
-        <MenuItem value="">{label}</MenuItem>
+        <MenuItem value="">
+          {label}
+        </MenuItem>
         {dataValue && dataValue.length > 0 ? (
           dataValue.map((item, idx) => {
-           
-            if (idx !== 0){
+            if (idx !== 0) {
               return (
-              <MenuItem value={item} key={idx}>
-                {item}
-              </MenuItem>
-            );
+                <MenuItem value={item} key={idx}>
+                  {item}
+                </MenuItem>
+              );
             } else {
-              return null
+              return null;
             }
-
-            
           })
         ) : (
           <MenuItem value={name}>{name}</MenuItem>

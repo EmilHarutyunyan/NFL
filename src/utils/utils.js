@@ -31,3 +31,44 @@ export const upUsersCals = (players, pricentValuePlayer, key) => {
     return { ...player, value: +(player[key] - pricentValue), pricentValue: -pricentValue};
   });
 };
+
+
+// Round Calc Create New Data
+export const roundTeam = (roundCount,teams) => {
+  const newData = []
+  let indexCount = 1;
+  for (let i = 1; i <= roundCount; ++i) {
+    for (let j = 0; j < teams.length; ++j) {
+      newData.push({
+        id: Math.random(),
+        index: indexCount,
+        round_index: `${i} Round`,
+        round: teams[j]
+      })
+      indexCount++;
+    }
+  }
+  return newData;
+}
+// Get Team Except Id
+export const getExceptTeam = (arr,expectArr,key) => {
+  
+  return arr.filter(item => !expectArr.includes(item[key]))
+}
+
+// Get Random Team
+export const getRandom =(arr, n) => {
+  var result = new Array(n),
+    len = arr.length,
+    taken = new Array(len);
+  if (n > len)
+    throw new RangeError("getRandom: more elements taken than available");
+  while (n--) {
+    var x = Math.floor(Math.random() * len);
+    result[n] = arr[x in taken ? taken[x] : x];
+    taken[x] = --len in taken ? taken[len] : len;
+  }
+  return result;
+}
+
+

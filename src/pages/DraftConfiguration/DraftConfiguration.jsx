@@ -7,27 +7,29 @@ import {
   DraftConfigWrap,
   DraftContainer,
   DraftHeading,
-  Steps,
-  StepItem,
 } from "./DraftConfig.styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getTeams,
   selectAllTeams,
+  selectDraftConfig,
   setResetRound,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { Switch } from "@mui/material";
 
 export const DraftConfiguration = () => {
-
   const dispatch = useDispatch();
   const draftConfigRef = useRef(null);
-  const { teamSelect } = useSelector((state) => state.draftCongif);
+  const { teamSelect, teams, teamSelectId, draftRandomness } =
+    useSelector(selectDraftConfig);
+
   const handleChange = (e) => {
     dispatch(selectAllTeams(e.target.checked));
   };
   useEffect(() => {
     draftConfigRef.current?.scrollIntoView({ behavior: "smooth" });
     dispatch(setResetRound());
+    dispatch(getTeams());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -46,31 +48,21 @@ export const DraftConfiguration = () => {
             />
             <p>Draft order is simulated</p>
             <label className="select-all" htmlFor="selectAll">
-                Select All
-                <Switch  onChange={handleChange}/>
+              Select All
+              <Switch onChange={handleChange} />
             </label>
-            <Team />
+            <Team
+              teams={teams}
+              teamSelectId={teamSelectId}
+              draftRandomness={draftRandomness}
+            />
           </div>
           <div className="settings">
-            <SettingsDraft teamSelect={teamSelect}/>
+            <SettingsDraft teamSelect={teamSelect} />
           </div>
         </div>
 
         <hr className="line" />
-        <Steps>
-          <StepItem>
-            <span className="active-step">1</span>
-            <p>Select Your Team (s), Setup Your Draft</p>
-          </StepItem>
-          <StepItem>
-            <span>2</span>
-            <p>Draft For Your Team</p>
-          </StepItem>
-          <StepItem>
-            <span>3</span>
-            <p>Share your Draft</p>
-          </StepItem>
-        </Steps>
       </DraftContainer>
     </DraftConfigWrap>
   );

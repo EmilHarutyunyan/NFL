@@ -28,7 +28,7 @@ export const CheckBoxInputSecond = ({
               <polygon
                 width={18}
                 height={18}
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 points="9.707 14.293 19 5 20.414 6.414 9.707 17.121 4 11.414 5.414 10"
               />
             </svg>

@@ -16,7 +16,7 @@ export const initialState = {
     "EDGE",
     "LB",
     "C",
-    "OG",
+    "G",
     "P",
     "K"
 ],
@@ -53,7 +53,7 @@ export const getColleges = createAsyncThunk(
     try {
     
       const res = await axios.get(
-        `${API_ENDPOINT}group/school/`
+        `${API_ENDPOINT}draft/school/`
       );
       return res.data;
     } catch (error) {
@@ -78,7 +78,7 @@ export const groupSlice = createSlice({
       state.colleges =  action.payload.position
     },
     setResetGroup: (state,_) => {
-      state.positions = ['All Positions'];
+      // state.positions = ['All Positions'];
       state.colleges = ['All Colleges'];
     },
   },

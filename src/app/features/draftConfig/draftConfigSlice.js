@@ -8,10 +8,10 @@ const initialState = {
   teams: [],
   teamSelect: [],
   teamSelectId: [],
-  teanSelectIdRound:[],
+  teamSelectIdRound: [],
   teamRemoveId: [],
   round: "1",
-  possitionalNedd: false,
+  positionalNeed: false,
   bpaCalculated: "",
   userQuantity: 3,
   loading: false,
@@ -19,7 +19,9 @@ const initialState = {
   draftValue: [],
   timeSpeed: 2,
   draftPlayers: [],
-  satus: "",
+  draftCardDepth: 2,
+  draftRandomness:2,
+  draftRandomnessTeam:[],
   pauseId: [],
   countRender: 0,
   tradeValue: { mounting: false },
@@ -67,7 +69,7 @@ export const getTradeValue = createAsyncThunk(
   async (_, { dispatch, rejectWithValue, getState }) => {
     try {
       const {
-        draftCongif: { round },
+        draftConfig: { round },
       } = getState();
       const res = await axios.get(
         `${API_ENDPOINT}trade-value-history/?limit=${+round * 32}&offset=0`
@@ -103,6 +105,15 @@ export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
+    setDraftCardDepth: (state,action) => {
+      state.draftCardDepth = action.payload;
+    },
+    setDraftRandomnessTeam: (state, action) => {
+      state.draftRandomnessTeam = action.payload
+    },
+    setDraftRandomness: (state,action) => {
+      state.draftRandomness = action.payload
+    },
     setTeams: (state, action) => {
       state.teamSelect = action.payload;
       state.status = state.teamSelect.length > 0 ? "green" : "";
@@ -145,7 +156,13 @@ export const draftConfigSlice = createSlice({
       );
       state.teamSelectId = teamSelectSort;
     },
+    setFirstTradeValue: (state, action) => {
+      state.tradeValue = action.payload
+    },
     setResetRound: (state, _) => {
+      state.draftCardDepth= 2;
+      state.draftRandomness = 2;
+      state.draftRandomnessTeam = [];
       state.teamSelectId = [];
       state.teamRemoveId = [];
       state.teamSelect = [];
@@ -156,7 +173,7 @@ export const draftConfigSlice = createSlice({
       state.draftValue = [];
       state.timeSpeed = 2;
       state.positionPlayer = ["All"];
-      state.possitionalNedd = false;
+      state.positionalNeed = false;
       state.teams = [];
       state.loading = false;
       state.draftPlayers = [];
@@ -215,9 +232,12 @@ export const draftConfigSlice = createSlice({
   },
 });
 
-export const selectDraftConfig = (state) => state.draftCongif;
+export const selectDraftConfig = (state) => state.draftConfig;
 
 export const {
+  setDraftCardDepth,
+  setDraftRandomnessTeam,
+  setDraftRandomness,
   setTeams,
   setAllTeams,
   setRound,
@@ -230,6 +250,7 @@ export const {
   delTeamsRound,
   setResetRound,
   setTradeValue,
+  setFirstTradeValue,
   setDraftPlayers,
   setTeamRemoveId,
   delPauseId,
@@ -268,11 +289,11 @@ export const saveTeams = (team) => (dispatch, getState) => {
   dispatch(setTeams(teamSelectItems));
 };
 
-export const pauseRender = (id) => (dispatch, getState) => {
-  const { teamSelectId } = selectDraftConfig(getState());
-  dispatch(setStatus("pause"));
-  dispatch(setTeamsRound([...teamSelectId, id]));
-};
+// export const pauseRender = (id) => (dispatch, getState) => {
+//   const { teamSelectId } = selectDraftConfig(getState());
+//   dispatch(setStatus("pause"));
+//   dispatch(setTeamsRound([...teamSelectId, id]));
+// };
 
 export const saveRound = (roundNum) => (dispatch, getState) => {
   const { teamSelectId } = selectDraftConfig(getState());

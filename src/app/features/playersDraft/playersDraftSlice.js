@@ -182,6 +182,8 @@ export const playersDraftSlice = createSlice({
       state.results = initialState.results;
       state.search = initialState.search    
       state.teamsPlayersData = initialState.teamsPlayersData;
+      state.position = initialState.position;
+      state.colleage = initialState.colleage;
     }
   },
   extraReducers: {

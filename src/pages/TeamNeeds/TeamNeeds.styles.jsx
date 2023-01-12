@@ -7,7 +7,7 @@ export const Wrapper = styled.section`
   }
 `;
 
-export const AccardinWrapper = styled.article`
+export const AccordionWrapper = styled.article`
   margin-bottom: 24px;
 `;
 
@@ -29,7 +29,7 @@ export const TeamInfo = styled.div`
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
-    color:#fff;
+    color: #fff;
     &-loc {
       font-weight: 700;
       font-size: 20px;
@@ -57,7 +57,6 @@ export const ImgWrap = styled.div`
     line-height: 21px;
     text-transform: capitalize;
     color: #fff;
-
   }
   img {
     width: 50px;
@@ -81,4 +80,21 @@ export const TeamPositionItem = styled.li`
     css`
       color: #004ea3;
     `};
+`;
+
+export const PlayerList = styled.div`
+  width:100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: 48px;
+  gap: 8px;
+
+  p {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 27px;
+    color: #004ea3;
+  }
 `;

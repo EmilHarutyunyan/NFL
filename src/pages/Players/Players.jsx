@@ -28,8 +28,10 @@ import {
   getColleges,
   getPositions,
   selectGroup,
+  setResetGroup,
 } from "../../app/features/group/groupSlice.js";
 import { NotFound } from "../../components/NotFound/NotFound.jsx";
+import { resPlayersDraft } from "../../app/features/playersDraft/playersDraftSlice.js";
 
 const Players = () => {
   const shouldLog = useRef(true);
@@ -44,8 +46,12 @@ const Players = () => {
     if (shouldLog.current) {
       shouldLog.current = false;
       dispatch(getPlayers());
-      dispatch(getPositions());
+      // dispatch(getPositions());
       dispatch(getColleges());
+    }
+    return () => {
+       dispatch(setResetGroup());
+       dispatch(resPlayersDraft());
     }
     // eslint-disable-next-line
   }, []);

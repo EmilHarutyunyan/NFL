@@ -1,9 +1,11 @@
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Title from "../../components/Title/Title";
 import {
-  AccardinWrapper,
+  AccordionWrapper,
   ImgWrap,
+  PlayerList,
   TeamInfo,
   TeamPosition,
   TeamPositionItem,
@@ -22,12 +24,13 @@ import {
 import { searchInfo } from "../../utils/utils";
 import { TEAM_NEEDS } from "../../utils/constants";
 import Spinner from "../../components/Spinner/Spinner";
+import { PlayerListIcon } from "../../components/Icons/Icons";
 const TeamNeeds = () => {
   const [expanded, setExpanded] = useState(false);
   const dispatch = useDispatch();
   const { teamNeeds,loading } = useSelector(selectTeamNeeds);
   const initial = useRef(true);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (initial.current) {
       initial.current = false;
@@ -39,6 +42,10 @@ const TeamNeeds = () => {
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
+
+  const handleNavigation = (query,team) => {
+    navigate(query, { state: team });
+  }
 
   return (
     <Wrapper className="main-container">
@@ -53,7 +60,7 @@ const TeamNeeds = () => {
               .flat();
 
             return (
-              <AccardinWrapper key={idx}>
+              <AccordionWrapper key={idx}>
                 <Accordion
                   expanded={expanded === `panel${idx}`}
                   onChange={handleChange(`panel${idx}`)}
@@ -84,7 +91,9 @@ const TeamNeeds = () => {
                     <TeamSummary>
                       <TeamInfo bgColor={teamInfo[0].color}>
                         <div className="tema-info-name">
-                          <p className="tema-info-name-loc">{teamInfo[0].loc}</p>
+                          <p className="tema-info-name-loc">
+                            {teamInfo[0].loc}
+                          </p>
                           <p className="tema-info-name-need">Needs</p>
                         </div>
                         <ImgWrap>
@@ -92,11 +101,11 @@ const TeamNeeds = () => {
                           <p>{round?.name}</p>
                         </ImgWrap>
                       </TeamInfo>
+
                       <TeamPosition>
                         {positions.map((position, idx) => {
                           return (
                             <>
-                              
                               {idx < 5 ? (
                                 <TeamPositionItem primary key={position.id}>
                                   {position.name}
@@ -106,12 +115,19 @@ const TeamNeeds = () => {
                                   {position.name}
                                 </TeamPositionItem>
                               )}
-                              
                             </>
                           );
                         })}
                       </TeamPosition>
                     </TeamSummary>
+                    <PlayerList
+                      onClick={() =>
+                        handleNavigation(`/team-list?list=${round?.name}`,{name:round?.name,logo:round?.logo})
+                      }
+                    >
+                        <PlayerListIcon />
+                        <p>Players list</p>
+                    </PlayerList>
                   </AccordionSummary>
                   <AccordionDetails>
                     <DraftPicks
@@ -155,7 +171,7 @@ const TeamNeeds = () => {
                     />
                   </AccordionDetails>
                 </Accordion>
-              </AccardinWrapper>
+              </AccordionWrapper>
             );
           })
         : null}
