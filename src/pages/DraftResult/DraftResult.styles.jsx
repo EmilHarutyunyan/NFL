@@ -49,12 +49,16 @@ export const DraftResultWrap = styled.div`
   background: #ffffff;
   width: 100%;
   max-width: 1075px;
-  height: 600px;
+  background: #ffffff;
   margin: 0 auto;
   border-radius: 10px;
+  margin-bottom: 100px;
 `;
 
 export const DraftResultHead = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 32px;
   background: #022142;
   border-radius: 10px 10px 0px 0px;
   padding: 11px 16px 11px 16px;
@@ -71,6 +75,7 @@ export const DraftResultRoundItem = styled.div`
   line-height: 30px;
   color: #0e1118;
   padding: 15px 16px;
+  cursor: pointer;
 
   ${(props) =>
     props.active &&
@@ -83,16 +88,21 @@ export const DraftResultFull = styled.div`
   display: flex;
   gap: 21px;
 `;
-export const DraftResultTeam = styled.div``;
+export const DraftResultTeam = styled.div`
+  background-image: url(${(props) => props.backImg || ""});
+  background-position: center;
+  background-repeat: repeat-y;
+`;
 
 export const DraftResultTeamItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 120px;
   border-bottom: 1px solid #e8ebef;
-  > div {
-    /* width: calc(100% / 6); */
+  padding: 16px 0;
+
+  & div {
+    width: calc(100% / 6);
     text-align: center;
   }
   .draft-result-team {
@@ -103,17 +113,20 @@ export const DraftResultTeamItem = styled.div`
       color: #3e464f;
       margin-right: auto;
       padding-left: 17px;
+      text-align: left;
     }
     &-adp {
       color: #50647b;
       font-weight: 400;
       font-size: 20px;
       line-height: 31px;
+      width: 35%;
     }
     &-log {
       display: flex;
       align-items: center;
       gap: 15px;
+      width: 35%;
       p {
         font-weight: 600;
         font-size: 20px;
@@ -122,11 +135,13 @@ export const DraftResultTeamItem = styled.div`
       }
     }
     &-rating {
-      display:flex;
+      display: flex;
       align-items: center;
       margin-left: auto;
-      gap:5px;
-      padding-right: 17px;
+      gap: 5px;
+      padding-right: 22px;
+      text-align: right;
+      justify-content: flex-end;
       &-block {
         width: 14px;
         height: 14px;
@@ -139,6 +154,13 @@ export const DraftResultTeamItem = styled.div`
 export const DraftResultPick = styled.div`
   width: 100%;
   max-width: 345px;
+  .downland-btn {
+    display:flex;
+    align-items: center;
+    color: #004EA3;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
 
 `
 export const DraftResultPickWrap = styled.div`
@@ -152,6 +174,12 @@ export const DraftResultPickWrap = styled.div`
       align-items: center;
       color: #fff;
       gap: 20px;
+      padding: 12px 0 12px 15px;
+      & img {
+        display: block;
+        width:42px;
+        height: auto;
+      }
       p {
         font-weight: 400;
         font-size: 20px;
@@ -242,4 +270,15 @@ export const DraftResultPickWrap = styled.div`
       }
     }
   }
+`;
+
+export const DraftResultFooter = styled.div`
+  background: #cad2da;
+  border-radius: 0px 0px 10px 10px;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 30px;
+  color: #022142;
+  text-align: center;
+  padding: 12px 0;
 `;

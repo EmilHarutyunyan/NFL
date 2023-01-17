@@ -16,10 +16,12 @@ import { selectDraftConfig } from '../app/features/draftConfig/draftConfigSlice'
 import TeamNeeds from '../pages/TeamNeeds/TeamNeeds';
 import DraftResult from '../pages/DraftResult/DraftResult';
 import TeamList from '../pages/TeamList/TeamList';
+import { selectDraftResult, setDraftResult } from '../app/features/draftResult/draftResultSlice';
 
 const Router = () => {
   const {teamSelect} = useSelector(selectDraftConfig)
-
+  const { results } = useSelector(selectDraftResult)
+ 
   return (
     <>
       <Routes>
@@ -29,9 +31,9 @@ const Router = () => {
           <Route path="draft-configuration" element={<DraftConfiguration />} />
           <Route path="draft-player" element={<ProtectRouter access={teamSelect} redirect={'/draft-configuration'}><DraftPlayer /></ProtectRouter>} />
           <Route path="draft-result" element={
-            // <ProtectRouter access={teamSelect} redirect={'/draft-result'}>
+            <ProtectRouter access={results} redirect={'/draft-configuration'}>
               <DraftResult />
-            // </ProtectRouter>
+            </ProtectRouter>
           } 
 
           />

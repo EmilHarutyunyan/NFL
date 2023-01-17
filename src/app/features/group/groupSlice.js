@@ -12,7 +12,7 @@ export const initialState = {
     "OT",
     "CB",
     "S",
-    "DT",
+    "DL",
     "EDGE",
     "LB",
     "C",

@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+// utils
+import { POSITIONS_COLOR } from "../../utils/constants";
 import Search from "../Search/Search";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +19,7 @@ import {
 import infoImg from "../../assets/img/Info.png";
 import pauseImg from "../../assets/img/pause.png";
 
-// Styles
+// styles
 import {
   Wrapper,
   SelectTeam,
@@ -26,12 +28,14 @@ import {
   DraftPlayerWrapper,
   DraftPlayerItems,
   DraftPlayerItem,
+  PicksInfo,
 } from "./DraftPlayerChoose.styles";
 
 import Spinner from "../Spinner/Spinner";
 import Pagination from "../Pagination/Pagination";
 import {
   delPlayersDraft,
+  playerPositionMulti,
   selectPlayersDraft,
   setCurrentPage,
   setPlayerItems,
@@ -39,6 +43,7 @@ import {
   setSearchPlayers,
 } from "../../app/features/playersDraft/playersDraftSlice";
 import { pricentPick, upUsersCals } from "../../utils/utils";
+import { Switch } from "@mui/material";
 
 const PageSize = 10;
 const DraftPlayerChoose = ({
@@ -48,6 +53,7 @@ const DraftPlayerChoose = ({
   setChangeId,
 }) => {
   const groups = useSelector(selectGroup);
+  const [colorShow,setColorShow] = useState(true)
   const {
     draftPlayers,
     tradeValue,
@@ -58,7 +64,6 @@ const DraftPlayerChoose = ({
     teamSelectId,
   } = useSelector(selectDraftConfig);
   const dispatch = useDispatch();
-
   const { position, playerItems } = useSelector(selectPlayersDraft);
 
   const draftBtnDisable = draftStatus === "red" ? true : false;
@@ -68,19 +73,20 @@ const DraftPlayerChoose = ({
   const currentTableData = useMemo(() => {
     const firstPageIndex = (playersDraft.currentPage - 1) * PageSize;
     const lastPageIndex = firstPageIndex + PageSize;
+    
     if (draftPlayers.length > 0) {
       let playersData = playersDraft.results;
-
       if (playersDraft.search) {
         playersData = playersDraft.results.filter((player) => {
           const name = player.player.toLowerCase();
           return name.includes(playersDraft.search);
         });
       }
-      if (playersDraft.position && playersDraft.position !== "All") {
+      if (playersDraft.position.length && !playersDraft.position.includes('All')) {
         playersData = playersDraft.results.filter((player) => {
           const position = player.position;
-          return position.toLowerCase() === playersDraft.position.toLowerCase();
+          return playersDraft.position.includes(position);
+          // return position.toLowerCase() === playersDraft.position.toLowerCase();
         });
       }
 
@@ -99,7 +105,7 @@ const DraftPlayerChoose = ({
   }, [
     playersDraft.currentPage,
     playersDraft.search,
-    playersDraft.position,
+    playersDraft.position.length,
     playersDraft.results,
   ]);
 
@@ -108,7 +114,6 @@ const DraftPlayerChoose = ({
       initial.current = false;
       return;
     }
-
     const timer = setTimeout(() => {
       dispatch(setSearchPlayers(searchValue));
     }, 500);
@@ -209,6 +214,10 @@ const DraftPlayerChoose = ({
                 </>
               )}
             </div>
+            <PicksInfo>
+              <p>Remaining picks</p>
+              <p>{teamSelectId.join(",")}</p>
+            </PicksInfo>
           </SelectTeam>
           <Search
             value={searchValue}
@@ -223,18 +232,28 @@ const DraftPlayerChoose = ({
                 return (
                   <NumItem
                     key={id}
+                    backColor={POSITIONS_COLOR[item.split(" ")[0]]}
                     onClick={() => {
                       dispatch(setCurrentPage(1));
-                      dispatch(setPositionPlayersDraft(item.split(" ")[0]));
+                      dispatch(playerPositionMulti(item.split(" ")[0]));
                     }}
                     className={
-                      position === item.split(" ")[0] ? "active" : null
+                      playersDraft.position.includes(item.split(" ")[0])
+                        ? "active"
+                        : null
                     }
                   >
                     <Nums num={item.split(" ")[0]} />
                   </NumItem>
                 );
               })}
+            <div>
+              Show positions colors in list
+              <Switch
+                defaultChecked
+                onChange={() => setColorShow((prev) => !prev)}
+              />
+            </div>
           </NumWrapper>
           <DraftPlayerWrapper>
             <DraftPlayerItems>
@@ -242,7 +261,10 @@ const DraftPlayerChoose = ({
                 {playersDraft.results.length > 0 &&
                   currentTableData.playersDataSlice.map((item, idx) => {
                     return (
-                      <DraftPlayerItem key={idx}>
+                      <DraftPlayerItem
+                        key={idx}
+                        backColor={colorShow ? POSITIONS_COLOR[item.position] : ''}
+                      >
                         <div className="player-draft">
                           <div className="player-td player-rank">
                             <p>Rank</p>
@@ -260,7 +282,7 @@ const DraftPlayerChoose = ({
                             {item.position}
                           </h4>
                           {/* <img src={colleageImg} alt="" /> */}
-                          <h4 className="player-td playyer-college">
+                          <h4 className="player-td player-college">
                             {item.school}
                           </h4>
                           <img src={infoImg} alt="" />

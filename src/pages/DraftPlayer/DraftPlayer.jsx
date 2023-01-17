@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   selectDraftConfig,
   setResetRound,
   setStatus,
 } from "../../app/features/draftConfig/draftConfigSlice";
+import { selectDraftResult, setDraftResult, setDraftResultAction } from "../../app/features/draftResult/draftResultSlice";
 // import { getPositions } from '../../app/features/group/groupSlice'
 import {
   getPlayersDraft,
@@ -35,34 +37,43 @@ const DraftPlayer = () => {
     teams,
     round,
     draftPlayers,
+    teamSelect
   } = useSelector(selectDraftConfig);
   // const [ordering,setOrdering] = useState("")
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const playersDraft = useSelector(selectPlayersDraft);
+  const draftResults  = useSelector(selectDraftResult);
+
   const [thisId, setThisId] = useState(0);
   const [changeId, setChangeId] = useState(0);
 
   const count = useMemo(() => {
-    if (countRender + 1 === teamSelectId[0]) {
-      let selectId = teamSelectId[0];
+    // if (countRender + 1 === teamSelectId[0]) {
+      let selectId = countRender;
       for (let i = 1; i <= +round; ++i) {
         if (selectId <= 32) {
           break;
         } else {
-          selectId = teamSelectId[0] - 32 * i;
+          selectId = countRender - 32 * i;
         }
       }
-      // const findTemas = teams.find((team) => selectId === team.id);
-      // findTemas && dispatch(getPlayersDraft(findTemas.name));
+      if (selectId !== 32) dispatch(getPlayersDraft(teams[selectId].name));
       dispatch(setStatus("orange"));
       return countRender + 1;
-    }
-   
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countRender]);
 
   useEffect(() => {
-    dispatch(getPlayersDraft());
+    
+    if (draftResults.results.length > 0) {
+      navigate("/draft-result");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftResults.results]);
+  useEffect(() => {
+    // dispatch(getPlayersDraft());
     // dispatch(getPositions())
 
     return () => {
@@ -73,7 +84,15 @@ const DraftPlayer = () => {
   }, []);
 
   useEffect(() => {
-     dispatch(getPlayersDraft(teams[countRender].name));
+    // let selectId = teamSelectId[0];
+    // for (let i = 1; i <= +round; ++i) {
+    //   if (selectId <= 32) {
+    //     break;
+    //   } else {
+    //     selectId = teamSelectId[0] - 32 * i;
+    //   }
+    // }
+   
     if (countRender === tradeValue?.results?.length) {
       const data = { items: [] };
       draftPlayers.forEach((item) => {
@@ -97,8 +116,9 @@ const DraftPlayer = () => {
 
         data.items.push(dataItem);
       });
-      
+      dispatch(setDraftResultAction(draftPlayers, teamSelect, round));
       dispatch(setHistoryBoard(data));
+      // navigate('/draft-result')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countRender]);

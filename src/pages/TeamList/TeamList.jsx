@@ -174,8 +174,6 @@ const TeamList = () => {
                     previous={playersDraft.previous}
                     next={playersDraft.next}
                     onPageChange={(page) => {
-                      console.log("setCurrentPageList :", setCurrentPageList);
-                    
                       dispatch(setCurrentPageList(page));
                     }}
                   />

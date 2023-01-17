@@ -16,6 +16,7 @@ import {
   setResetRound,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { Switch } from "@mui/material";
+import { resDraftResult } from "../../app/features/draftResult/draftResultSlice";
 
 export const DraftConfiguration = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,7 @@ export const DraftConfiguration = () => {
     draftConfigRef.current?.scrollIntoView({ behavior: "smooth" });
     dispatch(setResetRound());
     dispatch(getTeams());
+    dispatch(resDraftResult())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

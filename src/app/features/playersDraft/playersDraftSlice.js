@@ -2,6 +2,7 @@ import axios from "axios";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { API_ENDPOINT } from "../../../config/config";
+import { toggleArrObj } from "../../../utils/utils";
 
 const initialState = {
   loading: false,
@@ -13,7 +14,7 @@ const initialState = {
   offset: 0,
   results: [],
   search: "",
-  position:"",
+  position:[],
   colleage:"",
   playerChoose:[],
   playerItems:[],
@@ -145,6 +146,7 @@ export const playersDraftSlice = createSlice({
       state.search = action.payload
     },
     setPositionPlayersDraft: (state, action) => {
+     
       state.position = action.payload
     },
     setColleagePlayers: (state, action) => {
@@ -232,6 +234,9 @@ export const playersDraftSlice = createSlice({
 export const selectPlayersDraft = (state) => state.playersDraft;
 export const { setPlayersDraft,setSearchPlayers,setPositionPlayersDraft,setColleagePlayers,setCurrentPage,setPlayerItems,setNewPlayers,resPlayersDraft,setPlayerChoose } = playersDraftSlice.actions;
 
+
+
+
 // Action Creator Thunk
 export const positionAction = (positionValue) => (dispatch, getState) => {
   const {
@@ -244,6 +249,18 @@ export const positionAction = (positionValue) => (dispatch, getState) => {
     dispatch(postitionPlayersDraft(positionValue));
   }
 };
+
+export const playerPositionMulti = (pos) => (dispatch,getState) => {
+  const { playersDraft: {position} } = getState();
+  let newPosition = []
+  if (position.length && position.includes(pos)) {
+    newPosition = position.filter(item => item !== pos)
+  } else {
+    newPosition = [...position,pos]
+  }
+  dispatch(setPositionPlayersDraft(newPosition))
+
+}
 
 export const colleageAction = (colleageValue) => (dispatch, getState) => {
   if(colleageValue === '') {

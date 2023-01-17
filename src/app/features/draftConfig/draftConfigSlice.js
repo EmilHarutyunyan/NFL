@@ -10,7 +10,7 @@ const initialState = {
   teamSelectId: [],
   teamSelectIdRound: [],
   teamRemoveId: [],
-  round: "1",
+  round: 1,
   positionalNeed: false,
   bpaCalculated: "",
   userQuantity: 3,

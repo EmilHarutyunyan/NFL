@@ -160,3 +160,21 @@ export const TEAM_NEEDS = [
     loc:'WAS'
   },
 ];
+
+export const POSITIONS_COLOR = {
+  "All": '',
+  "QB": '#E7E9EB',
+  "WR": '#F9F2D9',
+  "TE": '#E7D1DB',
+  "RB":'#EAF0E7',
+  "OT": '#F1F1E6',
+  "CB": '#D9BDE3',
+  "S": '#FAEBA7',
+  "DL": '#B4EECD',
+  "EDGE": '#EDE0EB',
+  "LB": '#DCE6EE',
+  "C": '#F2E2DE',
+  "G": '#ACE8DC',
+  "P": '#F8E8D9',
+  "K":'#FAEBA7'
+}

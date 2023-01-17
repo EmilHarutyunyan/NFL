@@ -70,7 +70,7 @@ const DraftValueChart = () => {
               <table>
                 <thead>
                   <tr>
-                    <th>Pik</th>
+                    <th>Selection</th>
                     {showHide.team ? (null) : (<th>Team</th>)}
                     <th>Value</th>
                   </tr>

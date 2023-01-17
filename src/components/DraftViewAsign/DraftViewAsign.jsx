@@ -2,20 +2,19 @@ import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 // Styles
-import { Wrapper } from "./DraftViewAsign.styles";
+import { PlayerName, PlayerPos, Wrapper } from "./DraftViewAsign.styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getTradeValue,
   selectDraftConfig,
   setCountRender,
   setDraftPlayersAction,
   setFirstTradeValue,
-  setStatus,
   setTradeValue,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { useMemo } from "react";
 import { delPlayersDraft } from "../../app/features/playersDraft/playersDraftSlice";
 import { roundTeam } from "../../utils/utils";
+import { POSITIONS_COLOR } from "../../utils/constants";
 
 
 const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
@@ -230,8 +229,12 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
                         thisId,
                       }}
                     >
-                      <p className="player-name">{team.player.player}</p>
-                      <p className="player-pos">{team.player.position}</p>
+                      <PlayerName>{team.player.player}</PlayerName>
+                      <PlayerPos
+                        backColor={POSITIONS_COLOR[team.player.position]}
+                      >
+                        {team.player.position}
+                      </PlayerPos>
                       <p className="player-colleg">{team.player.school}</p>
                     </Delayed>
                   )}

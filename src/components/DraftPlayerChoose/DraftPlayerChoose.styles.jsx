@@ -1,7 +1,6 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-export const Wrapper = styled.div`
-`;
+export const Wrapper = styled.div``;
 
 export const SelectTeam = styled.div`
   display: flex;
@@ -17,6 +16,17 @@ export const SelectTeam = styled.div`
     width: 80px;
     height: 80px;
   }
+`;
+
+export const PicksInfo = styled.div`
+  background: #e8ebef;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 30px;
+  text-align: center;
+  color: #0e1118;
+  padding: 8px 16px;
 `;
 export const NumWrapper = styled.div`
   display: flex;
@@ -35,12 +45,16 @@ export const NumItem = styled.div`
   justify-content: center;
   cursor: pointer;
   padding: 5px 14px;
+  ${(props) =>
+    props.backColor &&
+    css`
+      background-color: ${(props) => props.backColor};
+      border: none;
+    `}
 
   &.active {
     border: 2px solid #004ea3;
-    border
   }
-
   span {
     color: #0e1118;
     font-size: 18px;
@@ -48,8 +62,6 @@ export const NumItem = styled.div`
     font-weight: 400;
   }
 `;
-
-
 
 export const DraftPlayerWrapper = styled.div`
   .player-draft-btn-wrap {
@@ -67,7 +79,6 @@ export const DraftPlayerWrapper = styled.div`
     margin: 0 auto;
     cursor: pointer;
     justify-content: center;
-
   }
   .player-draft-btn:disabled,
   .player-draft-btn[disabled] {
@@ -76,8 +87,7 @@ export const DraftPlayerWrapper = styled.div`
 `;
 
 export const DraftPlayerItems = styled.ul`
-width: 100%;
-
+  width: 100%;
 `;
 
 export const DraftPlayerItem = styled.li`

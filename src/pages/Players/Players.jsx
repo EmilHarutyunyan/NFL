@@ -26,7 +26,6 @@ import {
 } from "./Players.styles";
 import {
   getColleges,
-  getPositions,
   selectGroup,
   setResetGroup,
 } from "../../app/features/group/groupSlice.js";

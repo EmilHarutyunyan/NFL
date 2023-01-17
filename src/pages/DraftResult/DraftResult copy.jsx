@@ -1,11 +1,7 @@
-import React, { useState, useRef, useMemo, useCallback } from "react";
-// import downloadjs from "downloadjs";
-// import html2canvas from "html2canvas";
-// import { toPng } from "html-to-image";
-import { useSelector } from "react-redux";
-import { selectDraftResult } from "../../app/features/draftResult/draftResultSlice";
-import { toPng } from "html-to-image";
-import { useNavigate } from "react-router-dom";
+import React, { useRef } from "react";
+import downloadjs from "downloadjs";
+import html2canvas from "html2canvas";
+
 // components
 import Title from "../../components/Title/Title";
 import Button from "../../components/Buttons/Button";
@@ -14,13 +10,11 @@ import MySelectImg from "../../components/MySelect/MySelectImg";
 // img
 import twitterBlue from "../../assets/img/twitter-blue.png";
 import logoImg from "../../assets/img/logo.png";
-import ordinImg from "../../assets/img/ordin.png";
 import markaImg from "../../assets/img/marka.png";
 import downlandImg from "../../assets/img/downlandImg.png";
 
 // styles
 import {
-  DraftResultFooter,
   DraftResultFull,
   DraftResultHead,
   DraftResultPick,
@@ -34,11 +28,13 @@ import {
   ImgWrap,
   Wrapper,
 } from "./DraftResult.styles";
-
+import { useSelector } from "react-redux";
+import { selectDraftResult } from "../../app/features/draftResult/draftResultSlice";
+import { useState } from "react";
+import { useMemo } from "react";
 
 const DraftResult = () => {
   const domEl = useRef(null);
-  const navigate = useNavigate();
   const [roundSelect, setRoundSelect] = useState(1);
   const { results, roundTeam, teamsName, teamsPlayer } =
     useSelector(selectDraftResult);
@@ -52,6 +48,10 @@ const DraftResult = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamMain]);
 
+  console.log(
+    "🚀 ~ file: DraftResult.jsx:45 ~ teamSelect ~ teamSelect",
+    teamSelect
+  );
   const teamTable = useMemo(() => {
     return results.filter(
       (res) => +res.round_index.split(" ")[0] === roundSelect
@@ -59,27 +59,11 @@ const DraftResult = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roundSelect]);
 
-  // const handleCaptureClick = async () => {
-  //   const canvas = await html2canvas(domEl.current);
-  //   const dataURL = canvas.toDataURL("image/png");
-  //   downloadjs(dataURL, "download.png", "image/png");
-  // };
-    const onButtonClick = useCallback(() => {
-      if (domEl.current === null) {
-        return;
-      }
-
-      toPng(domEl.current, { cacheBust: true })
-        .then((dataUrl) => {
-          const link = document.createElement("a");
-          link.download = "my-image-name.png";
-          link.href = dataUrl;
-          link.click();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }, [domEl]);
+  const handleCaptureClick = async () => {
+    const canvas = await html2canvas(domEl.current);
+    const dataURL = canvas.toDataURL("image/png");
+    downloadjs(dataURL, "download.png", "image/png");
+  };
   return (
     <Wrapper className="main-container">
       <Title
@@ -91,14 +75,14 @@ const DraftResult = () => {
           <div className="share-draft">
             <p>Share Your Mock Draft Result</p>
             <div>
-              <img src={twitterBlue} alt="" onClick={onButtonClick} />
+              <img src={twitterBlue} alt="" />
             </div>
           </div>
         </div>
         <Button
           btnText="Enter Draft"
           btnClassName="enter-draft-btn"
-          onBtnClick={() => navigate("draft-configuration")}
+          onBtnClick={() => alert("ok")}
         />
       </DraftResultShare>
       <DraftResultFull>
@@ -107,34 +91,15 @@ const DraftResult = () => {
             <ImgWrap>
               <img src={logoImg} alt="logo" />
             </ImgWrap>
-            <ImgWrap>
-              <img src={ordinImg} alt="logo" />
-            </ImgWrap>
-            <ImgWrap>
-              <img src={ordinImg} alt="logo" />
-            </ImgWrap>
-            <ImgWrap>
-              <img src={ordinImg} alt="logo" />
-            </ImgWrap>
-            <ImgWrap>
-              <img src={ordinImg} alt="logo" />
-            </ImgWrap>
-            <ImgWrap>
-              <img src={ordinImg} alt="logo" />
-            </ImgWrap>
-            <ImgWrap>
-              <img src={ordinImg} alt="logo" />
-            </ImgWrap>
           </DraftResultHead>
           <DraftResultRound>
-            {roundTeam?.map((item, idx) => {
+            {roundTeam?.map((item) => {
               const roundText = item.split(" ");
               if (+roundText[0] === roundSelect) {
                 return (
                   <DraftResultRoundItem
                     active
                     onClick={() => setRoundSelect(+roundText[0])}
-                    key={idx}
                   >
                     {roundText[1]} {roundText[0]}
                   </DraftResultRoundItem>
@@ -142,7 +107,6 @@ const DraftResult = () => {
               }
               return (
                 <DraftResultRoundItem
-                  key={idx}
                   onClick={() => setRoundSelect(+roundText[0])}
                 >
                   {roundText[1]} {roundText[0]}
@@ -152,9 +116,9 @@ const DraftResult = () => {
           </DraftResultRound>
           <DraftResultTeam backImg={markaImg}>
             {teamTable.length &&
-              teamTable.map((team, idx) => {
+              teamTable.map((team) => {
                 return (
-                  <DraftResultTeamItem key={idx}>
+                  <DraftResultTeamItem>
                     <div className="draft-result-team-round">
                       <p>
                         R{roundSelect}:<span>{team?.index}</span>
@@ -181,11 +145,10 @@ const DraftResult = () => {
                 );
               })}
           </DraftResultTeam>
-          <DraftResultFooter>www.DraftSimulator.com</DraftResultFooter>
         </DraftResultWrap>
         <DraftResultPick>
-          <div className="downland-btn">
-            <img src={downlandImg} alt="" onClick={onButtonClick} />
+          <div>
+            <img src={downlandImg} alt="" />
             <p>Download results image</p>
           </div>
           <DraftResultHead>
@@ -198,50 +161,51 @@ const DraftResult = () => {
           </DraftResultHead>
 
           <DraftResultPickWrap ref={domEl}>
-            {teamSelect && (
-              <div className="draft-result-pick-logo">
-                <img src={teamSelect[0]?.round?.logo} alt="Texans" />
-                <p>{teamSelect[0]?.round?.name}</p>
-              </div>
-            )}
             {teamSelect &&
-              teamSelect?.map((team, idx) => {
-                const round = +team.round_index.split(" ")[0];
-                return (
-                  <React.Fragment key={idx}>
-                    {/* <div className="draft-result-pick-logo">
-                      <img src={texanLogo} alt="Texans" />
-                      <p>Texans</p>
-                    </div> */}
-                    <div className="draft-result-pick-item">
-                      <div className="draft-result-pick-item-info">
-                        <div className="draft-result-pick-round">
-                          <p>
-                            R{round}:<span>{team?.index}</span>
-                          </p>
+              Object.keys(teamSelect)?.map((team) => {
+                if (Array.isArray(teamSelect[team])) {
+                  return teamSelect[team].map((team) => {
+                    const round = +team.round_index.split(" ")[0];
+                    return (
+                      <>
+                        <div className="draft-result-pick-item">
+                          <div className="draft-result-pick-item-info">
+                            <div className="draft-result-pick-round">
+                              <p>
+                                R{round}:<span>{team?.index}</span>
+                              </p>
+                            </div>
+                            <div className="draft-result-pick-adp">
+                              <p>ADP</p>
+                            </div>
+                            <div className="draft-result-pick-name">
+                              {team?.player?.player}
+                            </div>
+                            <div className="draft-result-pick-pos">
+                              <p>{team?.player?.position}</p>
+                            </div>
+                          </div>
+                          <div className="draft-result-pick-item-text">
+                            <div className="draft-result-pick-college">
+                              <p>{team?.player?.school}</p>
+                            </div>
+                            <div className="draft-result-pick-rating">
+                              <p className="draft-result-pick-rating-block"></p>
+                              <p>A+</p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="draft-result-pick-adp">
-                          <p>ADP</p>
-                        </div>
-                        <div className="draft-result-pick-name">
-                          {team?.player?.player}
-                        </div>
-                        <div className="draft-result-pick-pos">
-                          <p>{team?.player?.position}</p>
-                        </div>
-                      </div>
-                      <div className="draft-result-pick-item-text">
-                        <div className="draft-result-pick-college">
-                          <p>{team?.player?.school}</p>
-                        </div>
-                        <div className="draft-result-pick-rating">
-                          <p className="draft-result-pick-rating-block"></p>
-                          <p>A+</p>
-                        </div>
-                      </div>
+                      </>
+                    );
+                  });
+                } else {
+                  return (
+                    <div className="draft-result-pick-logo">
+                      <img src={teamSelect[team]?.logo} alt="Texans" />
+                      <p>{teamSelect[team]?.name}</p>
                     </div>
-                  </React.Fragment>
-                );
+                  );
+                }
               })}
           </DraftResultPickWrap>
         </DraftResultPick>
