@@ -35,7 +35,6 @@ const PageSize = 10;
 const TeamList = () => {
   const [searchParams] = useSearchParams();
   const { state: team } = useLocation();
-  const [maxValuePlayer, seMaxValuePlayer] = useState(null)
   const listQuery = searchParams.get("list") || "";
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
@@ -48,11 +47,6 @@ const TeamList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listQuery]);
 
-  useEffect(() => {
-    if(playersDraft.results.length > 0) {
-      seMaxValuePlayer(playersDraft.results[0].id);
-    }
-  }, [playersDraft.results]);
   useEffect(() => {
     const timer = setTimeout(() => {
       dispatch(setSearchPlayerList(searchValue));
@@ -137,8 +131,7 @@ const TeamList = () => {
               <>
                 {playersDraft.results.length > 0 &&
                   currentTableData?.playersDataSlice.map((item, idx) => {
-                    const colorBackground =
-                      item.id === maxValuePlayer ? "#FFF1ED" : "#FFF9E5";
+                    const colorBackground = item.id === 1 ? "#FFF1ED" : (item.id > 1 && item.id < 9) ? '#FFF9E5' : '#fff'
                     return (
                       <DraftPlayerItem key={idx} backColor={colorBackground}>
                         <div className="player-draft">

@@ -48,10 +48,7 @@ const DraftResult = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamMain]);
 
-  console.log(
-    "🚀 ~ file: DraftResult.jsx:45 ~ teamSelect ~ teamSelect",
-    teamSelect
-  );
+  
   const teamTable = useMemo(() => {
     return results.filter(
       (res) => +res.round_index.split(" ")[0] === roundSelect

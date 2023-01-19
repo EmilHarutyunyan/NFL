@@ -159,6 +159,11 @@ export const TEAM_NEEDS = [
     color: '#631A1A',
     loc:'WAS'
   },
+  {
+    name: 'Bucaneers',
+    color: '#a31d2f',
+    loc:'BUC'
+  },
 ];
 
 export const POSITIONS_COLOR = {

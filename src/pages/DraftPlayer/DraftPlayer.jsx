@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
+  getTradeValue,
   selectDraftConfig,
   setResetRound,
   setStatus,
@@ -37,9 +38,10 @@ const DraftPlayer = () => {
     teams,
     round,
     draftPlayers,
-    teamSelect
+    teamSelect,
+    teamPickIndex,
   } = useSelector(selectDraftConfig);
-  // const [ordering,setOrdering] = useState("")
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const playersDraft = useSelector(selectPlayersDraft);
@@ -49,21 +51,23 @@ const DraftPlayer = () => {
   const [changeId, setChangeId] = useState(0);
 
   const count = useMemo(() => {
-    // if (countRender + 1 === teamSelectId[0]) {
-      let selectId = countRender;
-      for (let i = 1; i <= +round; ++i) {
-        if (selectId <= 32) {
-          break;
-        } else {
-          selectId = countRender - 32 * i;
-        }
-      }
-      if (selectId !== 32) dispatch(getPlayersDraft(teams[selectId].name));
+    if (tradeValue.mouthing) {
+      // let selectId = countRender;
+      // for (let i = 1; i <= +round; ++i) {
+      //   if (selectId <= 32) {
+      //     break;
+      //   } else {
+      //     selectId = countRender - 32 * i;
+      //   }
+      // }
+      // if (selectId !== 32) 
+      
+      dispatch(getPlayersDraft(tradeValue.results[countRender].round.name));
       dispatch(setStatus("orange"));
       return countRender + 1;
-    // }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countRender]);
+  }, [countRender, tradeValue.mouthing]);
 
   useEffect(() => {
     
@@ -73,9 +77,8 @@ const DraftPlayer = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftResults.results]);
   useEffect(() => {
-    // dispatch(getPlayersDraft());
+    dispatch(getTradeValue());
     // dispatch(getPositions())
-
     return () => {
       dispatch(resPlayersDraft());
       dispatch(setResetRound());
@@ -122,7 +125,10 @@ const DraftPlayer = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countRender]);
+console.log(count)
+console.log('count :', count);
 
+console.log('teamPickIndex :', teamPickIndex);
   return (
     <Wrapper className="main-container">
       <Banner>
@@ -139,30 +145,36 @@ const DraftPlayer = () => {
       </Banner>
 
       <DraftView>
-        <DraftViewAsign
-          thisId={countRender}
-          setThisId={setThisId}
-          setChangeId={setChangeId}
-          changeId={changeId}
-          players={playersDraft}
-        />
-        <DraftViewSimulator>
-          {!teamSelectId.includes(count) && status !== "red" ? (
-            <DraftSimulator />
-          ) : playersDraft.results.length > 0 ? (
-            <DraftPlayerChoose
-              playersDraft={playersDraft}
-              draftStatus={status}
-              thisId={thisId}
+        {tradeValue.mouthing && (
+          <>
+            <DraftViewAsign
+              thisId={countRender}
               setThisId={setThisId}
               setChangeId={setChangeId}
+              changeId={changeId}
+              players={playersDraft}
+              tradeValue={tradeValue}
             />
-          ) : null}
-        </DraftViewSimulator>
+            <DraftViewSimulator>
+              {!teamPickIndex.includes(count) && status !== "red"  ? (
+                <DraftSimulator />
+              ) : playersDraft.results.length > 0 ? (
+                <DraftPlayerChoose
+                  playersDraft={playersDraft}
+                  draftStatus={status}
+                  thisId={thisId}
+                  setThisId={setThisId}
+                  setChangeId={setChangeId}
+                />
+              ) : null}
+            </DraftViewSimulator>
+          </>
+        )}
       </DraftView>
       <hr className="line" />
     </Wrapper>
   );
 };
+
 
 export default DraftPlayer;

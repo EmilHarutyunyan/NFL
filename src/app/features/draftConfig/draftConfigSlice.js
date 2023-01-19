@@ -9,6 +9,7 @@ const initialState = {
   teamSelect: [],
   teamSelectId: [],
   teamSelectIdRound: [],
+  teamPickIndex:[],
   teamRemoveId: [],
   round: 1,
   positionalNeed: false,
@@ -24,7 +25,7 @@ const initialState = {
   draftRandomnessTeam:[],
   pauseId: [],
   countRender: 0,
-  tradeValue: { mounting: false },
+  tradeValue: { mouthing: false },
 };
 
 export const getHistoryBoard = createAsyncThunk(
@@ -69,11 +70,13 @@ export const getTradeValue = createAsyncThunk(
   async (_, { dispatch, rejectWithValue, getState }) => {
     try {
       const {
-        draftConfig: { round },
+        draftConfig: { round, teamSelectId },
       } = getState();
       const res = await axios.get(
-        `${API_ENDPOINT}trade-value-history/?limit=${+round * 32}&offset=0`
+        `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${round}&tm=`
       );
+      const teamPickIndex = res.data.results.filter((team) => teamSelectId.includes(team.round.id)).map(team => team.index)
+      dispatch(setTeamPickIndex(teamPickIndex))
       return res.data;
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -105,6 +108,9 @@ export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
+    setTeamPickIndex: (state, action) => {
+      state.teamPickIndex = action.payload
+    },
     setDraftCardDepth: (state,action) => {
       state.draftCardDepth = action.payload;
     },
@@ -178,7 +184,7 @@ export const draftConfigSlice = createSlice({
       state.loading = false;
       state.draftPlayers = [];
       state.status = "";
-      state.tradeValue = { mounting: false };
+      state.tradeValue = { mouthing: false };
     },
     setTeamRemoveId: (state, action) => {
       state.teamRemoveId = [action.payload];
@@ -193,7 +199,8 @@ export const draftConfigSlice = createSlice({
       state.pauseId = [];
     },
     delTeamsRound: (state, action) => {
-      state.teamSelectId = state.teamSelectId.filter(
+      debugger
+      state.teamPickIndex = state.teamPickIndex.filter(
         (item) => action.payload !== item
       );
     },
@@ -211,7 +218,7 @@ export const draftConfigSlice = createSlice({
     },
     [getTradeValue.fulfilled]: (state, action) => {
       state.loading = false;
-      state.tradeValue = { mounting: true, ...action.payload };
+      state.tradeValue = { mouthing: true, ...action.payload };
     },
     [getTradeValue.pending]: (state, action) => {
       state.loading = true;
@@ -235,6 +242,7 @@ export const draftConfigSlice = createSlice({
 export const selectDraftConfig = (state) => state.draftConfig;
 
 export const {
+  setTeamPickIndex,
   setDraftCardDepth,
   setDraftRandomnessTeam,
   setDraftRandomness,

@@ -62,6 +62,7 @@ const DraftPlayerChoose = ({
     status,
     teams,
     teamSelectId,
+    teamPickIndex,
   } = useSelector(selectDraftConfig);
   const dispatch = useDispatch();
   const { position, playerItems } = useSelector(selectPlayersDraft);
@@ -149,22 +150,26 @@ const DraftPlayerChoose = ({
   };
 
   const playerChoose = (item, idx) => {
-    let team = teamSelectId[0] - (+round - 1) * 32;
+    
+    let team = teamPickIndex[0]
+    // let team = teamPickIndex[0] - (+round - 1) * 32;
     let playerItem = { ...item };
 
     let pricentPlayers = [];
 
-    if (+round > 1) {
-      for (let i = 0; i < +round; ++i) {
-        if (teamSelectId[0] - 32 * i <= 32 && teamSelectId[0] - 32 * i >= 1) {
-          team = teamSelectId[0] - 32 * i;
-          break;
-        }
-      }
-    }
-    const teamName = teams[team - 1].name;
-    if (teams[team - 1].adp >= item[teamName]) {
-      const pricentValue = pricentPick(teams[team - 1].adp, item[teamName]);
+    // if (+round > 1) {
+    //   for (let i = 0; i < +round; ++i) {
+    //     if (teamPickIndex[0] - 32 * i <= 32 && teamPickIndex[0] - 32 * i >= 1) {
+    //       team = teamPickIndex[0] - 32 * i;
+    //       break;
+    //     }
+    //   }
+    // }
+    console.log(tradeValue.results);
+    const teamName = tradeValue.results[team - 1].round.name;
+    const teamValue = +tradeValue.results[team - 1].value
+    if (teamValue >= item[teamName]) {
+      const pricentValue = pricentPick(teamValue, item[teamName]);
       let playerItemsSlice = [];
 
       for (let i = 0; i < playerItems.length; ++i) {
@@ -175,16 +180,16 @@ const DraftPlayerChoose = ({
           playerItemsSlice.push(playerItems[i]);
         }
       }
-   
+
       pricentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
       playerItem = { ...item, [teamName]: item.value + pricentValue };
     }
 
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft("All"));
-    playerConcat(playerItem, teamSelectId[0], pricentPlayers);
-    dispatch(delTeamsRound(teamSelectId[0]));
-    setThisId(teamSelectId[0]);
+    playerConcat(playerItem, teamPickIndex[0], pricentPlayers);
+    dispatch(delTeamsRound(teamPickIndex[0]));
+    setThisId(teamPickIndex[0]);
     setChangeId(true);
   };
   return (
@@ -216,7 +221,7 @@ const DraftPlayerChoose = ({
             </div>
             <PicksInfo>
               <p>Remaining picks</p>
-              <p>{teamSelectId.join(",")}</p>
+              <p>{teamPickIndex.join(",")}</p>
             </PicksInfo>
           </SelectTeam>
           <Search
@@ -263,7 +268,9 @@ const DraftPlayerChoose = ({
                     return (
                       <DraftPlayerItem
                         key={idx}
-                        backColor={colorShow ? POSITIONS_COLOR[item.position] : ''}
+                        backColor={
+                          colorShow ? POSITIONS_COLOR[item.position] : ""
+                        }
                       >
                         <div className="player-draft">
                           <div className="player-td player-rank">

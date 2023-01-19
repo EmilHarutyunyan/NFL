@@ -93,7 +93,7 @@ export const DraftPlayerItems = styled.ul`
 export const DraftPlayerItem = styled.li`
   border-bottom: 1px solid #e8ebef;
   padding-bottom: 16px;
-  background-color: ${(props) => (props.backColor ? `${props.backColor}` : "")};
+  background-color: ${(props) => (props.backColor ? `${props.backColor}` : "#fff")};
   :first-child {
     margin-top: 20px;
   }

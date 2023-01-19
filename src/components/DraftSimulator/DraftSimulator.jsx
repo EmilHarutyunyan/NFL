@@ -7,28 +7,31 @@ import { DraftSimulatorWrapper, DraftStart, DraftStartBtn } from './DraftSimulat
 import pauseImg from "../../assets/img/pause.png";
 
 const DraftSimulator = () => {
-  const {countRender,round, teamSelectId} = useSelector(selectDraftConfig)
+  const { countRender, round, teamSelectId, teamPickIndex } =
+    useSelector(selectDraftConfig);
   const dispatch = useDispatch();
   const count = useMemo(() => countRender, [countRender])
  
   return (
     <DraftSimulatorWrapper>
-    <DraftStart>
-      {/* <p>{+round*32 - count}</p> */}
-      <p>{teamSelectId[0] ? teamSelectId[0] - count: +round*32 - count}</p>
-      <p>Picks until your turn ...</p>
-    </DraftStart>
-    <DraftStartBtn onClick={()=> {
-    
-      dispatch(setPauseId(count))
-      dispatch(setStatus('red'))
-    }
-      }>
-      <img src={pauseImg} alt="play_pause" />
-      <span>Pause</span>
-    </DraftStartBtn>
-  </DraftSimulatorWrapper>
-  )
+      <DraftStart>
+        {/* <p>{+round*32 - count}</p> */}
+        <p>
+          {teamPickIndex[0] ? teamPickIndex[0] - count : +round * 32 - count}
+        </p>
+        <p>Picks until your turn ...</p>
+      </DraftStart>
+      <DraftStartBtn
+        onClick={() => {
+          dispatch(setPauseId(count));
+          dispatch(setStatus("red"));
+        }}
+      >
+        <img src={pauseImg} alt="play_pause" />
+        <span>Pause</span>
+      </DraftStartBtn>
+    </DraftSimulatorWrapper>
+  );
 }
 
 export default DraftSimulator

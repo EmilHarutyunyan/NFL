@@ -54,6 +54,7 @@ const TeamNeeds = () => {
       {teamNeeds.length
         ? teamNeeds.map((team, idx) => {
             const { round, team_neads_info: teamNeedsInfo } = team;
+            
             const teamInfo = searchInfo(TEAM_NEEDS, round, (item) => item.name);
             const positions = teamNeedsInfo
               .map((item) => item.positions)
@@ -89,10 +90,10 @@ const TeamNeeds = () => {
                     }}
                   >
                     <TeamSummary>
-                      <TeamInfo bgColor={teamInfo[0].color}>
+                      <TeamInfo bgColor={teamInfo[0]?.color}>
                         <div className="tema-info-name">
                           <p className="tema-info-name-loc">
-                            {teamInfo[0].loc}
+                            {teamInfo[0]?.loc}
                           </p>
                           <p className="tema-info-name-need">Needs</p>
                         </div>
