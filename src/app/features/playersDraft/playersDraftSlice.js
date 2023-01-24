@@ -2,7 +2,6 @@ import axios from "axios";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { API_ENDPOINT } from "../../../config/config";
-import { toggleArrObj } from "../../../utils/utils";
 
 const initialState = {
   loading: false,
@@ -37,7 +36,7 @@ export const getPlayersDraft = createAsyncThunk(
       // Filter Choose Players
       if(playerChoose.length) {
         const playerChooseId = playerChoose.map(el => el.id)
-        const resDataResult = resData.results.filter(player =>  !playerChooseId.includes(player.id))
+        const resDataResult = resData.results.filter(player => !playerChooseId.includes(player.id))
         resData.results = resDataResult
       }
       dispatch(setPlayersDraft(resData));
@@ -169,7 +168,7 @@ export const playersDraftSlice = createSlice({
       state.playerChoose= action.payload;
     },
     resPlayersDraft: (state, action) => {
-      
+      // state = initialState
       state.loading = initialState.loading;
       state.status = initialState.status;
       state.colleage = initialState.colleage;
@@ -271,11 +270,12 @@ export const colleageAction = (colleageValue) => (dispatch, getState) => {
   }
 };
 export const delPlayersDraft = (players) => (dispatch,getState) => {
+
   const { playersDraft: { results,playerChoose } } = getState();
   // const delPlayers = [...players,...playerChoose]
   dispatch(setPlayerChoose([...players,...playerChoose]))
   const playersId = players.map(player => player.id)
-  const playerData = results.filter((itme) => !playersId.includes(itme.id))
+  const playerData = results.filter((item) => !playersId.includes(item.id))
   dispatch(setNewPlayers(playerData))
       
 }

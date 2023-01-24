@@ -18,8 +18,10 @@ export const BannerWrap = styled.div`
 export const BannerContent = styled.div`
   display: flex;
   align-items: center;
-  h1 {
+  gap: 25px;
+  h2 {
     font-size: 36px;
+    line-height: 54px;
     font-family: "Saira Semi Condensed", sans-serif;
     font-weight: 600;
     color: white;

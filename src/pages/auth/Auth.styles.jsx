@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const AuthWrap = styled.section`
   background: #022142;
@@ -10,6 +10,7 @@ export const AuthWrap = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 15px;
 `;
 
 export const AuthContent = styled.div`
@@ -17,7 +18,7 @@ export const AuthContent = styled.div`
   border-radius: 10px;
   background-color: white;
   padding: 40px 80px;
-  max-width: 600px;
+  max-width: 540px;
   width: 100%;
   h2 {
     text-align: center;
@@ -26,6 +27,13 @@ export const AuthContent = styled.div`
     color: #0e1118;
     font-family: "Saira Semi Condensed", sans-serif;
     font-weight: 400;
+  }
+  img {
+    display: block;
+    max-width: 91px;
+    width: 100%;
+    margin: 0 auto;
+    margin-bottom: 24px;
   }
 `;
 
@@ -72,16 +80,85 @@ export const NavigationList = styled.ul`
   justify-content: center;
   li a {
     color: #004ea3;
-    font-size: 16px;
-    font-family: "Poppins", sans-serif;
-    font-weight: 600;
-    text-decoration: none;
-    border-bottom: 1px solid;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
   }
   li a.forgot-pass {
     color: #004ea3 !important;
     font-family: "Poppins", sans-serif !important;
     font-weight: 400 !important;
     text-decoration: none !important;
+  }
+`;
+
+export const Error = styled.p`
+  color: #d83333;
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+  line-height: 25.5px;
+  ${({ messageEmail }) =>
+    messageEmail &&
+    css`
+      opacity: 1;
+    `}
+  ${({ messagePass }) =>
+    messagePass &&
+    css`
+      opacity: 1;
+    `}
+`;
+
+export const InputWrap = styled.div`
+  input {
+    padding: 12px 16px 11px 16px;
+    outline: none;
+    border: 1px solid #afb4b9;
+    border-radius: 4px;
+    width: 100%;
+    ::placeholder {
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 27px;
+    }
+  }
+  > div {
+    position: relative;
+    svg {
+      position: absolute;
+      top: 50%;
+      transform: translate(-150%, -50%);
+      cursor: pointer;
+    }
+  }
+  
+`;
+export const BtnWrap = styled.div`
+  button {
+    display: block;
+    color: #fff;
+    background: #004ea3;
+    border-radius: 4px;
+    padding: 13px 5px;
+    font-style: normal;
+    font-size: 20px;
+    line-height: 30px;
+    width: 100%;
+    margin-top: 24px;
+  }
+`;
+
+export const CheckWrap = styled.div`
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+  a {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    text-decoration-line: underline;
+    text-decoration-color: #004ea3;
+    color: #004ea3;
   }
 `;

@@ -8,191 +8,110 @@ import {
   selectDraftConfig,
   setCountRender,
   setDraftPlayersAction,
-  setFirstTradeValue,
   setTradeValue,
 } from "../../app/features/draftConfig/draftConfigSlice";
-import { useMemo } from "react";
-import { delPlayersDraft } from "../../app/features/playersDraft/playersDraftSlice";
-import { roundTeam } from "../../utils/utils";
+import {
+  delPlayersDraft,
+} from "../../app/features/playersDraft/playersDraftSlice";
 import { POSITIONS_COLOR } from "../../utils/constants";
 
-
-const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
+const Delayed = ({ children, waitBefore = 500, scroll = null, player }) => {
   const [isShow, setIsShow] = useState(false);
-  const dispatch = useDispatch();
   const { countRender } = useSelector(selectDraftConfig);
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsShow(true);
-      if (scroll?.id) {
-        if (countRender <= scroll.id) {
-          scroll.teamRef?.current?.scrollTo(0, (scroll.id - 1) * 75);
-          
-          dispatch(setCountRender(scroll.id));
-          // dispatch(setStatus('green'));
-        } else {
-          // console.log('scroll.id orange:', scroll.id);
-         
-        } 
-      } else {
-        // console.log('scroll.id orange:', scroll.id);
-      }
 
+      if (countRender <= scroll.id && player) {
+        scroll.teamRef?.current?.scrollTo(0, (scroll.id - 1) * 75);
+      }
     }, waitBefore);
     return () => clearTimeout(timer);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waitBefore]);
 
-  function ScrollSpasi() {
-    if (
-      scroll !== null &&
-      scroll?.id >= scroll?.thisId &&
-      scroll?.thisId !== 0
-    ) {
-      // scroll.teamRef?.current?.scrollBy(0, 75);
-    }
-    // roundSet.clear()
-    return children;
-  }
   function Animation() {
     return <CircularProgress style={{ position: "absolute", right: "10%" }} />;
   }
 
-  return isShow ? ScrollSpasi() : Animation();
+  return isShow ? children : Animation();
 };
 
-const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
-  const dispatch = useDispatch()
+const DraftViewAsign = ({ players, thisId}) => {
+  const dispatch = useDispatch();
   const {
-    teamSelectId,
     pauseId,
     timeSpeed,
     tradeValue,
     loading,
-    round,
-    teams,
     teamPickIndex,
+    countRender,
+    
   } = useSelector(selectDraftConfig);
-  const divRef = useRef(null)
+  const divRef = useRef(null);
   const roundArr = useRef([]);
 
   const teamRef = useRef(null);
 
-  const combineTeam = useMemo(
-    () => (data, teamPickIndex, players) => {
-      let playersItems = players.results;
-      const newDataResult = [];
-      const playersData = [];
-      let i = 0;
-
-      if (players.results.length && teamPickIndex.length > 0) {
-        for (const item of data.results) {
-          let teamItem = structuredClone(item);
-          if (teamPickIndex.includes(teamItem.index)) {
-            newDataResult.push(teamItem);
-            continue;
-          }
-          if (!teamItem.player && !teamPickIndex.includes(teamItem.index)) {
-            if (teamItem.index < teamPickIndex[0]) {
-              teamItem["player"] = playersItems[i];
-              playersData.push(playersItems[i]);
-              dispatch(setDraftPlayersAction(teamItem));
-              i++;
-            }
-          }
-          newDataResult.push(teamItem);
-        }
-      } else if (teamPickIndex.length === 0) {
-        for (const item of data.results) {
-          let teamItem = structuredClone(item);
-          if (!teamItem.player) {
-            teamItem["player"] = playersItems[i];
-            playersData.push(playersItems[i]);
-            dispatch(setDraftPlayersAction(teamItem));
-            i++;
-          }
-          newDataResult.push(teamItem);
-        }
-      }
-      const tradeValue = { ...data, results: newDataResult };
-      return { tradeValue, playersData };
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [teamPickIndex]
-  );
-
-  
-  // useEffect(() => {
-  //   if (players.status && players.results && players.results.length) {
-  //     let tradeValue = {
-  //       count: roundTeam(round, teams).length,
-  //       mounting: true,
-  //       results: roundTeam(round, teams),
-  //     };
-  //     dispatch(setFirstTradeValue(tradeValue));
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [players.status]);
-
-
   useEffect(() => {
-    if (tradeValue?.mouthing && players.status) {
-      const newData = combineTeam(tradeValue, teamPickIndex, players);
-      
-      dispatch(setTradeValue(newData.tradeValue));
-      dispatch(delPlayersDraft(newData.playersData));
-      divRef.current?.scrollIntoView({ behavior: "smooth" });
-      // setLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tradeValue.mouthing, players.status]);
+    if (
+      tradeValue?.mouthing &&
+      !players.loading &&
+      players.status &&
+      (countRender + 1 < teamPickIndex[0] || !teamPickIndex.length)
+    ) {
+      if (!pauseId.length) {
+        let newTradeValue = {};
+        let tradeValueTeam = structuredClone(tradeValue.results[countRender]);
 
+        const player = players.results[0];
+        tradeValueTeam["player"] = player;
+        let newTradeValueResults = tradeValue.results.map((team) =>
+          team.index === tradeValueTeam.index ? tradeValueTeam : team
+        );
 
+        newTradeValue = {
+          ...tradeValue,
+          results: newTradeValueResults,
+        };
 
-  useEffect(() => {
-    if (changeId) {
-      if (pauseId.length === 0) {
-        const newData = combineTeam(tradeValue, teamPickIndex, players);
-        dispatch(setTradeValue(newData.tradeValue));
-        dispatch(delPlayersDraft(newData.playersData));
+        dispatch(setTradeValue(newTradeValue));
+        dispatch(setDraftPlayersAction(tradeValueTeam));
+        dispatch(delPlayersDraft([player]));
+        dispatch(setCountRender());
       }
     }
-
-    return () => {
-      setChangeId(false);
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teamPickIndex]);
-
+  }, [tradeValue.mouthing, players.loading,pauseId]);
 
   return (
     <Wrapper ref={divRef}>
-      { players.length > 0 && loading ? <CircularProgress /> : null}
+      {players.length > 0 && loading ? <CircularProgress /> : null}
       <ul ref={teamRef}>
         {tradeValue?.results?.map((team, idx) => {
-        
-        
-
           const {
             index: id,
 
             round_index: roundIndex,
-            round: { logo  },
+            round: { logo },
           } = team;
-          
+
           const isBelowThreshold = (currentValue) => currentValue > id;
-          const checkTeam = teamPickIndex.every(isBelowThreshold) ? id * (1000/timeSpeed/id) : 0;
-          const time = thisId ? + (id - thisId) * (1000/timeSpeed) : checkTeam;
-          
+          const checkTeam = teamPickIndex.every(isBelowThreshold)
+            ? id * (1000 / timeSpeed / id)
+            : 0;
+          const time = thisId ? +(id - thisId) * (1000 / timeSpeed) : checkTeam;
+
           if (id === 1) {
             roundArr.current = [];
           }
           const roundCheck = roundArr.current.includes(roundIndex)
             ? false
             : roundArr.current.push(roundIndex);
+
           return (
-            <>
+            <React.Fragment key={id}>
               {roundCheck ? (
                 <li className="round" key={Math.random()}>
                   {roundIndex}
@@ -227,34 +146,43 @@ const DraftViewAsign = ({players,thisId, setChangeId, changeId}) => {
                       )}
                     </>
                   )}
-                  {!!checkTeam && team?.player && (
+                  {!!checkTeam && (
                     <Delayed
                       waitBefore={time}
                       scroll={{
                         teamRef,
                         id,
                         thisId,
+                        player: team.player ? true : false,
                       }}
                     >
-                      <PlayerName>{team.player.player}</PlayerName>
-                      <PlayerPos
-                        backColor={POSITIONS_COLOR[team.player.position]}
-                      >
-                        {team.player.position}
-                      </PlayerPos>
-                      <p className="player-colleg">{team.player.school}</p>
+                      {team?.player ? (
+                        <>
+                          <PlayerName>{team?.player?.player}</PlayerName>
+                          <PlayerPos
+                            backColor={POSITIONS_COLOR[team?.player?.position]}
+                          >
+                            {team.player.position}
+                          </PlayerPos>
+                          <p className="player-colleg">
+                            {team?.player?.school}
+                          </p>
+                        </>
+                      ) : (
+                        <CircularProgress
+                          style={{ position: "absolute", right: "10%" }}
+                        />
+                      )}
                     </Delayed>
                   )}
                 </div>
               </li>
-            </>
+            </React.Fragment>
           );
         })}
       </ul>
     </Wrapper>
   );
-       
-       
 };
 
 export default DraftViewAsign;

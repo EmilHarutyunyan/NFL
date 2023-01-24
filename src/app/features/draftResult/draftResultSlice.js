@@ -15,16 +15,10 @@ const draftResultSlice = createSlice({
   initialState,
   reducers: {
     setDraftResult: (state, action) => {
-      state.results = action.payload;
-    },
-    setRoundTeam: (state, action) => {
-      state.roundTeam = action.payload;
-    },
-    setTeamsName: (state, action) => {
-      state.teamsName = action.payload
-    },
-    setTeamsPlayer: (state, action) => {
-      state.teamsPlayer = action.payload
+      state.results = action.payload.results;
+      state.roundTeam = action.payload.roundTeam;
+      state.teamsName = action.payload.teamsName
+      state.teamsPlayer = action.payload.teamsPlayer
     },
     resDraftResult: (state, action) => {
       state.results = []
@@ -36,34 +30,29 @@ export const selectDraftResult = (state) => state.draftResult;
 
 export const { setDraftResult, setRoundTeam, setTeamsName, setTeamsPlayer, resDraftResult } = draftResultSlice.actions;
 
-export const setDraftResultAction = (teams, teamSelect, round) => (dispatch, getState) => {
+export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexControl) => (dispatch, getState) => {
 
+  debugger
   const setRound = []
-  const teamsSelectName = []
+  const teamsSelectName = teamSelect.map(item => item.name)
   const teamsPlayer = {}
-
+  
   for (let i = 1; i <= round; ++i) {
-    setRound.push(`${i} Round`)
+    setRound.push(`Round ${i}`)
   }
-  for (let i = 0; i < teamSelect.length; ++i) {
-    const teamNameItem = teamSelect[i].name
-    teamsSelectName.push(teamNameItem)
-    for (let j = 0; j < round; ++j) {
-      const teamId = (teamSelect[i].id - 1) + 32 * j;
-      if (teamsPlayer[teamNameItem]) {
-        teamsPlayer[teamNameItem].push(teams[teamId])
-      }
-      else {
-        teamsPlayer[teamNameItem] = [teams[teamId]]
-      }
-
+  for (let index of teamPickIndexControl) {
+    const teamNameItem = teams[index - 1].round.name
+    if (teamsPlayer[teamNameItem]) {
+      teamsPlayer[teamNameItem].push(teams[index - 1])
+    } else {
+      teamsPlayer[teamNameItem] = [teams[index - 1]]
     }
   }
 
-  dispatch(setRoundTeam(setRound))
-  dispatch(setDraftResult(teams));
-  dispatch(setTeamsName(teamsSelectName))
-  dispatch(setTeamsPlayer(teamsPlayer))
+  // dispatch(setRoundTeam(setRound))
+  dispatch(setDraftResult({ results:teams, roundTeam: setRound, teamsName: teamsSelectName, teamsPlayer}));
+  // dispatch(setTeamsName(teamsSelectName))
+  // dispatch(setTeamsPlayer(teamsPlayer))
 };
 
 export default draftResultSlice.reducer;

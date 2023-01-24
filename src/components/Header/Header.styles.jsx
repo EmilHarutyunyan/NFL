@@ -2,12 +2,15 @@ import styled from "styled-components";
 
 export const HeaderWrap = styled.header`
     background: #022142;
-    padding: 16px 0;
+    padding: 4px 0;
 `;
 export const HeaderInner = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    > div {
+      flex: 1 1 auto;
+    }
    & img {
       display: block;
       object-fit: cover;
@@ -29,6 +32,9 @@ export const Nav = styled.nav`
       text-decoration: none;
       font-family: "Saira Semi Condensed", sans-serif;
       font-weight: 500;
+      &.active {
+        text-decoration: underline;
+      }
     }
   }
 `;
@@ -40,16 +46,23 @@ export const BtnWrap = styled.div`
     padding: 4px 24px;
     border-radius: 4px;
     cursor: pointer;
-  }
-  button:first-child {
-    border: 1px solid;
-    color: white;
-    background-color: transparent;
-  }
-  button:last-child {
-    border: 1px solid;
-    color: black;
-    background-color: white;
     margin-left: 24px;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+    :hover {
+      opacity: 1;
+    }
   }
+  button.sign-in {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    margin-left: 0;
+  }
+`;
+
+export const HeaderBody = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;

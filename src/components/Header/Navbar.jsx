@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { links } from "./dataLinks";
 // Styles
 import { Nav } from "./Header.styles";
@@ -12,7 +12,7 @@ function Navbar() {
           const { id, url, text } = item;
           return (
             <li key={id}>
-              <Link to={url}>{text}</Link>
+              <NavLink to={url}>{text}</NavLink>
             </li>
           );
         })}

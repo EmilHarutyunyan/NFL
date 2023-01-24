@@ -24,6 +24,7 @@ export const CheckBoxLabel = styled.label`
   input {
     margin-right: 16px;
     outline: none;
+    width: 22px;
   }
   span {
     color: #0e1118;

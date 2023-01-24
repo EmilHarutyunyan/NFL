@@ -1,111 +1,114 @@
-import React, { useState } from 'react'
-import axios from "axios";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { RegisterInput } from '../../../components/Inputs/RegisterInput';
-import { CheckBoxInput } from '../../../components/Inputs/CheckBoxInput';
-import { RegisterButton } from '../../../components/Buttons/RegisterButton';
+import { CheckBoxInput } from "../../../components/Inputs/CheckBoxInput";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+// styles
+import {
+  AuthContent,
+  AuthWrap,
+  BtnWrap,
+  CheckWrap,
+  Error,
+  InputWrap,
+  NavigationList,
+} from "../Auth.styles";
+// images
+import logoMid from "../../../assets/img/logoMid.png";
+import { EyeCloseIcon, EyeOpenIcon } from "../../../components/Icons/Icons";
+import { CircularProgress } from "@mui/material";
 
-// Style
-import { AuthContent, AuthWrap, Divider, NavigationList, SocialMediaList } from '../Auth.styles';
-// Img
-import fbIcon from "../../../assets/img/Facebook.png";
-import googleIcon from "../../../assets/img/google.png";
-import twitterIcon from "../../../assets/img/twitter.png";
-
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Email should have correct format")
+    .required("Required"),
+  password: yup
+    .string()
+    .required("Required")
+    .min(8, "Password is too short - should be 8 chars minimum."),
+});
 
 const SignIn = () => {
-
   const [isChecked, setIsChecked] = useState(false);
   const [loader, setLoader] = useState(false);
-  const { handleSubmit, register, reset } = useForm();
-
-  function onSubmit(data) {
-    setLoader(true);
-    axios
-      .post("https://qo-url@-@stex-dir", data)
-      .then(() => {
-        setLoader(false);
-        toast("Your message was sent");
-        reset();
-      })
-      .catch(() => {
-        setLoader(false);
-    
-        toast("Something went wrong");
-      });
-  }
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: "onBlur",
+    // onSubmit
+    resolver: yupResolver(schema),
+  });
+  const onSubmit = (data) => {
+    // alert(JSON.stringify(data));
+    setLoader(!loader)
+    setErrorMsg("Your email address or password is not correct");
+    console.log(data);
+  };
   return (
     <AuthWrap>
       <AuthContent>
+        <Link to={"/"}>
+          <img src={logoMid} alt="logo" />
+        </Link>
         <h2>Sign In</h2>
+        {errorMsg && <Error>{errorMsg}</Error>}
         <form onSubmit={handleSubmit(onSubmit)}>
-          <RegisterInput
-            inputType={"email"}
-            inputPlaceholder={"Email"}
-            register={register}
-            registerTarget={"email"}
-            isRequired={true}
-          />
-          <RegisterInput
-            inputType={"password"}
-            inputPlaceholder={"Password"}
-            register={register}
-            registerTarget={"password"}
-            isRequired={true}
-          />
-          <CheckBoxInput
-            inputId={"remember"}
-            inputChecked={isChecked}
-            onInputChange={(event) => setIsChecked(event.target.checked)}
-            inputLabelText={"Remamber"}
-          />
-          <RegisterButton
-            buttonType={"submit"}
-            buttonLoader={loader}
-            buttonClassName={"submit-button"}
-          >
-            {"Sign In"}
-          </RegisterButton>
+          <InputWrap>
+            <input {...register("email")} placeholder="Email" />
+
+            <Error messageEmail={errors.email?.message}>
+              {errors.email?.message ? errors.email?.message : <br />}
+            </Error>
+          </InputWrap>
+          <InputWrap>
+            <div>
+              <input
+                {...register("password")}
+                placeholder="Password"
+                type={showPassword ? "text" : "password"}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOpenIcon /> : <EyeCloseIcon />}
+              </button>
+            </div>
+            <Error messagePass={errors.password?.message}>
+              {errors.password?.message ? errors.password?.message : <br />}
+            </Error>
+          </InputWrap>
+          <CheckWrap>
+            <CheckBoxInput
+              inputId={"remember"}
+              inputChecked={isChecked}
+              onInputChange={(event) => setIsChecked(event.target.checked)}
+              inputLabelText={"Remember"}
+            />
+            <Link to={"/"}>Forgot your password?</Link>
+          </CheckWrap>
+          <BtnWrap>
+            <button type="submit">
+              {loader && <CircularProgress size={17} color={"inherit"} />}
+              Sign In
+            </button>
+          </BtnWrap>
         </form>
-        <Divider>Or</Divider>
-        <SocialMediaList>
-          
-            <li>
-              <a href="https://twitter.com/" rel="noopener noreferrer">
-                <img src={twitterIcon} alt="twitter" />
-              </a>
-            </li>
-          <li>
-            <a href="https://www.facebook.com/" rel="noopener noreferrer">
-              <img src={fbIcon} alt="facebook" />
-            </a>
-          </li>
-          <li>
-            <a href="http://google.com/" rel="noopener noreferrer">
-              <img src={googleIcon} alt="google" />
-            </a>
-            
-          </li>
-        </SocialMediaList>
+
         <NavigationList>
-            <li>
-              <Link className="forgot-pass" to={"forgot-password"}>
-                Forgot your password?{" "}
-              </Link>
-              <span style={{ margin: "10px" }}>|</span>
-            </li>
-          
           <li>
-            <Link to={"/sign-up"}>
-              {"Sign Up"}
-            </Link>
+            Already have an account? <Link to={"/sign-up"}>{"Sign Up"}</Link>
           </li>
         </NavigationList>
       </AuthContent>
     </AuthWrap>
   );
-}
+};
 
-export default SignIn
+export default SignIn;

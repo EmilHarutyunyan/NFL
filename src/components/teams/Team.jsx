@@ -5,7 +5,7 @@ import { TeamItem } from './TeamItem';
 import './team.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import { getExceptTeam, getRandom } from '../../utils/utils';
+import { getFilterTwoData, getRandom } from "../../utils/utils";
 import { useDispatch } from 'react-redux';
 import { setDraftRandomnessTeam } from '../../app/features/draftConfig/draftConfigSlice';
 
@@ -13,10 +13,10 @@ export const Team = ({ teams, teamSelectId, draftRandomness }) => {
   const dispatch = useDispatch()
   useEffect(()=> {
     if (teams.length) {
-    const exceptTeam = getExceptTeam(teams, teamSelectId, 'index')
+    const exceptTeam = getFilterTwoData(teams, teamSelectId, "index");
     const exceptTeamId = exceptTeam.map(item => item.index)
     const draftRandomnessTeam = getRandom(exceptTeamId, draftRandomness)
-    console.log('draftRandomnessTeam :', draftRandomnessTeam);
+    
       dispatch(setDraftRandomnessTeam(draftRandomnessTeam))
     }
 

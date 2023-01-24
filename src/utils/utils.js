@@ -8,8 +8,8 @@ export const searchInfo = (arr, item, getValue = (item) => item) => {
   return arr.filter((i) => getValue(i) === getValue(item));
 };
 
-export const pricentPick = (teamValue, playerValue, pricent = 20) => {
-  return +(((teamValue - playerValue) * pricent) / 100).toFixed(2);
+export const percentPick = (teamValue, playerValue, percent = 20) => {
+  return +(((teamValue - playerValue) * percent) / 100).toFixed(2);
 };
 
 let sumNumber = (num) => {
@@ -20,15 +20,15 @@ let sumNumber = (num) => {
   return sum;
 };
 
-export const upUsersCals = (players, pricentValuePlayer, key) => {
+export const upUsersCals = (players, percentValuePlayer, key) => {
   const point = sumNumber(players.length - 1);
-  const midPoint = pricentValuePlayer / point;
+  const midPoint =percentValuePlayer / point;
   return players.map((player, idx) => {
-    const pricentValue = +((midPoint * (players.length - idx - 1)).toFixed(2));
+    const percentValue = +((midPoint * (players.length - idx - 1)).toFixed(2));
     if(idx === (players.length - 1)) {
-      return { ...player, value: +(player[key] + pricentValuePlayer), pricentValue:pricentValuePlayer };
+      return { ...player, value: +(player[key] + percentValuePlayer), percentValue:percentValuePlayer };
     }
-    return { ...player, value: +(player[key] - pricentValue), pricentValue: -pricentValue};
+    return { ...player, value: +(player[key] - percentValue), percentValue: -percentValue};
   });
 };
 
@@ -50,10 +50,9 @@ export const roundTeam = (roundCount,teams) => {
   }
   return newData;
 }
-// Get Team Except Id
-export const getExceptTeam = (arr,expectArr,key) => {
-  
-  return arr.filter(item => !expectArr.includes(item[key]))
+
+export const getFilterTwoData = (arr,secondArr,key) => {
+  return arr.filter(item => !secondArr.includes(item[key]))
 }
 
 // Get Random Team

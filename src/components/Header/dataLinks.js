@@ -19,4 +19,9 @@ export const links = [
     text: "Team Needs",
     url: "/team-needs",
   },
+  {
+    id: 5,
+    text: "Podcaster / Premium",
+    url: "/podcaster",
+  },
 ];

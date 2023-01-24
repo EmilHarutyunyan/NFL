@@ -30,7 +30,7 @@ const Settings = ({teamSelect}) => {
   const dispatch = useDispatch();
   const { round, timeSpeed, draftRandomness, draftCardDepth } =
     useSelector(selectDraftConfig);
-
+  const [advanceSetting,setAdvanceSetting] = useState(false)
   const [isRoundOne, setIsRoundOne] = useState(false);
   const [isRoundTwo, setIsRoundTwo] = useState(false);
   const [isRoundOneFan, setIsRoundOneFan] = useState(false);
@@ -97,116 +97,127 @@ const Settings = ({teamSelect}) => {
         </div>
         <label htmlFor="">
           Use default
-          <Switch />
+          <Switch onChange={(e) => setAdvanceSetting(e.target.checked)} />
         </label>
       </SettingItem>
-      <SettingItem className="setting-goriz">
-        <Title titleText="Draft card depth" titleClassName="setting-title " />
-        <Speed>
-          <Box sx={{ width: "100%" }}>
-            <Slider
-              defaultValue={2}
-              step={1}
-              min={1}
-              max={8}
-              value={draftCardDepth}
-              onChange={(e) => handleSetting(e, setDraftCardDepth)}
-              aria-label="Default"
-              valueLabelDisplay="auto"
+      {!advanceSetting && (
+        <>
+          <SettingItem className="setting-goriz">
+            <Title
+              titleText="Draft card depth"
+              titleClassName="setting-title "
             />
-            <SettingMarks>
-              <span>Less (2)</span>
-              <span>More (8)</span>
-            </SettingMarks>
-          </Box>
-        </Speed>
-      </SettingItem>
-      <SettingItem className="setting-goriz">
-        <Title titleText="Draft randomness" titleClassName="setting-title " />
-        <Speed>
-          <Box sx={{ width: "100%" }}>
-            <Slider
-              defaultValue={2}
-              step={1}
-              min={1}
-              max={16}
-              value={draftRandomness}
-              onChange={(e) => handleSetting(e, setDraftRandomness)}
-              aria-label="Default"
-              valueLabelDisplay="auto"
+            <Speed>
+              <Box sx={{ width: "100%" }}>
+                <Slider
+                  defaultValue={2}
+                  step={1}
+                  min={1}
+                  max={8}
+                  value={draftCardDepth}
+                  onChange={(e) => handleSetting(e, setDraftCardDepth)}
+                  aria-label="Default"
+                  valueLabelDisplay="auto"
+                />
+                <SettingMarks>
+                  <span>Less (2)</span>
+                  <span>More (8)</span>
+                </SettingMarks>
+              </Box>
+            </Speed>
+          </SettingItem>
+          <SettingItem className="setting-goriz">
+            <Title
+              titleText="Draft randomness"
+              titleClassName="setting-title "
             />
-            <SettingMarks>
-              <span>Less (2)</span>
-              <span>More (16)</span>
-            </SettingMarks>
-          </Box>
-        </Speed>
-      </SettingItem>
-      <SettingItem className="setting-round-check">
-        <CheckBoxInputSecond
-          checked={isRoundOne}
-          label={"1nd round BPA"}
-          nameClass={"setting-check"}
-          onInputChange={setIsRoundOne}
-        />
-        <CheckBoxInputSecond
-          checked={isRoundTwo}
-          label={"2nd round BPA"}
-          nameClass={"setting-check"}
-          onInputChange={setIsRoundTwo}
-        />
-      </SettingItem>
-      <SettingItem className="setting-goriz">
-        <Title titleText="Round depth" titleClassName="setting-title " />
-        <Speed>
-          <Box sx={{ width: "100%" }}>
-            <Slider
-              defaultValue={2}
-              step={1}
-              min={1}
-              max={5}
-              value={2}
-              // onChange={handleSpeed}
-              aria-label="Default"
-              valueLabelDisplay="auto"
+            <Speed>
+              <Box sx={{ width: "100%" }}>
+                <Slider
+                  defaultValue={2}
+                  step={1}
+                  min={1}
+                  max={16}
+                  value={draftRandomness}
+                  onChange={(e) => handleSetting(e, setDraftRandomness)}
+                  aria-label="Default"
+                  valueLabelDisplay="auto"
+                />
+                <SettingMarks>
+                  <span>Less (2)</span>
+                  <span>More (16)</span>
+                </SettingMarks>
+              </Box>
+            </Speed>
+          </SettingItem>
+          <SettingItem className="setting-round-check">
+            <CheckBoxInputSecond
+              checked={isRoundOne}
+              label={"1nd round BPA"}
+              nameClass={"setting-check"}
+              onInputChange={setIsRoundOne}
             />
-            <SettingMarks>
-              <span>Less (2)</span>
-              <span>More (5)</span>
-            </SettingMarks>
-          </Box>
-        </Speed>
-      </SettingItem>
-      <SettingItem className="setting-fan">
-        <div className="setting-fan-item">
-          <p>1st round fanatic challenge</p>
-          <CheckBoxInputSecond
-            checked={isRoundOneFan}
-            nameClass={"setting-check"}
-            onInputChange={setIsRoundOneFan}
-          />
-        </div>
-        <div className="setting-fan-item">
-          <p>2st round fanatic challenge</p>
-          <CheckBoxInputSecond
-            checked={isRoundTwoFan}
-            nameClass={"setting-check"}
-            onInputChange={setIsRoundTwoFan}
-          />
-        </div>
-        <div className="setting-fan-item">
-          <p>3st round fanatic challenge</p>
-          <CheckBoxInputSecond
-            checked={isRoundThreeFan}
-            nameClass={"setting-check"}
-            onInputChange={setIsRoundThreeFan}
-          />
-        </div>
-        <div className="setting-fan-item">
-          <p>Fanatic mode</p>
-          <Switch />
-        </div>
-      </SettingItem>
+            <CheckBoxInputSecond
+              checked={isRoundTwo}
+              label={"2nd round BPA"}
+              nameClass={"setting-check"}
+              onInputChange={setIsRoundTwo}
+            />
+          </SettingItem>
+          <SettingItem className="setting-goriz">
+            <Title titleText="Round depth" titleClassName="setting-title " />
+            <Speed>
+              <Box sx={{ width: "100%" }}>
+                <Slider
+                  defaultValue={2}
+                  step={1}
+                  min={1}
+                  max={5}
+                  value={2}
+                  // onChange={handleSpeed}
+                  aria-label="Default"
+                  valueLabelDisplay="auto"
+                />
+                <SettingMarks>
+                  <span>Less (2)</span>
+                  <span>More (5)</span>
+                </SettingMarks>
+              </Box>
+            </Speed>
+          </SettingItem>
+          <SettingItem className="setting-fan">
+            <div className="setting-fan-item">
+              <p>1st round fanatic challenge</p>
+              <CheckBoxInputSecond
+                checked={isRoundOneFan}
+                nameClass={"setting-check"}
+                onInputChange={setIsRoundOneFan}
+              />
+            </div>
+            <div className="setting-fan-item">
+              <p>2st round fanatic challenge</p>
+              <CheckBoxInputSecond
+                checked={isRoundTwoFan}
+                nameClass={"setting-check"}
+                onInputChange={setIsRoundTwoFan}
+              />
+            </div>
+            <div className="setting-fan-item">
+              <p>3st round fanatic challenge</p>
+              <CheckBoxInputSecond
+                checked={isRoundThreeFan}
+                nameClass={"setting-check"}
+                onInputChange={setIsRoundThreeFan}
+              />
+            </div>
+            <div className="setting-fan-item">
+              <p>Fanatic mode</p>
+              <Switch />
+            </div>
+          </SettingItem>
+        </>
+      )}
+
       <Button
         btnText="Enter Draft"
         btnIcon={arrowLeft}

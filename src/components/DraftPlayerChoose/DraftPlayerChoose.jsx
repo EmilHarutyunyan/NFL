@@ -10,6 +10,7 @@ import {
   delPauseId,
   delTeamsRound,
   selectDraftConfig,
+  setCountRender,
   setDraftPlayersAction,
   setStatus,
   setTradeValue,
@@ -36,13 +37,11 @@ import Pagination from "../Pagination/Pagination";
 import {
   delPlayersDraft,
   playerPositionMulti,
-  selectPlayersDraft,
   setCurrentPage,
-  setPlayerItems,
   setPositionPlayersDraft,
   setSearchPlayers,
 } from "../../app/features/playersDraft/playersDraftSlice";
-import { pricentPick, upUsersCals } from "../../utils/utils";
+import { percentPick, upUsersCals } from "../../utils/utils";
 import { Switch } from "@mui/material";
 
 const PageSize = 10;
@@ -50,22 +49,16 @@ const DraftPlayerChoose = ({
   playersDraft,
   draftStatus,
   setThisId,
-  setChangeId,
 }) => {
   const groups = useSelector(selectGroup);
-  const [colorShow,setColorShow] = useState(true)
+  const [colorShow, setColorShow] = useState(true);
   const {
-    draftPlayers,
     tradeValue,
     countRender,
-    round,
     status,
-    teams,
-    teamSelectId,
     teamPickIndex,
   } = useSelector(selectDraftConfig);
   const dispatch = useDispatch();
-  const { position, playerItems } = useSelector(selectPlayersDraft);
 
   const draftBtnDisable = draftStatus === "red" ? true : false;
   const initial = useRef(true);
@@ -75,15 +68,18 @@ const DraftPlayerChoose = ({
     const firstPageIndex = (playersDraft.currentPage - 1) * PageSize;
     const lastPageIndex = firstPageIndex + PageSize;
     
-    if (draftPlayers.length > 0) {
+    // if (draftPlayers.length > 0) {
       let playersData = playersDraft.results;
       if (playersDraft.search) {
         playersData = playersDraft.results.filter((player) => {
           const name = player.player.toLowerCase();
-          return name.includes(playersDraft.search);
+          return name.includes(playersDraft.search.toLowerCase());
         });
       }
-      if (playersDraft.position.length && !playersDraft.position.includes('All')) {
+      if (
+        playersDraft.position.length &&
+        !playersDraft.position.includes("All")
+      ) {
         playersData = playersDraft.results.filter((player) => {
           const position = player.position;
           return playersDraft.position.includes(position);
@@ -93,14 +89,14 @@ const DraftPlayerChoose = ({
 
       const playersDataSlice = playersData.slice(firstPageIndex, lastPageIndex);
       return { playersData, playersDataSlice };
-    } else {
-      const playersDataSlice = playersDraft.results.slice(
-        firstPageIndex,
-        lastPageIndex
-      );
-      const playersData = playersDraft.results;
-      return { playersData, playersDataSlice };
-    }
+    // } else {
+    //   const playersDataSlice = playersDraft.results.slice(
+    //     firstPageIndex,
+    //     lastPageIndex
+    //   );
+    //   const playersData = playersDraft.results;
+    //   return { playersData, playersDataSlice };
+    // }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -124,13 +120,8 @@ const DraftPlayerChoose = ({
     // eslint-disable-next-line
   }, [setSearchValue, searchValue]);
 
-  useEffect(() => {
-    dispatch(setPlayerItems(currentTableData.playersData));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTableData]);
-
   const playerConcat = (playerItem, teamId, upPlayers = {}) => {
+    
     const teamItem = structuredClone(tradeValue.results[teamId - 1]);
     teamItem["player"] = playerItem;
 
@@ -140,57 +131,43 @@ const DraftPlayerChoose = ({
       }
       return item;
     });
-    let playersData = playersDraft.results.filter(
-      (player) => playerItem.id !== player.id
-    );
-    dispatch(setPlayerItems(playersData));
+
     dispatch(delPlayersDraft([playerItem]));
     dispatch(setTradeValue({ ...tradeValue, results: newTradeValue }));
     dispatch(setDraftPlayersAction({ ...teamItem, upPlayers }));
   };
 
   const playerChoose = (item, idx) => {
-    
-    let team = teamPickIndex[0]
-    // let team = teamPickIndex[0] - (+round - 1) * 32;
+    let team = teamPickIndex[0];
     let playerItem = { ...item };
+    let percentPlayers = [];
 
-    let pricentPlayers = [];
-
-    // if (+round > 1) {
-    //   for (let i = 0; i < +round; ++i) {
-    //     if (teamPickIndex[0] - 32 * i <= 32 && teamPickIndex[0] - 32 * i >= 1) {
-    //       team = teamPickIndex[0] - 32 * i;
-    //       break;
-    //     }
-    //   }
-    // }
-    console.log(tradeValue.results);
     const teamName = tradeValue.results[team - 1].round.name;
-    const teamValue = +tradeValue.results[team - 1].value
+    const teamValue = +tradeValue.results[team - 1].value;
     if (teamValue >= item[teamName]) {
-      const pricentValue = pricentPick(teamValue, item[teamName]);
+      const percentValue = percentPick(teamValue, item[teamName]);
       let playerItemsSlice = [];
 
-      for (let i = 0; i < playerItems.length; ++i) {
-        if (playerItems[i].id === playerItem.id) {
-          playerItemsSlice.push(playerItems[i]);
+      for (let i = 0; i < playersDraft.results.length; ++i) {
+        if (playersDraft.results[i].id === playerItem.id) {
+          playerItemsSlice.push(playersDraft.results[i]);
           break;
         } else {
-          playerItemsSlice.push(playerItems[i]);
+          playerItemsSlice.push(playersDraft.results[i]);
         }
       }
 
-      pricentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
-      playerItem = { ...item, [teamName]: item.value + pricentValue };
+      percentPlayers = upUsersCals(playerItemsSlice, percentValue, teamName);
+      playerItem = { ...item, [teamName]: item.value + percentValue };
     }
 
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft("All"));
-    playerConcat(playerItem, teamPickIndex[0], pricentPlayers);
+    playerConcat(playerItem, teamPickIndex[0], percentPlayers);
     dispatch(delTeamsRound(teamPickIndex[0]));
     setThisId(teamPickIndex[0]);
-    setChangeId(true);
+    // setChangeId(true);
+    dispatch(setCountRender());
   };
   return (
     <>

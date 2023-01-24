@@ -53,5 +53,9 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0 auto;
   }
 
+  button {
+    background-color: transparent;
+    border:none;
+  }
 
 `;

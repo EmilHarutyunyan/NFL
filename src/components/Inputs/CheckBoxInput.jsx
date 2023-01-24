@@ -14,7 +14,7 @@ export const CheckBoxInput = ({
           type="checkbox"
           id={inputId}
           // checked
-          checked={true}
+          checked={inputChecked}
           onChange={onInputChange}
         />
         <div className="input-checkbox" />

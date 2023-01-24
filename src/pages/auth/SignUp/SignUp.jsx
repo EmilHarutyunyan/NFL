@@ -1,15 +1,3 @@
-// import React from 'react'
-// import { RegisterSection } from '../fragment/registerSection'
-// import './signup.css'
-
-// export const SignUp = () => {
-//   return (
-//     <div>
-//         <RegisterSection />
-//     </div>
-//   )
-// }
-
 import axios from 'axios';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';

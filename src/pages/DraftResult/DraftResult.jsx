@@ -40,12 +40,10 @@ const DraftResult = () => {
   const domEl = useRef(null);
   const navigate = useNavigate();
   const [roundSelect, setRoundSelect] = useState(1);
-  const { results, roundTeam, teamsName, teamsPlayer } =
-    useSelector(selectDraftResult);
+  const { results, roundTeam, teamsName, teamsPlayer } = useSelector(selectDraftResult);
   const [teamMain, setTeamMain] = useState(teamsName[0]);
-  const state = useSelector(selectDraftResult);
 
-  console.log("state :", state);
+
 
   const teamSelect = useMemo(() => {
     return teamsPlayer[teamMain];
@@ -54,7 +52,7 @@ const DraftResult = () => {
 
   const teamTable = useMemo(() => {
     return results.filter(
-      (res) => +res.round_index.split(" ")[0] === roundSelect
+      (res) => +res.round_index.split(" ")[1] === roundSelect
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roundSelect]);
@@ -129,23 +127,24 @@ const DraftResult = () => {
           <DraftResultRound>
             {roundTeam?.map((item, idx) => {
               const roundText = item.split(" ");
-              if (+roundText[0] === roundSelect) {
+              debugger
+              if (+roundText[1] === roundSelect) {
                 return (
                   <DraftResultRoundItem
                     active
-                    onClick={() => setRoundSelect(+roundText[0])}
+                    onClick={() => setRoundSelect(+roundText[1])}
                     key={idx}
                   >
-                    {roundText[1]} {roundText[0]}
+                    {item}
                   </DraftResultRoundItem>
                 );
               }
               return (
                 <DraftResultRoundItem
                   key={idx}
-                  onClick={() => setRoundSelect(+roundText[0])}
+                  onClick={() => setRoundSelect(+roundText[1])}
                 >
-                  {roundText[1]} {roundText[0]}
+                  {item}
                 </DraftResultRoundItem>
               );
             })}
@@ -206,13 +205,10 @@ const DraftResult = () => {
             )}
             {teamSelect &&
               teamSelect?.map((team, idx) => {
-                const round = +team.round_index.split(" ")[0];
+                const round = +team?.round_index?.split(" ")[1];
                 return (
                   <React.Fragment key={idx}>
-                    {/* <div className="draft-result-pick-logo">
-                      <img src={texanLogo} alt="Texans" />
-                      <p>Texans</p>
-                    </div> */}
+                    
                     <div className="draft-result-pick-item">
                       <div className="draft-result-pick-item-info">
                         <div className="draft-result-pick-round">

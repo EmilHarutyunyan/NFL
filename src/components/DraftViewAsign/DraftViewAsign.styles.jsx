@@ -47,6 +47,7 @@ export const Wrapper = styled.div`
     z-index: 1;
     display: flex;
     align-items: center;
+    text-transform: capitalize;
   }
   .pick {
     display: flex;

@@ -16,7 +16,8 @@ import { selectDraftConfig } from '../app/features/draftConfig/draftConfigSlice'
 import TeamNeeds from '../pages/TeamNeeds/TeamNeeds';
 import DraftResult from '../pages/DraftResult/DraftResult';
 import TeamList from '../pages/TeamList/TeamList';
-import { selectDraftResult, setDraftResult } from '../app/features/draftResult/draftResultSlice';
+import { selectDraftResult } from '../app/features/draftResult/draftResultSlice';
+import NotFound from '../pages/NotFoundPage/NotFoundPage';
 
 const Router = () => {
   const {teamSelect} = useSelector(selectDraftConfig)
@@ -42,6 +43,7 @@ const Router = () => {
           <Route path="team-needs" element={<TeamNeeds />} />
           <Route path="team-list" element={<TeamList />} />
         </Route>
+        <Route path="*" element={<NotFound />}/>
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
       </Routes>
