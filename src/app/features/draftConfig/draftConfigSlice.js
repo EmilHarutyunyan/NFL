@@ -1,10 +1,9 @@
-import axios from "axios";
 import { createSlice } from "@reduxjs/toolkit";
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { API_ENDPOINT } from "../../../config/config";
 import { toggleArrObj } from "../../../utils/utils";
+import { getDraftValue, getTeams, getTradeValue } from "./drafConfigAction";
 
 const initialState = {
+  advancedSetting: false,
   teams: [],
   teamSelect: [],
   teamSelectId: [],
@@ -23,92 +22,28 @@ const initialState = {
   draftPlayers: [],
   draftCardDepth: 2,
   draftRandomness:2,
+  roundDepth:5,
+  roundBPA: [],
   draftRandomnessTeam:[],
   pauseId: [],
   countRender: 0,
   tradeValue: { mouthing: false },
 };
 
-export const getHistoryBoard = createAsyncThunk(
-  "draftConfig/getHistoryBoard",
-  async (_, { dispatch, rejectWithValue }) => {
-    const { draft, player, round_index } = [];
-    try {
-      const res = await axios.post(`${API_ENDPOINT}history-board/`, {
-        draft,
-        player,
-        round_index,
-      });
-      return res.data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(error.message);
-      }
-    }
-  }
-);
-
-export const getTeams = createAsyncThunk(
-  "draftConfig/getTeams",
-  async (_, { dispatch, rejectWithValue }) => {
-    try {
-      const res = await axios.get(`${API_ENDPOINT}rounds/?limit=33`);
-      return res.data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(error.message);
-      }
-    }
-  }
-);
-
-export const getTradeValue = createAsyncThunk(
-  "draftConfig/getTradeValue",
-  async (_, { dispatch, rejectWithValue, getState }) => {
-    try {
-      const {
-        draftConfig: { round, teamSelectId },
-      } = getState();
-      const res = await axios.get(
-        `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${round}&tm=`
-      );
-      const teamPickIndex = res.data.results.filter((team) => teamSelectId.includes(team.round.index)).map(team => team.index)
-      dispatch(setTeamPickIndex(teamPickIndex))
-      return res.data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(error.message);
-      }
-    }
-  }
-);
-
-export const getDraftValue = createAsyncThunk(
-  "draftConfig/getDraftValue",
-  async (_, { dispatch, rejectWithValue }) => {
-    try {
-      const res = await axios.get(`${API_ENDPOINT}trade-value/?limit=224`);
-      return res.data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(error.message);
-      }
-    }
-  }
-);
 
 export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
+    setRoundBPA: (state,action)=> {
+      state.roundBPA = action.payload
+    },
+    setRoundDepth: (state,action) => {
+      state.roundDepth = action.payload
+    },
+    setAdvancedSetting: (state,action) => {
+      state.advancedSetting = action.payload;
+    },
     setTeamPickIndex: (state, action) => {
       state.teamPickIndex = action.payload
       state.teamPickIndexControl = action.payload
@@ -206,6 +141,7 @@ export const draftConfigSlice = createSlice({
       state.draftPlayers = [];
       state.status = "";
       state.tradeValue = { mouthing: false };
+      state.advancedSetting = false
 
     },
   },
@@ -246,6 +182,9 @@ export const draftConfigSlice = createSlice({
 export const selectDraftConfig = (state) => state.draftConfig;
 
 export const {
+  setRoundBPA,
+  setRoundDepth,
+  setAdvancedSetting,
   setTeamPickIndex,
   setDraftCardDepth,
   setDraftRandomnessTeam,
@@ -266,6 +205,7 @@ export const {
   setDraftPlayers,
   setTeamRemoveId,
   delPauseId,
+  
 } = draftConfigSlice.actions;
 
 const teamRound = (round, teamSelectId) => {
@@ -282,6 +222,15 @@ const teamRound = (round, teamSelectId) => {
 
 
 // Actions Creator
+export const checkRoundBPA = (round) => (dispatch, getState) => {
+  const { roundBPA } = selectDraftConfig(getState());
+  const intRound = +round
+  const addOrRemove = roundBPA.includes(intRound) ? roundBPA.filter(i => i !== intRound) : [...roundBPA, intRound];
+  
+  dispatch(setRoundBPA(addOrRemove))
+
+}
+
 export const selectAllTeams = (check) => (dispatch, getState) => {
   const { teams, round } = selectDraftConfig(getState());
   const teamSelectItemsId = teams.map((elem) => elem.id);

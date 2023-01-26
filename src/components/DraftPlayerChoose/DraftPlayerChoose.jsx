@@ -89,14 +89,6 @@ const DraftPlayerChoose = ({
 
       const playersDataSlice = playersData.slice(firstPageIndex, lastPageIndex);
       return { playersData, playersDataSlice };
-    // } else {
-    //   const playersDataSlice = playersDraft.results.slice(
-    //     firstPageIndex,
-    //     lastPageIndex
-    //   );
-    //   const playersData = playersDraft.results;
-    //   return { playersData, playersDataSlice };
-    // }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

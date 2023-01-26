@@ -1,112 +1,219 @@
-import axios from 'axios';
-import React, { useState } from 'react'
-import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { RegisterButton } from '../../../components/Buttons/RegisterButton';
-import { CheckBoxInput } from '../../../components/Inputs/CheckBoxInput';
-import { RegisterInput } from '../../../components/Inputs/RegisterInput';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+// styles
+import {
+  AuthContent,
+  AuthWrap,
+  BtnWrap,
+  CheckWrap,
+  Error,
+  InputWrap,
+  NavigationList,
+} from "../Auth.styles";
+// images
+import logoMid from "../../../assets/img/logoMid.png";
+import { EyeCloseIcon, EyeOpenIcon } from "../../../components/Icons/Icons";
+import { CircularProgress } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../../../app/features/user/userActions";
+import TokenService from "../../../service/token.service";
+import { selectUser } from "../../../app/features/user/userSlice";
 
-// Style
-import { AuthContent, AuthWrap, Divider, NavigationList, SocialMediaList } from '../Auth.styles';
-// Img
-import fbIcon from "../../../assets/img/Facebook.png";
-import googleIcon from "../../../assets/img/google.png";
-
+const schema = yup.object().shape({
+  name: yup
+    .string()
+    .max(40)
+    .min(3, "First Name must be at least 3 characters")
+    .required("Required First Name"),
+  surname: yup
+    .string()
+    .max(40)
+    .min(3, "Last Name must be at least 3 characters")
+    .required("Required Last Name"),
+  twitter: yup
+    .string()
+    .required("Required Twitter handle")
+    .matches(/^@?(\w){1,15}$/, "Not valid twitter handle"),
+  email: yup
+    .string()
+    .email("Email should have correct format")
+    .required("Email is a required field"),
+  password: yup
+    .string()
+    .required("No password provided.")
+    .min(8, "Password is too short - should be 8 chars minimum."),
+  confirmPwd: yup
+    .string()
+    .required("Password is mandatory")
+    .oneOf([yup.ref("password")], "Passwords does not match"),
+  acceptTerms: yup
+    .bool()
+    .oneOf([true], "I agree to the Terms of Service & Privacy Policy required"),
+});
 
 const SignUp = () => {
-  const [isChecked, setIsChecked] = useState(false);
   const [loader, setLoader] = useState(false);
-  const { handleSubmit, register, reset } = useForm();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
+  
+  const { success, error } = useSelector(selectUser);
+ 
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: "onBlur",
+    // onSubmit
+    resolver: yupResolver(schema),
+  });
+  const onSubmit = (data) => {
+    // alert(JSON.stringify(data));
+    setLoader(!loader);
+    const {
+      email: username,
+      name: first_name,
+      surname: last_name,
+      twitter: twitter_link,
+      password,
+    } = data;
+    dispatch(registerUser({ username, first_name, last_name, twitter_link , password}));
+  };
+  useEffect(() => {
+    if (success) {
+      setLoader(!loader);
+      setTimeout(() => {
+        navigate("/");
+      }, 500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [success]);
+  useEffect(()=> {
+    if(error) {
+      debugger
+    console.log('error :', error);
 
-  function onSubmit(data) {
-   
-    setLoader(true);
-    axios
-      .post("https://qo-url@-@stex-dir", data)
-      .then(() => {
-        setLoader(false);
-        toast("Your message was sent");
-        reset();
-      })
-      .catch(() => {
-        setLoader(false);
-       
-        toast("Something went wrong");
-      });
-  }
+      setErrorMsg(error)
+    }
+  },[error])
   return (
     <AuthWrap>
       <AuthContent>
-        <h2>{"Sign Up"}</h2>
+        <Link to={"/"}>
+          <img src={logoMid} alt="logo" />
+        </Link>
+        <h2>Sign Up</h2>
+        {errorMsg && <Error>{errorMsg}</Error>}
         <form onSubmit={handleSubmit(onSubmit)}>
-          <RegisterInput
-            inputType={"email"}
-            inputPlaceholder={"Email"}
-            register={register}
-            registerTarget={"email"}
-            isRequired={true}
-          />
-          <RegisterInput
-            inputType={"password"}
-            inputPlaceholder={"Password"}
-            register={register}
-            registerTarget={"password"}
-            isRequired={true}
-          />
-       
-            <RegisterInput
-              inputType={"password"}
-              inputPlaceholder={"Confirm Password"}
-              register={register}
-              registerTarget={"confirmPassword"}
-              isRequired={true}
+          <InputWrap>
+            <input {...register("name")} placeholder="Name" />
+
+            <Error message={errors.name?.message}>
+              {errors.name?.message ? errors.name?.message : <br />}
+            </Error>
+          </InputWrap>
+          <InputWrap>
+            <input {...register("surname")} placeholder="Surname" />
+
+            <Error message={errors.surname?.message}>
+              {errors.surname?.message ? errors.surname?.message : <br />}
+            </Error>
+          </InputWrap>
+          <InputWrap>
+            <input {...register("twitter")} placeholder="Twitter handle" />
+
+            <Error message={errors.twitter?.message}>
+              {errors.twitter?.message ? errors.twitter?.message : <br />}
+            </Error>
+          </InputWrap>
+          <InputWrap>
+            <input {...register("email")} placeholder="Email" />
+
+            <Error message={errors.email?.message}>
+              {errors.email?.message ? errors.email?.message : <br />}
+            </Error>
+          </InputWrap>
+          <InputWrap>
+            <div>
+              <input
+                {...register("password")}
+                placeholder="Password"
+                type={showPassword ? "text" : "password"}
+              />
+
+              <button
+                type="button"
+                className="pass-eye"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOpenIcon /> : <EyeCloseIcon />}
+              </button>
+            </div>
+            <Error message={errors.password?.message}>
+              {errors.password?.message ? errors.password?.message : <br />}
+            </Error>
+          </InputWrap>
+          <InputWrap>
+            <div>
+              <input
+                {...register("confirmPwd")}
+                placeholder="Repeat password"
+                type={showConfirmPassword ? "text" : "password"}
+              />
+              <button
+                type="button"
+                className="pass-eye"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <EyeOpenIcon /> : <EyeCloseIcon />}
+              </button>
+            </div>
+            <Error message={errors.confirmPwd?.message}>
+              {errors.confirmPwd?.message ? errors.confirmPwd?.message : <br />}
+            </Error>
+          </InputWrap>
+          <CheckWrap className="sign-up-checkwrap">
+            <input
+              name="acceptTerms"
+              type="checkbox"
+              {...register("acceptTerms")}
             />
-      
-          <CheckBoxInput
-            inputId={"agree"}
-            inputChecked={isChecked}
-            onInputChange={(event) => setIsChecked(event.target.checked)}
-            inputLabelText={
-                <>
-                  I agree to the{" "}
-                  <Link to={"terms-of-use"}>Terms of Service</Link> and{" "}
-                  <Link to={"/privacy-policy"}>Privacy Policy</Link>
-                </>
-              
-            }
-          />
-          <RegisterButton
-            buttonType={"submit"}
-            buttonLoader={loader}
-            buttonClassName={"submit-button"}
-          >
-            {"Sign Up"}
-          </RegisterButton>
+            <Link to={"/terms-service"}> Terms of Service</Link>&
+            <Link to={"/privacy-policy"}>Privacy Policy</Link>
+            <Error message={errors.acceptTerms?.message}>
+              {errors.acceptTerms?.message ? (
+                errors.acceptTerms?.message
+              ) : (
+                <br />
+              )}
+            </Error>
+          </CheckWrap>
+          <BtnWrap>
+            <button type="submit">
+              {loader ? (
+                <CircularProgress size={17} color={"inherit"} />
+              ) : (
+                <>Sign Up</>
+              )}
+            </button>
+          </BtnWrap>
         </form>
-        <Divider>Or</Divider>
-        <SocialMediaList>
-          <li>
-            <a href="https://www.facebook.com/" rel="noopener noreferrer">
-              <img src={fbIcon} alt="facebook" />
-            </a>
-          </li>
-          <li>
-            <a href="http://google.com/" rel="noopener noreferrer">
-              <img src={googleIcon} alt="google" />
-            </a>
-          </li>
-        </SocialMediaList>
+
         <NavigationList>
           <li>
-            <Link to={"/sign-in"}>
-              {"Sign In"}
-            </Link>
+            Don’t have an account?
+            <Link to={"/sign-in"}> {"Sign In"}</Link>
           </li>
         </NavigationList>
       </AuthContent>
     </AuthWrap>
   );
-} 
+};
 
-export default SignUp
+export default SignUp;

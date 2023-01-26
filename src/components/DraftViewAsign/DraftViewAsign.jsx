@@ -10,10 +10,9 @@ import {
   setDraftPlayersAction,
   setTradeValue,
 } from "../../app/features/draftConfig/draftConfigSlice";
-import {
-  delPlayersDraft,
-} from "../../app/features/playersDraft/playersDraftSlice";
+import { delPlayersDraft } from "../../app/features/playersDraft/playersDraftSlice";
 import { POSITIONS_COLOR } from "../../utils/constants";
+import draftAutoSettings from "./DraftAutoSettings";
 
 const Delayed = ({ children, waitBefore = 500, scroll = null, player }) => {
   const [isShow, setIsShow] = useState(false);
@@ -38,7 +37,7 @@ const Delayed = ({ children, waitBefore = 500, scroll = null, player }) => {
   return isShow ? children : Animation();
 };
 
-const DraftViewAsign = ({ players, thisId}) => {
+const DraftViewAsign = ({ players, thisId }) => {
   const dispatch = useDispatch();
   const {
     pauseId,
@@ -47,7 +46,11 @@ const DraftViewAsign = ({ players, thisId}) => {
     loading,
     teamPickIndex,
     countRender,
-    
+    draftCardDepth,
+    draftRandomnessTeam,
+    roundBPA,
+    roundDepth,
+    round,
   } = useSelector(selectDraftConfig);
   const divRef = useRef(null);
   const roundArr = useRef([]);
@@ -64,9 +67,19 @@ const DraftViewAsign = ({ players, thisId}) => {
       if (!pauseId.length) {
         let newTradeValue = {};
         let tradeValueTeam = structuredClone(tradeValue.results[countRender]);
-
-        const player = players.results[0];
-        tradeValueTeam["player"] = player;
+        const playersAll = players.results;
+        const player = draftAutoSettings(
+          draftCardDepth,
+          draftRandomnessTeam,
+          roundBPA,
+          roundDepth,
+          round,
+          playersAll,
+          tradeValueTeam
+          );
+        const {player:playerItem, playerDepth} = player
+        tradeValueTeam["player"] = playerItem;
+        tradeValueTeam["playerDepth"] = playerDepth;
         let newTradeValueResults = tradeValue.results.map((team) =>
           team.index === tradeValueTeam.index ? tradeValueTeam : team
         );
@@ -78,12 +91,12 @@ const DraftViewAsign = ({ players, thisId}) => {
 
         dispatch(setTradeValue(newTradeValue));
         dispatch(setDraftPlayersAction(tradeValueTeam));
-        dispatch(delPlayersDraft([player]));
+        dispatch(delPlayersDraft([playerItem]));
         dispatch(setCountRender());
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tradeValue.mouthing, players.loading,pauseId]);
+  }, [tradeValue.mouthing, players.loading, pauseId]);
 
   return (
     <Wrapper ref={divRef}>

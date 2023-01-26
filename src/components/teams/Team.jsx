@@ -1,13 +1,12 @@
 import React, { useEffect} from 'react'
 import { TeamItem } from './TeamItem';
-// import teamLogo from '../../components/assets/img/logo1.png';
 
-import './team.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { getFilterTwoData, getRandom } from "../../utils/utils";
 import { useDispatch } from 'react-redux';
 import { setDraftRandomnessTeam } from '../../app/features/draftConfig/draftConfigSlice';
+import { AllTeams } from './Teams.styles';
 
 export const Team = ({ teams, teamSelectId, draftRandomness }) => {
   const dispatch = useDispatch()
@@ -52,9 +51,5 @@ export const Team = ({ teams, teamSelectId, draftRandomness }) => {
   }
 
 
-  return (
-    <div className='all-teams'>
-      {printContent()}
-    </div>
-  )
+  return <AllTeams>{printContent()}</AllTeams>;
 }

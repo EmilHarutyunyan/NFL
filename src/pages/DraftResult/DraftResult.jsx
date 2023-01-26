@@ -127,7 +127,6 @@ const DraftResult = () => {
           <DraftResultRound>
             {roundTeam?.map((item, idx) => {
               const roundText = item.split(" ");
-              debugger
               if (+roundText[1] === roundSelect) {
                 return (
                   <DraftResultRoundItem

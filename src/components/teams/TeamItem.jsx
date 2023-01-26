@@ -1,12 +1,13 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { saveTeams } from "../../app/features/draftConfig/draftConfigSlice";
+import { TeamItemDiv } from "./Teams.styles";
 
 
 export const TeamItem = ({ teams, num, teamName, teamLogo, isChecked, item }) => {
   const dispatch = useDispatch();
   return (
-    <div
+    <TeamItemDiv
       onClick={() => {
         dispatch(saveTeams(item));
       }}
@@ -17,6 +18,6 @@ export const TeamItem = ({ teams, num, teamName, teamLogo, isChecked, item }) =>
         <p className="name">{teamName}</p>
       </div>
       <img src={teamLogo} alt="" />
-    </div>
+    </TeamItemDiv>
   );
 };

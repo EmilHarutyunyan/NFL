@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { CheckBoxInput } from "../../../components/Inputs/CheckBoxInput";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 // styles
@@ -9,37 +8,30 @@ import {
   AuthContent,
   AuthWrap,
   BtnWrap,
-  CheckWrap,
   Error,
   InputWrap,
-  NavigationList,
 } from "../Auth.styles";
 // images
 import logoMid from "../../../assets/img/logoMid.png";
 import { EyeCloseIcon, EyeOpenIcon } from "../../../components/Icons/Icons";
 import { CircularProgress } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { userLogin } from "../../../app/features/user/userActions";
-import { selectUser } from "../../../app/features/user/userSlice";
-import { useEffect } from "react";
 
 const schema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Email should have correct format")
-    .required("Required"),
   password: yup
     .string()
-    .required("Required")
+    .required("No password provided.")
     .min(8, "Password is too short - should be 8 chars minimum."),
+  confirmPwd: yup
+    .string()
+    .required("Password is mandatory")
+    .oneOf([yup.ref("password")], "Passwords does not match"),
 });
 
-const SignIn = () => {
-  const [isChecked, setIsChecked] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+const ResetPass = () => {
+  const [loader, setLoader] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
-  const { loading } = useSelector(selectUser);
-  const dispatch = useDispatch()
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const {
     register,
@@ -52,33 +44,20 @@ const SignIn = () => {
   });
   const onSubmit = (data) => {
     // alert(JSON.stringify(data));
-    const {email:username,password} = data
-    dispatch(userLogin({ username, password }));
+    setLoader(!loader);
+    setErrorMsg("Your email address or password is not correct");
+   
   };
-  useEffect(() => {
-    if (loading) {
-      setTimeout(() => {
-        navigate("/");
-      }, 500);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading]);
   return (
     <AuthWrap>
       <AuthContent>
         <Link to={"/"}>
           <img src={logoMid} alt="logo" />
         </Link>
-        <h2>Sign In</h2>
+        <h2 className="forgot-pass">Reset password</h2>
+        <h3>Type your new password here.</h3>
         {errorMsg && <Error>{errorMsg}</Error>}
         <form onSubmit={handleSubmit(onSubmit)}>
-          <InputWrap>
-            <input {...register("email")} placeholder="Email" />
-
-            <Error message={errors.email?.message}>
-              {errors.email?.message ? errors.email?.message : <br />}
-            </Error>
-          </InputWrap>
           <InputWrap>
             <div>
               <input
@@ -86,6 +65,7 @@ const SignIn = () => {
                 placeholder="Password"
                 type={showPassword ? "text" : "password"}
               />
+
               <button
                 type="button"
                 className="pass-eye"
@@ -98,34 +78,36 @@ const SignIn = () => {
               {errors.password?.message ? errors.password?.message : <br />}
             </Error>
           </InputWrap>
-          <CheckWrap>
-            <CheckBoxInput
-              inputId={"remember"}
-              inputChecked={isChecked}
-              onInputChange={(event) => setIsChecked(event.target.checked)}
-              inputLabelText={"Remember"}
-            />
-            <Link to={"/reset-password"}>Forgot your password?</Link>
-          </CheckWrap>
-          <BtnWrap>
+          <InputWrap>
+            <div>
+              <input
+                {...register("confirmPwd")}
+                placeholder="Repeat password"
+                type={showConfirmPassword ? "text" : "password"}
+              />
+              <button
+                type="button"
+                className="pass-eye"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <EyeOpenIcon /> : <EyeCloseIcon />}
+              </button>
+            </div>
+            <Error message={errors.confirmPwd?.message}>
+              {errors.confirmPwd?.message ? errors.confirmPwd?.message : <br />}
+            </Error>
+          </InputWrap>
+          <BtnWrap className="forgot-submit">
             <button type="submit">
-              {loading ? (
-                <CircularProgress size={17} color={"inherit"} />
-              ) : (
-                <>Sign In</>
-              )}
+              {loader && <CircularProgress size={17} color={"inherit"} />}
+              Send reset link to my email
             </button>
           </BtnWrap>
         </form>
-
-        <NavigationList>
-          <li>
-            Already have an account? <Link to={"/sign-up"}>{"Sign Up"}</Link>
-          </li>
-        </NavigationList>
+        <button onClick={() => navigate(-1)}>Back</button>
       </AuthContent>
     </AuthWrap>
   );
 };
 
-export default SignIn;
+export default ResetPass;

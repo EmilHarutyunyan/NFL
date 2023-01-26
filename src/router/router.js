@@ -18,6 +18,8 @@ import DraftResult from '../pages/DraftResult/DraftResult';
 import TeamList from '../pages/TeamList/TeamList';
 import { selectDraftResult } from '../app/features/draftResult/draftResultSlice';
 import NotFound from '../pages/NotFoundPage/NotFoundPage';
+import ResetPass from '../pages/auth/ResetPass/ResetPass';
+import ForgotPass from '../pages/auth/ForgotPass/ForgotPass';
 
 const Router = () => {
   const {teamSelect} = useSelector(selectDraftConfig)
@@ -46,6 +48,8 @@ const Router = () => {
         <Route path="*" element={<NotFound />}/>
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/forgot-password" element={<ForgotPass />} />
+        <Route path="/reset-password" element={<ResetPass />} />
       </Routes>
     </>
   );

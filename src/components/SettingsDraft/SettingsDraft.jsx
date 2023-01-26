@@ -1,5 +1,5 @@
 import { Switch } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import Title from "../../components/Title/Title";
 import Nums from "./Nums";
 import Box from "@mui/material/Box";
@@ -14,10 +14,13 @@ import {
 } from "./Settings.styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  checkRoundBPA,
   saveRound,
   selectDraftConfig,
+  setAdvancedSetting,
   setDraftCardDepth,
   setDraftRandomness,
+  setRoundDepth,
   setTimeSpeed,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { CheckBoxInputSecond } from "../Inputs/CheckBoxInputSecond";
@@ -28,24 +31,22 @@ import { useNavigate } from "react-router-dom";
 const Settings = ({teamSelect}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { round, timeSpeed, draftRandomness, draftCardDepth } =
-    useSelector(selectDraftConfig);
-  const [advanceSetting,setAdvanceSetting] = useState(false)
-  const [isRoundOne, setIsRoundOne] = useState(false);
-  const [isRoundTwo, setIsRoundTwo] = useState(false);
+  const {
+    round,
+    timeSpeed,
+    draftRandomness,
+    draftCardDepth,
+    advancedSetting,
+    roundDepth,
+    roundBPA,
+  } = useSelector(selectDraftConfig);
   const [isRoundOneFan, setIsRoundOneFan] = useState(false);
   const [isRoundTwoFan, setIsRoundTwoFan] = useState(false);
   const [isRoundThreeFan, setIsRoundThreeFan] = useState(false);
 
   const roundsArray = Array.from(Array(7).keys());
 
-  const handleSetting = useCallback(
-    (e,cl) => {
-      return dispatch(cl(e.target.value));
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [timeSpeed]
-  );
+  
   return (
     <>
       <SettingItem>
@@ -76,7 +77,7 @@ const Settings = ({teamSelect}) => {
               min={1}
               max={5}
               value={timeSpeed}
-              onChange={(e) => handleSetting(e, setTimeSpeed)}
+              onChange={(e) => dispatch(setTimeSpeed(e.target.value))}
               aria-label="Default"
               valueLabelDisplay="auto"
             />
@@ -97,10 +98,13 @@ const Settings = ({teamSelect}) => {
         </div>
         <label htmlFor="">
           Use default
-          <Switch onChange={(e) => setAdvanceSetting(e.target.checked)} />
+          <Switch
+            checked={advancedSetting}
+            onChange={(e) => dispatch(setAdvancedSetting(e.target.checked))}
+          />
         </label>
       </SettingItem>
-      {!advanceSetting && (
+      {!advancedSetting && (
         <>
           <SettingItem className="setting-goriz">
             <Title
@@ -112,10 +116,10 @@ const Settings = ({teamSelect}) => {
                 <Slider
                   defaultValue={2}
                   step={1}
-                  min={1}
+                  min={2}
                   max={8}
                   value={draftCardDepth}
-                  onChange={(e) => handleSetting(e, setDraftCardDepth)}
+                  onChange={(e) => dispatch(setDraftCardDepth(e.target.value))}
                   aria-label="Default"
                   valueLabelDisplay="auto"
                 />
@@ -136,10 +140,10 @@ const Settings = ({teamSelect}) => {
                 <Slider
                   defaultValue={2}
                   step={1}
-                  min={1}
+                  min={2}
                   max={16}
                   value={draftRandomness}
-                  onChange={(e) => handleSetting(e, setDraftRandomness)}
+                  onChange={(e) => dispatch(setDraftRandomness(e.target.value))}
                   aria-label="Default"
                   valueLabelDisplay="auto"
                 />
@@ -152,16 +156,20 @@ const Settings = ({teamSelect}) => {
           </SettingItem>
           <SettingItem className="setting-round-check">
             <CheckBoxInputSecond
-              checked={isRoundOne}
+              checked={roundBPA.includes(1)}
               label={"1nd round BPA"}
               nameClass={"setting-check"}
-              onInputChange={setIsRoundOne}
+              value={1}
+              disabled={!(round >= 1)}
+              onInputChange={(e) => dispatch(checkRoundBPA(e.target.value))}
             />
             <CheckBoxInputSecond
-              checked={isRoundTwo}
+              checked={roundBPA.includes(2)}
               label={"2nd round BPA"}
               nameClass={"setting-check"}
-              onInputChange={setIsRoundTwo}
+              value={2}
+              disabled={!(round >= 2)}
+              onInputChange={(e) => dispatch(checkRoundBPA(e.target.value))}
             />
           </SettingItem>
           <SettingItem className="setting-goriz">
@@ -169,12 +177,12 @@ const Settings = ({teamSelect}) => {
             <Speed>
               <Box sx={{ width: "100%" }}>
                 <Slider
-                  defaultValue={2}
                   step={1}
-                  min={1}
+                  min={2}
                   max={5}
-                  value={2}
-                  // onChange={handleSpeed}
+                  value={roundDepth}
+                  defaultValue={5}
+                  onChange={(e) => dispatch(setRoundDepth(e.target.value))}
                   aria-label="Default"
                   valueLabelDisplay="auto"
                 />

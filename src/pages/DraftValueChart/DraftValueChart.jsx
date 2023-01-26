@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getDraftValue, selectDraftConfig } from "../../app/features/draftConfig/draftConfigSlice";
+import {  selectDraftConfig } from "../../app/features/draftConfig/draftConfigSlice";
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -17,6 +17,7 @@ import {
   RoundColumnHead,
   Wrapper,
 } from "./DraftValueChart.styles";
+import { getDraftValue } from "../../app/features/draftConfig/drafConfigAction";
 
 const DraftValueChart = () => {
   const dispatch = useDispatch()

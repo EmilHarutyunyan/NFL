@@ -11,7 +11,7 @@ const DraftSimulator = () => {
     useSelector(selectDraftConfig);
   const dispatch = useDispatch();
   const count = useMemo(() => countRender, [countRender])
-  console.log("🚀 ~ file: DraftSimulator.jsx:14 ~ DraftSimulator ~ count", count)
+
  
   return (
     <DraftSimulatorWrapper>

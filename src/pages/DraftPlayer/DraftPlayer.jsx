@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getTradeValue } from "../../app/features/draftConfig/drafConfigAction";
 import {
-  getTradeValue,
   selectDraftConfig,
   setResetRound,
 } from "../../app/features/draftConfig/draftConfigSlice";

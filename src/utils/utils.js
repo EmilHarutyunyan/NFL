@@ -69,5 +69,3 @@ export const getRandom =(arr, n) => {
   }
   return result;
 }
-
-

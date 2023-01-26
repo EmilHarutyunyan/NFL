@@ -7,22 +7,29 @@ import {
   DraftConfigWrap,
   DraftContainer,
   DraftHeading,
+  DraftTeams,
+  SelectTeams,
+  TeamsSettings,
 } from "./DraftConfig.styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getTeams,
   selectAllTeams,
   selectDraftConfig,
   setResetRound,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { Switch } from "@mui/material";
 import { resDraftResult } from "../../app/features/draftResult/draftResultSlice";
+import { getTeams } from "../../app/features/draftConfig/drafConfigAction";
 
 export const DraftConfiguration = () => {
   const dispatch = useDispatch();
   const draftConfigRef = useRef(null);
-  const { teamSelect, teams, teamSelectId, draftRandomness } =
-    useSelector(selectDraftConfig);
+  const {
+    teamSelect,
+    teams,
+    teamSelectId,
+    draftRandomness,
+  } = useSelector(selectDraftConfig);
 
   const handleChange = (e) => {
     dispatch(selectAllTeams(e.target.checked));
@@ -42,8 +49,8 @@ export const DraftConfiguration = () => {
           <Title titleText="Draft Configuration" titleClassName="title" />
           <p>Customize your mock draft settings below</p>
         </DraftHeading>
-        <div className="select-teams">
-          <div className="teams">
+        <SelectTeams>
+          <DraftTeams>
             <Title
               titleText="Select Your Team (s)"
               titleClassName="teams-title"
@@ -58,11 +65,11 @@ export const DraftConfiguration = () => {
               teamSelectId={teamSelectId}
               draftRandomness={draftRandomness}
             />
-          </div>
-          <div className="settings">
+          </DraftTeams>
+          <TeamsSettings>
             <SettingsDraft teamSelect={teamSelect} />
-          </div>
-        </div>
+          </TeamsSettings>
+        </SelectTeams>
 
         <hr className="line" />
       </DraftContainer>

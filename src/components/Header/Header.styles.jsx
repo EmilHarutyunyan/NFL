@@ -49,7 +49,9 @@ export const BtnWrap = styled.div`
     margin-left: 24px;
     opacity: 0.9;
     transition: all 0.3s ease;
-    :hover {
+    background-color: #fff;
+    color:#000000;
+     :hover {
       opacity: 1;
     }
   }
@@ -65,4 +67,15 @@ export const HeaderBody = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+`;
+
+export const ProfileInfo = styled.div`
+display: flex;
+align-items: center;
+gap: 15px;
+color: #fff;
+  img {
+    width: 22px;
+    height: auto;
+  }
 `;

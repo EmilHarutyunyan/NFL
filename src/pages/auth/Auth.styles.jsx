@@ -22,18 +22,39 @@ export const AuthContent = styled.div`
   width: 100%;
   h2 {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     font-size: 40px;
     color: #0e1118;
     font-family: "Saira Semi Condensed", sans-serif;
     font-weight: 400;
+  }
+  h2.forgot-pass {
+    margin-bottom: 0;
+  }
+  h3 {
+    text-align: center;
+    margin-bottom: 16px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
   }
   img {
     display: block;
     max-width: 91px;
     width: 100%;
     margin: 0 auto;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+  }
+  button {
+    display: block;
+    margin: 0 auto;
+    margin-top: 24px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 30px;
+    text-align: center;
+    color: #004ea3;
   }
 `;
 
@@ -42,7 +63,7 @@ export const Divider = styled.div`
   font-size: 16px;
   font-family: "Saira Semi Condensed", sans-serif;
   font-weight: 400;
-  margin-bottom: 32px;
+  margin-bottom: 22px;
   position: relative;
   text-align: center;
   ::before {
@@ -75,7 +96,7 @@ export const SocialMediaList = styled.ul`
 export const NavigationList = styled.ul`
   list-style-type: none;
   text-align: center;
-  margin-top: 40px;
+  margin-top: 35px;
   display: flex;
   justify-content: center;
   li a {
@@ -97,13 +118,8 @@ export const Error = styled.p`
   opacity: 0;
   transition: all 0.3s ease-in-out;
   line-height: 25.5px;
-  ${({ messageEmail }) =>
-    messageEmail &&
-    css`
-      opacity: 1;
-    `}
-  ${({ messagePass }) =>
-    messagePass &&
+  ${({ message }) =>
+    message &&
     css`
       opacity: 1;
     `}
@@ -118,20 +134,24 @@ export const InputWrap = styled.div`
     width: 100%;
     ::placeholder {
       font-weight: 400;
-      font-size: 16px;
+      font-size: 14px;
       line-height: 27px;
     }
   }
   > div {
     position: relative;
-    svg {
+    .pass-eye {
       position: absolute;
       top: 50%;
-      transform: translate(-150%, -50%);
+      transform: translate(-150%, -40%);
       cursor: pointer;
+      margin: 0;
+      display: inline-block;
+      svg {
+        height: 17px;
+      }
     }
   }
-  
 `;
 export const BtnWrap = styled.div`
   button {
@@ -145,14 +165,22 @@ export const BtnWrap = styled.div`
     line-height: 30px;
     width: 100%;
     margin-top: 24px;
+    cursor: pointer;
+  }
+  button.forgot-submit {
+    margin-top: 0;
   }
 `;
 
 export const CheckWrap = styled.div`
-display: flex;
-align-items: center;
-justify-content: space-between;
-flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  &.sign-up-checkwrap {
+    gap: 5px;
+    justify-content: flex-start;
+  }
   a {
     font-weight: 400;
     font-size: 14px;
@@ -160,5 +188,6 @@ flex-wrap: wrap;
     text-decoration-line: underline;
     text-decoration-color: #004ea3;
     color: #004ea3;
+    cursor: pointer;
   }
 `;
