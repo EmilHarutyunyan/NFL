@@ -11,7 +11,7 @@ import { AllTeams } from './Teams.styles';
 export const Team = ({ teams, teamSelectId, draftRandomness }) => {
   const dispatch = useDispatch()
   useEffect(()=> {
-    if (teams.length) {
+    if (teams.length && teams.length !== 32) {
     const exceptTeam = getFilterTwoData(teams, teamSelectId, "index");
     const exceptTeamId = exceptTeam.map(item => item.index)
     const draftRandomnessTeam = getRandom(exceptTeamId, draftRandomness)

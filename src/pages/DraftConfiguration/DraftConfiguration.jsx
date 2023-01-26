@@ -64,6 +64,7 @@ export const DraftConfiguration = () => {
               teams={teams}
               teamSelectId={teamSelectId}
               draftRandomness={draftRandomness}
+              selectAll=""
             />
           </DraftTeams>
           <TeamsSettings>
