@@ -19,7 +19,7 @@ import { EyeCloseIcon, EyeOpenIcon } from "../../../components/Icons/Icons";
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../../../app/features/user/userActions";
-import TokenService from "../../../service/token.service";
+// import TokenService from "../../../service/token.service";
 import { selectUser } from "../../../app/features/user/userSlice";
 
 const schema = yup.object().shape({

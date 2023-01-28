@@ -1781,7 +1781,7 @@ export const dataResult =
           "Chiefs": 640,
           "Buccaneers": 640,
           "Bills": 640,
-          "percentValue": -5
+          "pricentValue": -5
         },
         {
           "id": 30,
@@ -1822,7 +1822,7 @@ export const dataResult =
           "Chiefs": 620,
           "Buccaneers": 620,
           "Bills": 620,
-          "percentValue": -3.33
+          "pricentValue": -3.33
         },
         {
           "id": 31,
@@ -1863,7 +1863,7 @@ export const dataResult =
           "Chiefs": 600,
           "Buccaneers": 600,
           "Bills": 600,
-          "percentValue": -1.67
+          "pricentValue": -1.67
         },
         {
           "id": 32,
@@ -1904,7 +1904,7 @@ export const dataResult =
           "Chiefs": 590,
           "Buccaneers": 590,
           "Bills": 590,
-          "percentValue": 10
+          "pricentValue": 10
         }
       ]
     },
@@ -3868,7 +3868,7 @@ export const dataResult =
           "Chiefs": 292,
           "Buccaneers": 292,
           "Bills": 292,
-          "percentValue": -2.13
+          "pricentValue": -2.13
         },
         {
           "id": 62,
@@ -3909,7 +3909,7 @@ export const dataResult =
           "Chiefs": 284,
           "Buccaneers": 284,
           "Bills": 284,
-          "percentValue": -1.07
+          "pricentValue": -1.07
         },
         {
           "id": 63,
@@ -3950,7 +3950,7 @@ export const dataResult =
           "Chiefs": 276,
           "Buccaneers": 276,
           "Bills": 276,
-          "percentValue": 3.2
+          "pricentValue": 3.2
         }
       ]
     },
@@ -4308,7 +4308,7 @@ export const dataResult =
             "Chiefs": 640,
             "Buccaneers": 640,
             "Bills": 640,
-            "percentValue": -5
+            "pricentValue": -5
           },
           {
             "id": 30,
@@ -4349,7 +4349,7 @@ export const dataResult =
             "Chiefs": 620,
             "Buccaneers": 620,
             "Bills": 620,
-            "percentValue": -3.33
+            "pricentValue": -3.33
           },
           {
             "id": 31,
@@ -4390,7 +4390,7 @@ export const dataResult =
             "Chiefs": 600,
             "Buccaneers": 600,
             "Bills": 600,
-            "percentValue": -1.67
+            "pricentValue": -1.67
           },
           {
             "id": 32,
@@ -4431,7 +4431,7 @@ export const dataResult =
             "Chiefs": 590,
             "Buccaneers": 590,
             "Bills": 590,
-            "percentValue": 10
+            "pricentValue": 10
           }
         ]
       },
@@ -4534,7 +4534,7 @@ export const dataResult =
             "Chiefs": 292,
             "Buccaneers": 292,
             "Bills": 292,
-            "percentValue": -2.13
+            "pricentValue": -2.13
           },
           {
             "id": 62,
@@ -4575,7 +4575,7 @@ export const dataResult =
             "Chiefs": 284,
             "Buccaneers": 284,
             "Bills": 284,
-            "percentValue": -1.07
+            "pricentValue": -1.07
           },
           {
             "id": 63,
@@ -4616,7 +4616,7 @@ export const dataResult =
             "Chiefs": 276,
             "Buccaneers": 276,
             "Bills": 276,
-            "percentValue": 3.2
+            "pricentValue": 3.2
           }
         ]
       }

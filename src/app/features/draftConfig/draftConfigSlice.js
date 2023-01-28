@@ -22,6 +22,7 @@ const initialState = {
   draftPlayers: [],
   draftCardDepth: 2,
   draftRandomness:2,
+  selectCardDepth: [],
   roundDepth:5,
   roundBPA: [],
   draftRandomnessTeam:[],
@@ -35,6 +36,9 @@ export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
+    setSelectCardDepth:(state,action) => {
+      state.selectCardDepth.push(action.payload)
+    },
     setRoundBPA: (state,action)=> {
       state.roundBPA = action.payload
     },
@@ -205,6 +209,7 @@ export const {
   setDraftPlayers,
   setTeamRemoveId,
   delPauseId,
+  setSelectCardDepth
   
 } = draftConfigSlice.actions;
 
@@ -226,9 +231,23 @@ export const checkRoundBPA = (round) => (dispatch, getState) => {
   const { roundBPA } = selectDraftConfig(getState());
   const intRound = +round
   const addOrRemove = roundBPA.includes(intRound) ? roundBPA.filter(i => i !== intRound) : [...roundBPA, intRound];
-  
   dispatch(setRoundBPA(addOrRemove))
+}
 
+export const delRoundBPA = (roundIndex) => (dispatch, getState) => {
+  const { roundBPA } = selectDraftConfig(getState());
+  let newBPA = []
+  if (+roundIndex > 2) {
+    dispatch(setRoundBPA([]))
+  }
+  else {
+    
+    newBPA = roundBPA.sort(function (a, b) {
+      return a - b;
+    });
+    dispatch(setRoundBPA(newBPA.slice(1)))
+
+  }
 }
 
 export const selectAllTeams = (check) => (dispatch, getState) => {

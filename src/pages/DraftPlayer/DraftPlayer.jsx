@@ -38,6 +38,7 @@ const DraftPlayer = () => {
     teamSelect,
     teamPickIndex,
     teamPickIndexControl,
+    draftRandomnessTeam,
   } = useSelector(selectDraftConfig);
 
   const dispatch = useDispatch();
@@ -123,7 +124,15 @@ const DraftPlayer = () => {
         data.items.push(dataItem);
       });
 
-      dispatch(setDraftResultAction(draftPlayers, teamSelect, round, teamPickIndexControl));
+      dispatch(
+        setDraftResultAction(
+          draftPlayers,
+          teamSelect,
+          round,
+          teamPickIndexControl,
+          draftRandomnessTeam
+        )
+      );
       dispatch(setHistoryBoard(data));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

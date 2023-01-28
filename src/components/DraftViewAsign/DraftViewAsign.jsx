@@ -5,9 +5,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { PlayerName, PlayerPos, Wrapper } from "./DraftViewAsign.styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  delRoundBPA,
   selectDraftConfig,
   setCountRender,
   setDraftPlayersAction,
+  setSelectCardDepth,
   setTradeValue,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { delPlayersDraft } from "../../app/features/playersDraft/playersDraftSlice";
@@ -51,6 +53,7 @@ const DraftViewAsign = ({ players, thisId }) => {
     roundBPA,
     roundDepth,
     round,
+    selectCardDepth,
   } = useSelector(selectDraftConfig);
   const divRef = useRef(null);
   const roundArr = useRef([]);
@@ -67,28 +70,55 @@ const DraftViewAsign = ({ players, thisId }) => {
       if (!pauseId.length) {
         let newTradeValue = {};
         let tradeValueTeam = structuredClone(tradeValue.results[countRender]);
+        let teamDepth = []
         const playersAll = players.results;
-        const player = draftAutoSettings(
+        let player = {};
+        let roundIndexBool = false;
+        if (countRender > 0 && roundBPA.length !== 0) {
+          let teamSlice = tradeValue.results.slice(0, countRender + 1);
+          teamSlice.forEach((team) => {
+            if (team.city === tradeValueTeam.city) {
+              teamDepth = team;
+            }
+          });
+        }
+         
+        if(roundBPA.length && !(roundBPA.includes(+tradeValueTeam.round_index_number))) {
+          roundIndexBool= true;
+          dispatch(delRoundBPA(tradeValueTeam.round_index_number));
+        }
+        
+        
+        player = draftAutoSettings(
           draftCardDepth,
           draftRandomnessTeam,
           roundBPA,
           roundDepth,
           round,
           playersAll,
-          tradeValueTeam
-          );
+          teamDepth,
+          tradeValueTeam,
+          selectCardDepth,
+          roundIndexBool
+        );
+
+        
         const {player:playerItem, playerDepth} = player
         tradeValueTeam["player"] = playerItem;
         tradeValueTeam["playerDepth"] = playerDepth;
         let newTradeValueResults = tradeValue.results.map((team) =>
           team.index === tradeValueTeam.index ? tradeValueTeam : team
         );
-
+          
         newTradeValue = {
           ...tradeValue,
           results: newTradeValueResults,
         };
-
+        
+        !selectCardDepth.includes(playerDepth) &&
+          dispatch(setSelectCardDepth(playerDepth));
+      
+        
         dispatch(setTradeValue(newTradeValue));
         dispatch(setDraftPlayersAction(tradeValueTeam));
         dispatch(delPlayersDraft([playerItem]));

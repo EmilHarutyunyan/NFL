@@ -19,6 +19,7 @@ const draftResultSlice = createSlice({
       state.roundTeam = action.payload.roundTeam;
       state.teamsName = action.payload.teamsName
       state.teamsPlayer = action.payload.teamsPlayer
+      state.draftRandomnessTeam = action.payload.draftRandomnessTeam;
     },
     resDraftResult: (state, action) => {
       state.results = []
@@ -30,7 +31,7 @@ export const selectDraftResult = (state) => state.draftResult;
 
 export const { setDraftResult, setRoundTeam, setTeamsName, setTeamsPlayer, resDraftResult } = draftResultSlice.actions;
 
-export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexControl) => (dispatch, getState) => {
+export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexControl, draftRandomnessTeam) => (dispatch, getState) => {
 
   
   const setRound = []
@@ -50,7 +51,7 @@ export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexCont
   }
 
   // dispatch(setRoundTeam(setRound))
-  dispatch(setDraftResult({ results:teams, roundTeam: setRound, teamsName: teamsSelectName, teamsPlayer}));
+  dispatch(setDraftResult({ results: teams, roundTeam: setRound, teamsName: teamsSelectName, teamsPlayer, draftRandomnessTeam }));
   // dispatch(setTeamsName(teamsSelectName))
   // dispatch(setTeamsPlayer(teamsPlayer))
 };

@@ -45,19 +45,11 @@ import { percentPick, upUsersCals } from "../../utils/utils";
 import { Switch } from "@mui/material";
 
 const PageSize = 10;
-const DraftPlayerChoose = ({
-  playersDraft,
-  draftStatus,
-  setThisId,
-}) => {
+const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
   const groups = useSelector(selectGroup);
   const [colorShow, setColorShow] = useState(true);
-  const {
-    tradeValue,
-    countRender,
-    status,
-    teamPickIndex,
-  } = useSelector(selectDraftConfig);
+  const { tradeValue, countRender, status, teamPickIndex } =
+    useSelector(selectDraftConfig);
   const dispatch = useDispatch();
 
   const draftBtnDisable = draftStatus === "red" ? true : false;
@@ -67,28 +59,28 @@ const DraftPlayerChoose = ({
   const currentTableData = useMemo(() => {
     const firstPageIndex = (playersDraft.currentPage - 1) * PageSize;
     const lastPageIndex = firstPageIndex + PageSize;
-    
-    // if (draftPlayers.length > 0) {
-      let playersData = playersDraft.results;
-      if (playersDraft.search) {
-        playersData = playersDraft.results.filter((player) => {
-          const name = player.player.toLowerCase();
-          return name.includes(playersDraft.search.toLowerCase());
-        });
-      }
-      if (
-        playersDraft.position.length &&
-        !playersDraft.position.includes("All")
-      ) {
-        playersData = playersDraft.results.filter((player) => {
-          const position = player.position;
-          return playersDraft.position.includes(position);
-          // return position.toLowerCase() === playersDraft.position.toLowerCase();
-        });
-      }
 
-      const playersDataSlice = playersData.slice(firstPageIndex, lastPageIndex);
-      return { playersData, playersDataSlice };
+    // if (draftPlayers.length > 0) {
+    let playersData = playersDraft.results;
+    if (playersDraft.search) {
+      playersData = playersDraft.results.filter((player) => {
+        const name = player.player.toLowerCase();
+        return name.includes(playersDraft.search.toLowerCase());
+      });
+    }
+    if (
+      playersDraft.position.length &&
+      !playersDraft.position.includes("All")
+    ) {
+      playersData = playersDraft.results.filter((player) => {
+        const position = player.position;
+        return playersDraft.position.includes(position);
+        // return position.toLowerCase() === playersDraft.position.toLowerCase();
+      });
+    }
+
+    const playersDataSlice = playersData.slice(firstPageIndex, lastPageIndex);
+    return { playersData, playersDataSlice };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -112,10 +104,10 @@ const DraftPlayerChoose = ({
     // eslint-disable-next-line
   }, [setSearchValue, searchValue]);
 
-  const playerConcat = (playerItem, teamId, upPlayers = {}) => {
-    
+  const playerConcat = (playerItem, teamId, upPlayers = {}, idx) => {
     const teamItem = structuredClone(tradeValue.results[teamId - 1]);
     teamItem["player"] = playerItem;
+    teamItem["playerDepth"] = idx + 1;
 
     const newTradeValue = tradeValue.results.map((item) => {
       if (item.index === teamItem.index) {
@@ -137,7 +129,7 @@ const DraftPlayerChoose = ({
     const teamName = tradeValue.results[team - 1].round.name;
     const teamValue = +tradeValue.results[team - 1].value;
     if (teamValue >= item[teamName]) {
-      const percentValue = percentPick(teamValue, item[teamName]);
+      const pricentValue = percentPick(teamValue, item[teamName]);
       let playerItemsSlice = [];
 
       for (let i = 0; i < playersDraft.results.length; ++i) {
@@ -149,13 +141,13 @@ const DraftPlayerChoose = ({
         }
       }
 
-      percentPlayers = upUsersCals(playerItemsSlice, percentValue, teamName);
-      playerItem = { ...item, [teamName]: item.value + percentValue };
+      percentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
+      playerItem = { ...item, [teamName]: item.value + pricentValue };
     }
 
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft("All"));
-    playerConcat(playerItem, teamPickIndex[0], percentPlayers);
+    playerConcat(playerItem, teamPickIndex[0], percentPlayers, idx);
     dispatch(delTeamsRound(teamPickIndex[0]));
     setThisId(teamPickIndex[0]);
     // setChangeId(true);

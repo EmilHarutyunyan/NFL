@@ -1,25 +1,42 @@
 import { getRandom } from "../../utils/utils";
-function draftAutoSettings(draftCardDepth, draftRandomnessTeam, roundBPA, roundDepth, round, playersAll, tradeValueTeam) {
+function draftAutoSettings(draftCardDepth, draftRandomnessTeam, roundBPA, roundDepth, round, playersAll, teamDepth, tradeValueTeam, selectCardDepth, roundIndexBool) {
+
   const playerPosition = Array.from({ length: draftCardDepth }, (_, i) => i + 1)
-  const playerRange = playersAll.slice(0,draftCardDepth);
-  const tradeValueTeamId = tradeValueTeam.round.id;
+  const playerRange = playersAll.slice(0, draftCardDepth);
+  const tradeValueTeamId = tradeValueTeam.round.index;
   const positionPlayers = []
   const playerChoose = {};
-  if(draftRandomnessTeam.includes(tradeValueTeamId)) {
-    const [randomPosition] = getRandom(playerPosition.slice(1, draftCardDepth),1)
-    const playerRandomIdExceptTop = playerRange[randomPosition]
+  if (roundBPA.length && !roundIndexBool) {
+    playerChoose["player"] = playerRange[0]
+    playerChoose["playerDepth"] = 1
+  }
+  // Except  Round 1
+  else if (teamDepth.length) {
+    playerChoose["player"] = playerRange[teamDepth[0].playerDepth - 1]
+    playerChoose["playerDepth"] = teamDepth[0].playerDepth
+  }
+  // Except Top-1 Player Round 1
+  else if (draftRandomnessTeam.includes(tradeValueTeamId)) {
+    
+    const [randomPosition] = getRandom(playerPosition.slice(1, draftCardDepth), 1)
+    const playerRandomIdExceptTop = playerRange[randomPosition - 1]
     positionPlayers.push(randomPosition)
     playerChoose["player"] = playerRandomIdExceptTop;
     playerChoose["playerDepth"] = randomPosition
-  } else if (!roundBPA.length) {
-    const [randomPosition] = getRandom(playerPosition.slice(0, draftCardDepth),1)
-    const playerRandomId = playerRange[randomPosition]
+  } 
+  // Round 1
+  else {
+    const [randomPosition] = getRandom(playerPosition.slice(0, draftCardDepth), 1)
+    const playerRandomId = playerRange[randomPosition - 1]
     positionPlayers.push(randomPosition)
     playerChoose["player"] = playerRandomId;
     playerChoose["playerDepth"] = randomPosition
+    if (selectCardDepth.length > draftCardDepth && !selectCardDepth.includes(draftCardDepth)) {
+      playerChoose["player"] = playerRange[draftCardDepth]
+      playerChoose["playerDepth"] = draftCardDepth
+    }
 
   }
-
   return playerChoose;
   // // RoundBPA
   // if(roundBPA.includes(round)) {

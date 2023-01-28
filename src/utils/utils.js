@@ -20,21 +20,21 @@ let sumNumber = (num) => {
   return sum;
 };
 
-export const upUsersCals = (players, percentValuePlayer, key) => {
+export const upUsersCals = (players, pricentValuePlayer, key) => {
   const point = sumNumber(players.length - 1);
-  const midPoint =percentValuePlayer / point;
+  const midPoint = pricentValuePlayer / point;
   return players.map((player, idx) => {
-    const percentValue = +((midPoint * (players.length - idx - 1)).toFixed(2));
-    if(idx === (players.length - 1)) {
-      return { ...player, value: +(player[key] + percentValuePlayer), percentValue:percentValuePlayer };
+    const pricentValue = +((midPoint * (players.length - idx - 1)).toFixed(2));
+    if (idx === (players.length - 1)) {
+      return { ...player, value: +(player[key] + pricentValuePlayer), pricentValue: pricentValuePlayer };
     }
-    return { ...player, value: +(player[key] - percentValue), percentValue: -percentValue};
+    return { ...player, value: +(player[key] - pricentValue), pricentValue: -pricentValue };
   });
 };
 
 
 // Round Calc Create New Data
-export const roundTeam = (roundCount,teams) => {
+export const roundTeam = (roundCount, teams) => {
   const newData = []
   let indexCount = 1;
   for (let i = 1; i <= roundCount; ++i) {
@@ -51,12 +51,12 @@ export const roundTeam = (roundCount,teams) => {
   return newData;
 }
 
-export const getFilterTwoData = (arr,secondArr,key) => {
+export const getFilterTwoData = (arr, secondArr, key) => {
   return arr.filter(item => !secondArr.includes(item[key]))
 }
 
 // Get Random Team
-export const getRandom =(arr, n) => {
+export const getRandom = (arr, n) => {
   var result = new Array(n),
     len = arr.length,
     taken = new Array(len);
