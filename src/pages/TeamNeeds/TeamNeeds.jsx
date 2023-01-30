@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getTeamNeeds,
+  resTeamNeeds,
   selectTeamNeeds,
 } from "../../app/features/teamNeeds/teamNeedsSlice";
 import { searchInfo } from "../../utils/utils";
@@ -36,7 +37,7 @@ const TeamNeeds = () => {
       initial.current = false;
       dispatch(getTeamNeeds());
     }
-
+    return () => dispatch(resTeamNeeds())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleChange = (panel) => (event, isExpanded) => {
@@ -47,10 +48,12 @@ const TeamNeeds = () => {
     navigate(query, { state: team });
   }
 
+  if (loading) {
+    return <Spinner />;
+  }
   return (
     <Wrapper className="main-container">
       <Title titleText="Team Needs" />
-      {loading ?  <Spinner /> : null}
       {teamNeeds.length
         ? teamNeeds.map((team, idx) => {
             const { round, team_neads_info: teamNeedsInfo } = team;

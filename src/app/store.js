@@ -7,7 +7,7 @@ import teamNeedsReducer from "./features/teamNeeds/teamNeedsSlice";
 import playersDraftReducer from "./features/playersDraft/playersDraftSlice";
 import teamListReducer from "./features/teamList/teamListSlice";
 import draftResultReducer from './features/draftResult/draftResultSlice';
-
+import draftValueReducer from "./features/draftValue/draftValueSlice"
 export const store = configureStore({
   reducer: {
     user: userReducer,
@@ -18,5 +18,6 @@ export const store = configureStore({
     playersDraft: playersDraftReducer,
     teamList: teamListReducer,
     draftResult: draftResultReducer,
+    draftValue: draftValueReducer,
   },
 });

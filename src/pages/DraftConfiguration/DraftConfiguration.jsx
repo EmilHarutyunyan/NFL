@@ -21,7 +21,7 @@ import { Switch } from "@mui/material";
 import { resDraftResult } from "../../app/features/draftResult/draftResultSlice";
 import { getTeams } from "../../app/features/draftConfig/drafConfigAction";
 
-export const DraftConfiguration = () => {
+ const DraftConfiguration = () => {
   const dispatch = useDispatch();
   const draftConfigRef = useRef(null);
   const {
@@ -64,7 +64,7 @@ export const DraftConfiguration = () => {
               teams={teams}
               teamSelectId={teamSelectId}
               draftRandomness={draftRandomness}
-              selectAll=""
+              teamSelect={teamSelect}
             />
           </DraftTeams>
           <TeamsSettings>
@@ -77,3 +77,4 @@ export const DraftConfiguration = () => {
     </DraftConfigWrap>
   );
 };
+export default DraftConfiguration;

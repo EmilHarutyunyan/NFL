@@ -17,11 +17,12 @@ import {
   RoundColumnHead,
   Wrapper,
 } from "./DraftValueChart.styles";
-import { getDraftValue } from "../../app/features/draftConfig/drafConfigAction";
+import { resDraftValue, selectDraftValue } from "../../app/features/draftValue/draftValueSlice";
+import { getDraftValue } from "../../app/features/draftValue/draftValueAction";
 
 const DraftValueChart = () => {
   const dispatch = useDispatch()
-  const {draftValue,loading} = useSelector(selectDraftConfig)
+  const {draftValue,loading} = useSelector(selectDraftValue)
   const initialRef = useRef(true)
   const roundColumn = 7;
   const team = 31;
@@ -43,8 +44,13 @@ const DraftValueChart = () => {
       initialRef.current = false;
       dispatch(getDraftValue())
     }
+    return () => dispatch(resDraftValue())
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
+
+  if(loading) {
+    return <Spinner />
+  }
 
   return (
     <Wrapper className="main-container">

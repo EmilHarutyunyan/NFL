@@ -14,7 +14,7 @@ export const TeamItem = ({ teams, num, teamName, teamLogo, isChecked, item }) =>
       className={`team-item ${isChecked ? "active" : ""}`}
     >
       <div>
-        <span className="num">{num}</span>
+        <span className="num">{item.index}</span>
         <p className="name">{teamName}</p>
       </div>
       <img src={teamLogo} alt="" />

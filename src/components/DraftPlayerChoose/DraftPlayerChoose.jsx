@@ -112,10 +112,10 @@ const DraftPlayerChoose = ({
     // eslint-disable-next-line
   }, [setSearchValue, searchValue]);
 
-  const playerConcat = (playerItem, teamId, upPlayers = {}) => {
-    
+  const playerConcat = (playerItem, teamId, upPlayers = {},idx) => {
     const teamItem = structuredClone(tradeValue.results[teamId - 1]);
     teamItem["player"] = playerItem;
+    teamItem["playerDepth"] = idx + 1;
 
     const newTradeValue = tradeValue.results.map((item) => {
       if (item.index === teamItem.index) {
@@ -155,7 +155,7 @@ const DraftPlayerChoose = ({
 
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft("All"));
-    playerConcat(playerItem, teamPickIndex[0], percentPlayers);
+    playerConcat(playerItem, teamPickIndex[0], percentPlayers,idx);
     dispatch(delTeamsRound(teamPickIndex[0]));
     setThisId(teamPickIndex[0]);
     // setChangeId(true);

@@ -27,6 +27,7 @@ import { CheckBoxInputSecond } from "../Inputs/CheckBoxInputSecond";
 import arrowLeft from "../../assets/img/arrow-left.png";
 import Button from "../Buttons/Button";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Settings = ({teamSelect}) => {
   const navigate = useNavigate();
@@ -46,6 +47,9 @@ const Settings = ({teamSelect}) => {
 
   const roundsArray = Array.from(Array(7).keys());
 
+  useEffect(()=> {
+    dispatch(setDraftRandomness(draftRandomness));
+  },[])
   
   return (
     <>

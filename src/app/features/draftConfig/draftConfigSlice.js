@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toggleArrObj } from "../../../utils/utils";
-import { getDraftValue, getTeams, getTradeValue } from "./drafConfigAction";
+import { getTeams, getTradeValue } from "./drafConfigAction";
 
 const initialState = {
   advancedSetting: false,
@@ -17,11 +17,11 @@ const initialState = {
   userQuantity: 3,
   loading: false,
   positionPlayer: ["All"],
-  draftValue: [],
   timeSpeed: 2,
   draftPlayers: [],
   draftCardDepth: 2,
   draftRandomness:2,
+  selectCardDepth: [],
   roundDepth:5,
   roundBPA: [],
   draftRandomnessTeam:[],
@@ -35,6 +35,9 @@ export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
+    setSelectCardDepth:(state,action) => {
+      state.selectCardDepth.push(action.payload)
+    },
     setRoundBPA: (state,action)=> {
       state.roundBPA = action.payload
     },
@@ -132,7 +135,6 @@ export const draftConfigSlice = createSlice({
       state.countRender = 0;
       state.positionPlayer = [];
       state.pauseId = [];
-      state.draftValue = [];
       state.timeSpeed = 2;
       state.positionPlayer = ["All"];
       state.positionalNeed = false;
@@ -165,17 +167,7 @@ export const draftConfigSlice = createSlice({
     },
     [getTradeValue.rejected]: (state, action) => {
       state.loading = false;
-    },
-    [getDraftValue.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.draftValue = action.payload?.results;
-    },
-    [getDraftValue.pending]: (state, action) => {
-      state.loading = true;
-    },
-    [getDraftValue.rejected]: (state, action) => {
-      state.loading = false;
-    },
+    }
   },
 });
 
@@ -205,6 +197,7 @@ export const {
   setDraftPlayers,
   setTeamRemoveId,
   delPauseId,
+  setSelectCardDepth
   
 } = draftConfigSlice.actions;
 
@@ -226,9 +219,23 @@ export const checkRoundBPA = (round) => (dispatch, getState) => {
   const { roundBPA } = selectDraftConfig(getState());
   const intRound = +round
   const addOrRemove = roundBPA.includes(intRound) ? roundBPA.filter(i => i !== intRound) : [...roundBPA, intRound];
-  
   dispatch(setRoundBPA(addOrRemove))
+}
 
+export const delRoundBPA = (roundIndex) => (dispatch, getState) => {
+  const { roundBPA } = selectDraftConfig(getState());
+  let newBPA = []
+  if (+roundIndex > 2) {
+    dispatch(setRoundBPA([]))
+  }
+  else {
+    
+    newBPA = roundBPA.sort(function (a, b) {
+      return a - b;
+    });
+    dispatch(setRoundBPA(newBPA.slice(1)))
+
+  }
 }
 
 export const selectAllTeams = (check) => (dispatch, getState) => {

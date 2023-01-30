@@ -26,7 +26,7 @@ export const getPlayersDraft = createAsyncThunk(
     
     try {
       const res = await axios.get(
-        `${API_ENDPOINT}players/?limit=700&offset=${0}&search=&position=&school&ordering=-${ordName}`
+        `${API_ENDPOINT}players/?limit=50&offset=${0}&search=&position=&school&ordering=-${ordName}`
       );
       const {
         playersDraft: { playerChoose },

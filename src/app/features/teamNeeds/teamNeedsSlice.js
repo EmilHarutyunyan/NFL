@@ -45,7 +45,10 @@ export const teamNeedsSlice = createSlice({
   name:"teamNeeds",
   initialState,
   reducers: {
-
+    resTeamNeeds:(state,_) => {
+      state.teamNeeds = initialState.teamNeeds;
+      state.loading = initialState.loading;
+    }
   },
   extraReducers: {
     [getTeamNeeds.fulfilled]: (state, action) => {
@@ -72,5 +75,5 @@ export const teamNeedsSlice = createSlice({
 })
 
 export const selectTeamNeeds = (state) => state.teamNeeds;
-
+export const { resTeamNeeds } = teamNeedsSlice.actions;
 export default teamNeedsSlice.reducer;

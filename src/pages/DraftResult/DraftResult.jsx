@@ -40,7 +40,8 @@ const DraftResult = () => {
   const domEl = useRef(null);
   const navigate = useNavigate();
   const [roundSelect, setRoundSelect] = useState(1);
-  const { results, roundTeam, teamsName, teamsPlayer } = useSelector(selectDraftResult);
+  const { results, roundTeam, teamsName, teamsPlayer, draftRandomnessTeam } =
+    useSelector(selectDraftResult);
   const [teamMain, setTeamMain] = useState(teamsName[0]);
 
 
@@ -92,6 +93,7 @@ const DraftResult = () => {
               <img src={twitterBlue} alt="" onClick={onButtonClick} />
             </div>
           </div>
+          <p>draftRandomnessTeam {draftRandomnessTeam.join(" ")}</p>
         </div>
         <Button
           btnText="Enter Draft"
@@ -164,6 +166,7 @@ const DraftResult = () => {
                     <div className="draft-result-team-log">
                       <img src={team?.round?.logo} alt="Team Logo" width={65} />
                       <p>{team?.player?.player}</p>
+                      <p>{team?.playerDepth}</p>
                     </div>
                     <div className="draft-result-team-pos">
                       <p>{team?.player?.position}</p>
@@ -207,7 +210,6 @@ const DraftResult = () => {
                 const round = +team?.round_index?.split(" ")[1];
                 return (
                   <React.Fragment key={idx}>
-                    
                     <div className="draft-result-pick-item">
                       <div className="draft-result-pick-item-info">
                         <div className="draft-result-pick-round">
@@ -220,6 +222,7 @@ const DraftResult = () => {
                         </div>
                         <div className="draft-result-pick-name">
                           {team?.player?.player}
+                          <p>{team?.playerDepth}</p>
                         </div>
                         <div className="draft-result-pick-pos">
                           <p>{team?.player?.position}</p>
