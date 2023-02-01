@@ -74,6 +74,8 @@ const DraftViewAsign = ({ players, thisId }) => {
         const playersAll = players.results;
         let player = {};
         let roundIndexBool = false;
+        let roundIndex = +tradeValueTeam.round_index_number;
+        // Team add Card Depth
         if (countRender > 0 && roundBPA.length !== 0) {
           let teamSlice = tradeValue.results.slice(0, countRender + 1);
           teamSlice.forEach((team) => {
@@ -88,7 +90,7 @@ const DraftViewAsign = ({ players, thisId }) => {
           dispatch(delRoundBPA(tradeValueTeam.round_index_number));
         }
         
-        
+
         player = draftAutoSettings(
           draftCardDepth,
           draftRandomnessTeam,
@@ -99,7 +101,8 @@ const DraftViewAsign = ({ players, thisId }) => {
           teamDepth,
           tradeValueTeam,
           selectCardDepth,
-          roundIndexBool
+          roundIndexBool,
+          roundIndex
         );
 
         
@@ -180,7 +183,7 @@ const DraftViewAsign = ({ players, thisId }) => {
                     <>
                       {teamPickIndex.includes(id) && pauseId[0] !== id ? (
                         <>
-                          <div className="player-click">One The Pik</div>
+                          <div className="player-click">One The Clock</div>
                         </>
                       ) : (
                         <>

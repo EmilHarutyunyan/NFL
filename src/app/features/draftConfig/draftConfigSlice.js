@@ -240,7 +240,7 @@ export const delRoundBPA = (roundIndex) => (dispatch, getState) => {
 
 export const selectAllTeams = (check) => (dispatch, getState) => {
   const { teams, round } = selectDraftConfig(getState());
-  const teamSelectItemsId = teams.map((elem) => elem.id);
+  const teamSelectItemsId = teams.map((elem) => elem.index);
   const roundsTeam = +round > 1 ? teamRound(round, teamSelectItemsId) : teamSelectItemsId;
   dispatch(setTeamsRound(check ? [...roundsTeam] : []));
   dispatch(setAllTeams(check ? teams : []))

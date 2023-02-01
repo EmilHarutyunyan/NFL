@@ -25,7 +25,7 @@ import {
 
 import Search from "../../components/Search/Search";
 import { selectGroup } from "../../app/features/group/groupSlice";
-import Nums from "../../components/SettingsDraft/Nums";
+
 import Pagination from "../../components/Pagination/Pagination";
 import { TeamListWrap } from "./TeamList.styles";
 
@@ -121,7 +121,7 @@ const TeamList = () => {
                       position === item.split(" ")[0] ? "active" : null
                     }
                   >
-                    <Nums num={item.split(" ")[0]} />
+                    <span>{item.split(" ")[0]}</span>
                   </NumItem>
                 );
               })}

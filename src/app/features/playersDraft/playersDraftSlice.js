@@ -22,11 +22,12 @@ const initialState = {
 
 export const getPlayersDraft = createAsyncThunk(
   "playersDraft/getPlayersDraft",
-  async (ordName="",{ dispatch, getState, rejectWithValue }) => {
+  async (config,{ dispatch, getState, rejectWithValue }) => {
     
+    console.log('config :', config);
     try {
       const res = await axios.get(
-        `${API_ENDPOINT}players/?limit=50&offset=${0}&search=&position=&school&ordering=-${ordName}`
+        `${API_ENDPOINT}players/?limit=${config.playerCountGet}&offset=${0}&search=&position=&school&ordering=-${config.teamName}`
       );
       const {
         playersDraft: { playerChoose },

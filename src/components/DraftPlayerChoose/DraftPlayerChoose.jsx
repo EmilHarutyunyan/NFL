@@ -5,7 +5,6 @@ import Search from "../Search/Search";
 
 import { useDispatch, useSelector } from "react-redux";
 import { selectGroup } from "../../app/features/group/groupSlice";
-import Nums from "../SettingsDraft/Nums";
 import {
   delPauseId,
   delTeamsRound,
@@ -30,6 +29,7 @@ import {
   DraftPlayerItems,
   DraftPlayerItem,
   PicksInfo,
+  TeamPickIndex,
 } from "./DraftPlayerChoose.styles";
 
 import Spinner from "../Spinner/Spinner";
@@ -182,7 +182,13 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
             </div>
             <PicksInfo>
               <p>Remaining picks</p>
-              <p>{teamPickIndex.join(",")}</p>
+              <TeamPickIndex>
+                {teamPickIndex.map((item,idx) => {
+                
+                  return <span>{item}{idx===teamPickIndex.length - 1 ? null: ','}</span>;
+                })}
+              </TeamPickIndex>
+              {/* <p>{teamPickIndex.join(",")}</p> */}
             </PicksInfo>
           </SelectTeam>
           <Search
@@ -209,7 +215,8 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                         : null
                     }
                   >
-                    <Nums num={item.split(" ")[0]} />
+                    <span>{item.split(" ")[0]}</span>
+                    
                   </NumItem>
                 );
               })}

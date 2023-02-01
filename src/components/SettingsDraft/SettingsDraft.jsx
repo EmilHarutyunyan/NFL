@@ -1,7 +1,6 @@
 import { Switch } from "@mui/material";
 import React, { useState } from "react";
 import Title from "../../components/Title/Title";
-import Nums from "./Nums";
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 
@@ -49,6 +48,8 @@ const Settings = ({teamSelect}) => {
 
   useEffect(()=> {
     dispatch(setDraftRandomness(draftRandomness));
+  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
   
   return (
@@ -65,7 +66,7 @@ const Settings = ({teamSelect}) => {
                 className={`${id === +round ? "active-round" : ""}`}
                 onClick={() => dispatch(saveRound(id))}
               >
-                <Nums num={id} />
+                <span >{id}</span> 
               </NumItem>
             );
           })}

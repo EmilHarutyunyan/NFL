@@ -79,6 +79,20 @@ const DraftResult = () => {
           console.log(err);
         });
     }, [domEl]);
+
+  const gradingCalc = (count) => {
+    if(count === 1) {
+      return 'A+'
+    } else if (count >= 2 && count <=8) {
+      return 'A'
+    } else if(count >= 9 && count <= 16) {
+      return 'B'
+    } else if(count >= 17 && count <= 33) {
+      return 'C'
+    } else if (count >= 34) {
+      return 'D'
+    }
+  }
   return (
     <Wrapper className="main-container">
       <Title
@@ -153,6 +167,8 @@ const DraftResult = () => {
           <DraftResultTeam backImg={markaImg}>
             {teamTable.length &&
               teamTable.map((team, idx) => {
+                debugger
+                const grading = gradingCalc(team?.playerDepth);
                 return (
                   <DraftResultTeamItem key={idx}>
                     <div className="draft-result-team-round">
@@ -176,7 +192,7 @@ const DraftResult = () => {
                     </div>
                     <div className="draft-result-team-rating">
                       <p className="draft-result-team-rating-block"></p>
-                      <p>A+</p>
+                      <p>{grading}</p>
                     </div>
                   </DraftResultTeamItem>
                 );
@@ -208,6 +224,7 @@ const DraftResult = () => {
             {teamSelect &&
               teamSelect?.map((team, idx) => {
                 const round = +team?.round_index?.split(" ")[1];
+                const grading = gradingCalc(team?.playerDepth);
                 return (
                   <React.Fragment key={idx}>
                     <div className="draft-result-pick-item">
@@ -234,7 +251,9 @@ const DraftResult = () => {
                         </div>
                         <div className="draft-result-pick-rating">
                           <p className="draft-result-pick-rating-block"></p>
-                          <p>A+</p>
+                          <p>
+                            {grading}
+                          </p>
                         </div>
                       </div>
                     </div>

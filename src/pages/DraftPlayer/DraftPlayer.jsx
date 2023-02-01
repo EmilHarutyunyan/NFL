@@ -73,7 +73,10 @@ const DraftPlayer = () => {
   useEffect(() => {
     
     if ((tradeValue.mouthing && countRender < teamPickIndex[0]) || (tradeValue.mouthing && !teamPickIndex.length && countRender !== tradeValue.results.length)) {
-        dispatch(getPlayersDraft(tradeValue.results[countRender].round.name));
+      const teamName = tradeValue.results[countRender].round.name;
+      let teamManual = teamSelect.some((item) => item.name === teamName);
+      let playerCountGet = !teamManual ? 260: 700;  
+      dispatch(getPlayersDraft({ playerCountGet, teamName }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count, tradeValue.mouthing]);

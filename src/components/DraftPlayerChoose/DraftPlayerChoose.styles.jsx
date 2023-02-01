@@ -18,6 +18,11 @@ export const SelectTeam = styled.div`
   }
 `;
 
+export const TeamPickIndex = styled.p`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
 export const PicksInfo = styled.div`
   background: #e8ebef;
   border-radius: 4px;
@@ -27,6 +32,10 @@ export const PicksInfo = styled.div`
   text-align: center;
   color: #0e1118;
   padding: 8px 16px;
+  max-width: 450px;
+  margin-bottom: 30px;
+  width: 100%;
+  text-align: left;
 `;
 export const NumWrapper = styled.div`
   display: flex;
