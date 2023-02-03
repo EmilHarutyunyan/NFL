@@ -28,6 +28,8 @@ const initialState = {
   pauseId: [],
   countRender: 0,
   tradeValue: { mouthing: false },
+  reserveTradeValue:[],
+  changeTrade:false
 };
 
 
@@ -35,6 +37,9 @@ export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
+    setChangeTrade:(state,action) => {
+      state.changeTrade = action.payload;
+    },
     setSelectCardDepth:(state,action) => {
       state.selectCardDepth.push(action.payload)
     },
@@ -81,6 +86,9 @@ export const draftConfigSlice = createSlice({
     },
     setDraftPlayers: (state, action) => {
       state.draftPlayers.push(action.payload);
+    },
+    changeTradeValue: (state, action) => {
+      state.tradeValue.results = action.payload
     },
 
     setPositionPlayer: (state, action) => {
@@ -144,6 +152,7 @@ export const draftConfigSlice = createSlice({
       state.status = "";
       state.tradeValue = { mouthing: false };
       state.advancedSetting = false
+      state.changeTrade = false;
 
     },
   },
@@ -161,6 +170,7 @@ export const draftConfigSlice = createSlice({
     [getTradeValue.fulfilled]: (state, action) => {
       state.loading = false;
       state.tradeValue = { mouthing: true, ...action.payload };
+      state.reserveTradeValue = action.payload.results
     },
     [getTradeValue.pending]: (state, action) => {
       state.loading = true;
@@ -174,6 +184,7 @@ export const draftConfigSlice = createSlice({
 export const selectDraftConfig = (state) => state.draftConfig;
 
 export const {
+  setChangeTrade,
   setRoundBPA,
   setRoundDepth,
   setAdvancedSetting,
@@ -197,8 +208,8 @@ export const {
   setDraftPlayers,
   setTeamRemoveId,
   delPauseId,
-  setSelectCardDepth
-  
+  setSelectCardDepth,
+  changeTradeValue,
 } = draftConfigSlice.actions;
 
 const teamRound = (round, teamSelectId) => {
@@ -275,5 +286,11 @@ export const setDraftPlayersAction = (player) => (dispatch, getState) => {
     dispatch(setDraftPlayers(player));
   }
 };
+
+export const changeTradeTeam = (tradeValue,teamTrade) => (dispatch,getState) =>{
+  const { teamSelectId,teamSelect,team } = selectDraftConfig(getState());
+  const newTeamSelect = team.filter(item => item.name === teamTrade.round.name)
+
+}
 
 export default draftConfigSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 // utils
 import { POSITIONS_COLOR } from "../../utils/constants";
 import Search from "../Search/Search";
@@ -51,9 +51,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
   const { tradeValue, countRender, status, teamPickIndex } =
     useSelector(selectDraftConfig);
   const dispatch = useDispatch();
-
   const draftBtnDisable = draftStatus === "red" ? true : false;
-  const initial = useRef(true);
   const [searchValue, setSearchValue] = useState("");
 
   const currentTableData = useMemo(() => {
@@ -90,11 +88,9 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     playersDraft.results,
   ]);
 
+ 
+
   useEffect(() => {
-    if (initial.current) {
-      initial.current = false;
-      return;
-    }
     const timer = setTimeout(() => {
       dispatch(setSearchPlayers(searchValue));
     }, 500);
@@ -249,14 +245,13 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                             <p>ADP</p>
                             <span>{item?.adp}</span>
                           </div>
-                          {/* <img src={playerImg} alt="" /> */}
+                          
                           <h4 className="player-td player-name">
                             {item.player}
                           </h4>
                           <h4 className="player-td player-position">
                             {item.position}
                           </h4>
-                          {/* <img src={colleageImg} alt="" /> */}
                           <h4 className="player-td player-college">
                             {item.school}
                           </h4>

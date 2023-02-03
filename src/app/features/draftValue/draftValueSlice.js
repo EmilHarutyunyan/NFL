@@ -18,7 +18,7 @@ export const draftValeSlice = createSlice({
   extraReducers: {
     [getDraftValue.fulfilled]: (state, action) => {
       state.loading = false;
-      debugger
+      
       state.draftValue = action.payload?.results;
     },
     [getDraftValue.pending]: (state, action) => {

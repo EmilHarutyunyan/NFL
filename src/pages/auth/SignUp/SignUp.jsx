@@ -96,7 +96,7 @@ const SignUp = () => {
   }, [success]);
   useEffect(()=> {
     if(error) {
-      debugger
+      
     console.log('error :', error);
 
       setErrorMsg(error)

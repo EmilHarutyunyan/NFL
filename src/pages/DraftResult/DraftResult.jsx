@@ -44,8 +44,6 @@ const DraftResult = () => {
     useSelector(selectDraftResult);
   const [teamMain, setTeamMain] = useState(teamsName[0]);
 
-
-
   const teamSelect = useMemo(() => {
     return teamsPlayer[teamMain];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -167,7 +165,7 @@ const DraftResult = () => {
           <DraftResultTeam backImg={markaImg}>
             {teamTable.length &&
               teamTable.map((team, idx) => {
-                debugger
+                
                 const grading = gradingCalc(team?.playerDepth);
                 return (
                   <DraftResultTeamItem key={idx}>
@@ -207,7 +205,6 @@ const DraftResult = () => {
           </div>
           <DraftResultHead>
             <MySelectImg
-              // label={teamsName[0]}
               name={teamMain}
               dataValue={teamsName}
               handleChange={(item) => setTeamMain(item.value)}

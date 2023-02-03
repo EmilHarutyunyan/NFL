@@ -20,6 +20,7 @@ import {
 import { Switch } from "@mui/material";
 import { resDraftResult } from "../../app/features/draftResult/draftResultSlice";
 import { getTeams } from "../../app/features/draftConfig/drafConfigAction";
+import ModalTrades from "../../components/ModalTrades/ModalTrades";
 
  const DraftConfiguration = () => {
   const dispatch = useDispatch();

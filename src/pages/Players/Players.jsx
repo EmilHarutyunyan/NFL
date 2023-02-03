@@ -73,51 +73,52 @@ const Players = () => {
   }
   return (
     <Wrapper className="main-container">
-     
-          <>
-          <Title titleText="Players list" />
-          <PlayerSetting>
-            <SelectWrap>
-              <MySelect
-                label={groups.positions[0]}
-                name={players.position}
-                dataValue={groups.positions}
-                handleChange={(item) => dispatch(positionAction(item.value))}
-              />
+      <>
+        <Title titleText="Players list" />
+        <PlayerSetting>
+          <SelectWrap>
+            <MySelect
+              customWidth={180}
+              label={groups.positions[0]}
+              name={players.position}
+              dataValue={groups.positions}
+              handleChange={(item) => dispatch(positionAction(item.value))}
+            />
 
-              <MySelect
-                label={groups.colleges[0]}
-                name={players.colleage}
-                dataValue={groups.colleges}
-                handleChange={(item) => dispatch(colleageAction(item.value))}
-              />
-            </SelectWrap>
-            <SearchWrap>
-              <Search
-                value={searchValue}
-                handleChange={(e) => {
-                  setSearchValue(e.target.value);
-                }}
-              />
-            </SearchWrap>
-          </PlayerSetting>
-          <TableWrap>
-            {players.results.length > 0 &&
-              players.results.map((player, idx) => {
-                return <PlayerItem player={player} key={idx} />;
-              })}
-            <Pagination
-              totalCount={players.count}
-              pageSize={players.limit}
-              currentPage={players.currentPage}
-              previous={players.previous}
-              next={players.next}
-              onPageChange={(page) => {
-                dispatch(pageNav(page));
+            <MySelect
+              customWidth={180}
+              label={groups.colleges[0]}
+              name={players.colleage}
+              dataValue={groups.colleges}
+              handleChange={(item) => dispatch(colleageAction(item.value))}
+            />
+          </SelectWrap>
+          <SearchWrap>
+            <Search
+              value={searchValue}
+              handleChange={(e) => {
+                setSearchValue(e.target.value);
               }}
             />
-          </TableWrap>
-        </>
+          </SearchWrap>
+        </PlayerSetting>
+        <TableWrap>
+          {players.results.length > 0 &&
+            players.results.map((player, idx) => {
+              return <PlayerItem player={player} key={idx} />;
+            })}
+          <Pagination
+            totalCount={players.count}
+            pageSize={players.limit}
+            currentPage={players.currentPage}
+            previous={players.previous}
+            next={players.next}
+            onPageChange={(page) => {
+              dispatch(pageNav(page));
+            }}
+          />
+        </TableWrap>
+      </>
       {!players.loading && players.results.length === 0 && <NotFound />}
     </Wrapper>
   );

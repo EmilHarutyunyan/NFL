@@ -54,6 +54,7 @@ const DraftViewAsign = ({ players, thisId }) => {
     roundDepth,
     round,
     selectCardDepth,
+    
   } = useSelector(selectDraftConfig);
   const divRef = useRef(null);
   const roundArr = useRef([]);

@@ -51,6 +51,7 @@ export const getTradeValue = createAsyncThunk(
         `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${round}&tm=`
       );
       const teamPickIndex = res.data.results.filter((team) => teamSelectId.includes(team.round.index)).map(team => team.index)
+      
       dispatch(setTeamPickIndex(teamPickIndex))
       return res.data;
     } catch (error) {

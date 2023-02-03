@@ -5,6 +5,7 @@ import { getTradeValue } from "../../app/features/draftConfig/drafConfigAction";
 import {
   selectDraftConfig,
   setResetRound,
+  setStatus,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { selectDraftResult, setDraftResultAction } from "../../app/features/draftResult/draftResultSlice";
 // import { getPositions } from '../../app/features/group/groupSlice'
@@ -18,6 +19,8 @@ import { ReactComponent as CircleSvg } from "../../assets/svg/circle.svg";
 import DraftPlayerChoose from "../../components/DraftPlayerChoose/DraftPlayerChoose";
 import DraftSimulator from "../../components/DraftSimulator/DraftSimulator";
 import DraftViewAsign from "../../components/DraftViewAsign/DraftViewAsign";
+import ModalTrades from "../../components/ModalTrades/ModalTrades";
+import { PLAYER_MAX } from "../../config/config";
 
 // Styes
 import {
@@ -39,6 +42,9 @@ const DraftPlayer = () => {
     teamPickIndex,
     teamPickIndexControl,
     draftRandomnessTeam,
+    draftCardDepth,
+    changeTrade,
+    reserveTradeValue,
   } = useSelector(selectDraftConfig);
 
   const dispatch = useDispatch();
@@ -51,18 +57,6 @@ const DraftPlayer = () => {
 
   const count = useMemo(() => {
     if (tradeValue.mouthing) {
-      // let selectId = countRender;
-      // for (let i = 1; i <= +round; ++i) {
-      //   if (selectId <= 32) {
-      //     break;
-      //   } else {
-      //     selectId = countRender - 32 * i;
-      //   }
-      // }
-      // if (selectId !== 32)
-
-      // dispatch(getPlayersDraft(tradeValue.results[countRender].round.name));
-      // dispatch(setStatus("orange"));
       return countRender + 1;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,17 +65,28 @@ const DraftPlayer = () => {
 
 
   useEffect(() => {
-    
-    if ((tradeValue.mouthing && countRender < teamPickIndex[0]) || (tradeValue.mouthing && !teamPickIndex.length && countRender !== tradeValue.results.length)) {
-      const teamName = tradeValue.results[countRender].round.name;
-      let teamManual = teamSelect.some((item) => item.name === teamName);
-      let playerCountGet = !teamManual ? 260: 700;  
-      dispatch(getPlayersDraft({ playerCountGet, teamName }));
+    // if(false){
+    if (
+      (tradeValue.mouthing && countRender < teamPickIndex[0]) ||
+      (tradeValue.mouthing &&
+        !teamPickIndex.length &&
+        countRender !== tradeValue.results.length)
+    ) {
+      if (changeTrade) {
+        const team = tradeValue.results[countRender];
+        const teamName = team.round.name;
+        let teamManual = teamSelect.some((item) => item.name === teamName);
+        let playerCountGet = !teamManual
+          ? draftCardDepth + team.index
+          : PLAYER_MAX;
+        dispatch(getPlayersDraft({ playerCountGet, teamName }));
+      }
     }
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count, tradeValue.mouthing]);
+  }, [count, tradeValue.mouthing, changeTrade]);
 
-  // // Go To Result Page
+ // Go To Result Page
   useEffect(() => {
     if (draftResults.results.length > 0) {
       navigate("/draft-result");
@@ -178,12 +183,15 @@ const DraftPlayer = () => {
                   setThisId={setThisId}
                   setChangeId={setChangeId}
                 />
-               
               ) : null}
             </DraftViewSimulator>
           </>
         )}
       </DraftView>
+      {tradeValue.mouthing && (
+        <ModalTrades tradeValue={tradeValue.results} teamSelect={teamSelect} />
+      )}
+
       <hr className="line" />
     </Wrapper>
   );

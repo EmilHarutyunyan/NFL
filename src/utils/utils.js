@@ -24,18 +24,25 @@ export const upUsersCals = (players, pricentValuePlayer, key) => {
   const point = sumNumber(players.length - 1);
   const midPoint = pricentValuePlayer / point;
   return players.map((player, idx) => {
-    const pricentValue = +((midPoint * (players.length - idx - 1)).toFixed(2));
-    if (idx === (players.length - 1)) {
-      return { ...player, value: +(player[key] + pricentValuePlayer), pricentValue: pricentValuePlayer };
+    const pricentValue = +(midPoint * (players.length - idx - 1)).toFixed(2);
+    if (idx === players.length - 1) {
+      return {
+        ...player,
+        value: +(player[key] + pricentValuePlayer),
+        pricentValue: pricentValuePlayer,
+      };
     }
-    return { ...player, value: +(player[key] - pricentValue), pricentValue: -pricentValue };
+    return {
+      ...player,
+      value: +(player[key] - pricentValue),
+      pricentValue: -pricentValue,
+    };
   });
 };
 
-
 // Round Calc Create New Data
 export const roundTeam = (roundCount, teams) => {
-  const newData = []
+  const newData = [];
   let indexCount = 1;
   for (let i = 1; i <= roundCount; ++i) {
     for (let j = 0; j < teams.length; ++j) {
@@ -43,16 +50,42 @@ export const roundTeam = (roundCount, teams) => {
         id: Math.random(),
         index: indexCount,
         round_index: `${i} Round`,
-        round: teams[j]
-      })
+        round: teams[j],
+      });
       indexCount++;
     }
   }
   return newData;
-}
+};
 
-export const getFilterTwoData = (arr, secondArr, key) => {
-  return arr.filter(item => !secondArr.includes(item[key]))
+export const getFilterTwoData = (
+  arr,
+  secondArr,
+  key,
+  deepKey = "",
+  bitwiseOperator = "XOR"
+) => {
+  if (bitwiseOperator === "AND") {
+    if (deepKey) {
+      return arr.filter((item) => secondArr.includes(item[key][deepKey]));
+    } else return arr.filter((item) => secondArr.includes(item[key]));
+  } else if (bitwiseOperator === "XOR") {
+    if (deepKey) {
+      return arr.filter((item) => !secondArr.includes(item[key][deepKey]));
+    } else return arr.filter((item) => !secondArr.includes(item[key]));
+  }
+};
+
+export const objectSet = (arr,key) => {
+  const mySet = [];
+  const setObject = []
+  arr.forEach(item => {
+    if(!mySet.includes(item[key])) {
+      mySet.push(item[key])
+      setObject.push(item)
+    }
+  })
+  return setObject
 }
 
 // Get Random Team
@@ -68,4 +101,4 @@ export const getRandom = (arr, n) => {
     taken[x] = --len in taken ? taken[len] : len;
   }
   return result;
-}
+};

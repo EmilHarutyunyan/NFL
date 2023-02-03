@@ -9,6 +9,7 @@ const MySelect = ({
   label,
   name = "",
   dataValue = [],
+  customWidth= '100%',
   handleChange = (f) => f,
 }) => {
 
@@ -26,13 +27,13 @@ const MySelect = ({
     PaperProps: {
       style: {
         maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 180,
+        width: customWidth,
       },
     },
   };
 
   return (
-    <FormControl sx={{ m: 1, minWidth: 180, margin: 0, ...styleForm }}>
+    <FormControl sx={{ m: 1, minWidth: customWidth, margin: 0, ...styleForm }}>
       <InputLabel id="demo-simple-select-autowidth-label">{label}</InputLabel>
       <Select
         labelId="demo-simple-select-autowidth-label"
@@ -44,9 +45,7 @@ const MySelect = ({
         sx={{ ...styleForm, borderRadius: "none" }}
         MenuProps={MenuProps}
       >
-        <MenuItem value="">
-          {label}
-        </MenuItem>
+        <MenuItem value="">{label}</MenuItem>
         {dataValue && dataValue.length > 0 ? (
           dataValue.map((item, idx) => {
             if (idx !== 0) {

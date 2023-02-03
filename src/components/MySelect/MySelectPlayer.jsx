@@ -2,20 +2,22 @@ import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-const MySelectImg = ({
-  label,
+import { MySelectPhotoWrap, PlayerName } from "./MySelect.styles";
+import { InputLabel } from "@mui/material";
+const MySelectPlayer = ({
+  label = "",
   name = "",
   dataValue = [],
   handleChange = (f) => f,
 }) => {
   const styleForm = {
-    border: "none",
-    borderRadius: 4,
+    border: "1px solid #989EA4",
+    borderRadius: "4px",
     fontFamily: "'Saira Semi Condensed'",
-    color: "#fff",
+    color: "red",
     fontSize: 16,
-    backgroundColor: "#022142",
-    width:"100%"
+    backgroundColor: "transparent",
+    width: "100%",
   };
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -23,18 +25,18 @@ const MySelectImg = ({
     PaperProps: {
       style: {
         maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 180,
+        width: 491,
       },
     },
   };
 
   return (
-    <FormControl sx={{ m: 1, minWidth: 180, margin: 0, ...styleForm }}>
-      
+    <FormControl sx={{ m: 1, minWidth: 491, margin: 0, ...styleForm }}>
       <Select
         value={name}
         label={name}
         autoWidth
+        defaultValue="Select Value"
         onChange={(e) => handleChange(e.target)}
         sx={{
           ...styleForm,
@@ -44,7 +46,7 @@ const MySelectImg = ({
             fill: "white",
           },
           "& .MuiSvgIcon-root": {
-            fill: "#fff",
+            fill: "#989EA4",
           },
           "&& fieldset": {
             border: "none",
@@ -61,16 +63,17 @@ const MySelectImg = ({
         MenuProps={MenuProps}
         inputProps={{ "aria-label": "Without label" }}
       >
-        
-        <MenuItem value="">{label}</MenuItem>
-        {dataValue.map((name) => (
-          <MenuItem key={name} value={name}>
-            {name}
-          </MenuItem>
-        ))}
+        {dataValue.map((item, idx) => {
+          
+          return (
+            <MenuItem key={idx} value={item} disabled={item==="Select Player"}>
+              <PlayerName>{item}</PlayerName>
+            </MenuItem>
+          );
+        })}
       </Select>
     </FormControl>
   );
 };
 
-export default MySelectImg;
+export default MySelectPlayer;
