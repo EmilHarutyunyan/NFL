@@ -53,7 +53,22 @@ export const getTradeValue = createAsyncThunk(
       const teamPickIndex = res.data.results.filter((team) => teamSelectId.includes(team.round.index)).map(team => team.index)
       
       dispatch(setTeamPickIndex(teamPickIndex))
-      return res.data;
+      const copyResData = structuredClone(res.data)
+      const iterationRound = [
+        ...res.data.results,
+        ...res.data.results,
+        ...res.data.results,
+        ...res.data.results,
+        ...res.data.results,
+      ];
+      copyResData.results = iterationRound;
+      copyResData.count = iterationRound.count
+      console.log(
+        [...res.data.results, ...res.data.results, ...res.data.results],
+        "res.data"
+      );
+      // console.log([...res.data.status, ...res.data.status, ...res.data.sta, ...res.data, ...res.data],"5 iteration")
+      return copyResData;
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);

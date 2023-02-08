@@ -118,6 +118,7 @@ export const Error = styled.p`
   opacity: 0;
   transition: all 0.3s ease-in-out;
   line-height: 25.5px;
+  text-transform: capitalize;
   ${({ message }) =>
     message &&
     css`

@@ -142,15 +142,15 @@ export const DraftResultTeamItem = styled.div`
       padding-right: 22px;
       text-align: right;
       justify-content: flex-end;
-      &-block {
-        width: 14px;
-        height: 14px;
-        background: #3adf00;
-      }
+
     }
   }
 `;
-
+export const GradeBox = styled.p`
+  width: 14px;
+  height: 14px;
+  background: ${({ color }) => (color ? `${color}` : "#3adf00")};
+`;
 export const DraftResultPick = styled.div`
   width: 100%;
   max-width: 345px;

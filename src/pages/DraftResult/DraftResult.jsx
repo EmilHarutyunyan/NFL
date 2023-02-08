@@ -31,10 +31,10 @@ import {
   DraftResultTeam,
   DraftResultTeamItem,
   DraftResultWrap,
+  GradeBox,
   ImgWrap,
   Wrapper,
 } from "./DraftResult.styles";
-
 
 const DraftResult = () => {
   const domEl = useRef(null);
@@ -61,36 +61,36 @@ const DraftResult = () => {
   //   const dataURL = canvas.toDataURL("image/png");
   //   downloadjs(dataURL, "download.png", "image/png");
   // };
-    const onButtonClick = useCallback(() => {
-      if (domEl.current === null) {
-        return;
-      }
+  const onButtonClick = useCallback(() => {
+    if (domEl.current === null) {
+      return;
+    }
 
-      toPng(domEl.current, { cacheBust: true })
-        .then((dataUrl) => {
-          const link = document.createElement("a");
-          link.download = "my-image-name.png";
-          link.href = dataUrl;
-          link.click();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }, [domEl]);
+    toPng(domEl.current, { cacheBust: true })
+      .then((dataUrl) => {
+        const link = document.createElement("a");
+        link.download = "my-image-name.png";
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [domEl]);
 
   const gradingCalc = (count) => {
-    if(count === 1) {
-      return 'A+'
-    } else if (count >= 2 && count <=8) {
-      return 'A'
-    } else if(count >= 9 && count <= 16) {
-      return 'B'
-    } else if(count >= 17 && count <= 33) {
-      return 'C'
+    if (count === 1) {
+      return { grade: "A+", color: "#3ADF00" };
+    } else if (count >= 2 && count <= 8) {
+      return { grade: "A", color: "#00950F" };
+    } else if (count >= 9 && count <= 16) {
+      return { grade: "B", color: "#002D85" };
+    } else if (count >= 17 && count <= 33) {
+      return { grade: "C", color: "#FFB800" };
     } else if (count >= 34) {
-      return 'D'
+      return { grade: "D", color: "#e43c3c" };
     }
-  }
+  };
   return (
     <Wrapper className="main-container">
       <Title
@@ -110,7 +110,7 @@ const DraftResult = () => {
         <Button
           btnText="Enter Draft"
           btnClassName="enter-draft-btn"
-          onBtnClick={() => navigate("draft-configuration")}
+          onBtnClick={() => navigate("/draft-configuration")}
         />
       </DraftResultShare>
       <DraftResultFull>
@@ -165,7 +165,6 @@ const DraftResult = () => {
           <DraftResultTeam backImg={markaImg}>
             {teamTable.length &&
               teamTable.map((team, idx) => {
-                
                 const grading = gradingCalc(team?.playerDepth);
                 return (
                   <DraftResultTeamItem key={idx}>
@@ -189,8 +188,8 @@ const DraftResult = () => {
                       <p>{team?.player?.school}</p>
                     </div>
                     <div className="draft-result-team-rating">
-                      <p className="draft-result-team-rating-block"></p>
-                      <p>{grading}</p>
+                      <GradeBox color={grading.color}></GradeBox>
+                      <p>{grading.grade}</p>
                     </div>
                   </DraftResultTeamItem>
                 );
@@ -247,10 +246,8 @@ const DraftResult = () => {
                           <p>{team?.player?.school}</p>
                         </div>
                         <div className="draft-result-pick-rating">
-                          <p className="draft-result-pick-rating-block"></p>
-                          <p>
-                            {grading}
-                          </p>
+                          <GradeBox color={grading.color}></GradeBox>
+                          <p>{grading.grade}</p>
                         </div>
                       </div>
                     </div>

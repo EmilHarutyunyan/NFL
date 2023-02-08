@@ -1,24 +1,15 @@
-// import axios from "axios";
+
 
 import axios from "axios";
 import TokenService from "./token.service";
 import jwt_decode from "jwt-decode";
 import dayjs from 'dayjs'
 import { API_ENDPOINT } from "../config/config";
-// const axiosInstance = axios.create({
-//   baseURL: "http://127.0.0.1:8000/",
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
-
-// export default axiosInstance;
 
 let authTokens = TokenService.getUser() || ""
-
 const axiosInstance = axios.create({
   API_ENDPOINT,
-  headers: { Authorization: `Bearer ${authTokens.tokens.access}` }
+  headers: { Authorization: `Bearer ${authTokens?.tokens?.access}` },
 });
 
 axiosInstance.interceptors.request.use(async req => {
@@ -26,10 +17,8 @@ axiosInstance.interceptors.request.use(async req => {
     authTokens = TokenService.getUser() || ""
     req.headers.Authorization = `Bearer ${authTokens.tokens.access}`
   }
-
-  const user = jwt_decode(authTokens.access)
+  const user = jwt_decode(authTokens?.tokens?.access);
   const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
-
   if (!isExpired) return req
 
   try {

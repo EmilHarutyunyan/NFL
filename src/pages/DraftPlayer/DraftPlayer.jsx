@@ -72,7 +72,7 @@ const DraftPlayer = () => {
         !teamPickIndex.length &&
         countRender !== tradeValue.results.length)
     ) {
-      if (changeTrade) {
+      // if (changeTrade) {
         const team = tradeValue.results[countRender];
         const teamName = team.round.name;
         let teamManual = teamSelect.some((item) => item.name === teamName);
@@ -80,7 +80,7 @@ const DraftPlayer = () => {
           ? draftCardDepth + team.index
           : PLAYER_MAX;
         dispatch(getPlayersDraft({ playerCountGet, teamName }));
-      }
+      // }
     }
     // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -188,9 +188,9 @@ const DraftPlayer = () => {
           </>
         )}
       </DraftView>
-      {tradeValue.mouthing && (
+      {/* {tradeValue.mouthing && (
         <ModalTrades tradeValue={tradeValue.results} teamSelect={teamSelect} />
-      )}
+      )} */}
 
       <hr className="line" />
     </Wrapper>

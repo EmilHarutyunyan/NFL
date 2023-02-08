@@ -1,5 +1,5 @@
 import { Switch } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import Title from "../../components/Title/Title";
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
@@ -13,6 +13,7 @@ import {
 } from "./Settings.styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  checkFanaticChallenge,
   checkRoundBPA,
   saveRound,
   selectDraftConfig,
@@ -39,11 +40,9 @@ const Settings = ({teamSelect}) => {
     advancedSetting,
     roundDepth,
     roundBPA,
+    fanaticChallenge,
   } = useSelector(selectDraftConfig);
-  const [isRoundOneFan, setIsRoundOneFan] = useState(false);
-  const [isRoundTwoFan, setIsRoundTwoFan] = useState(false);
-  const [isRoundThreeFan, setIsRoundThreeFan] = useState(false);
-
+ 
   const roundsArray = Array.from(Array(7).keys());
 
   useEffect(()=> {
@@ -66,7 +65,7 @@ const Settings = ({teamSelect}) => {
                 className={`${id === +round ? "active-round" : ""}`}
                 onClick={() => dispatch(saveRound(id))}
               >
-                <span >{id}</span> 
+                <span>{id}</span>
               </NumItem>
             );
           })}
@@ -77,7 +76,7 @@ const Settings = ({teamSelect}) => {
         <Speed>
           <Box sx={{ width: "100%" }}>
             <Slider
-              defaultValue={2}
+              defaultValue={timeSpeed}
               step={1}
               min={1}
               max={5}
@@ -202,25 +201,34 @@ const Settings = ({teamSelect}) => {
             <div className="setting-fan-item">
               <p>1st round fanatic challenge</p>
               <CheckBoxInputSecond
-                checked={isRoundOneFan}
+                checked={fanaticChallenge.some((item) => item.mode === 1)}
                 nameClass={"setting-check"}
-                onInputChange={setIsRoundOneFan}
+                value={1}
+                onInputChange={(e) =>
+                  dispatch(checkFanaticChallenge(+e.target.value, 5))
+                }
               />
             </div>
             <div className="setting-fan-item">
               <p>2st round fanatic challenge</p>
               <CheckBoxInputSecond
-                checked={isRoundTwoFan}
+                checked={fanaticChallenge.some((item) => item.mode === 2)}
                 nameClass={"setting-check"}
-                onInputChange={setIsRoundTwoFan}
+                value={2}
+                onInputChange={(e) =>
+                  dispatch(checkFanaticChallenge(+e.target.value, 10))
+                }
               />
             </div>
             <div className="setting-fan-item">
               <p>3st round fanatic challenge</p>
               <CheckBoxInputSecond
-                checked={isRoundThreeFan}
+                checked={fanaticChallenge.some((item) => item.mode === 3)}
                 nameClass={"setting-check"}
-                onInputChange={setIsRoundThreeFan}
+                value={3}
+                onInputChange={(e) =>
+                  dispatch(checkFanaticChallenge(+e.target.value, 15))
+                }
               />
             </div>
             <div className="setting-fan-item">

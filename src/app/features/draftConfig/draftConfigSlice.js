@@ -17,13 +17,16 @@ const initialState = {
   userQuantity: 3,
   loading: false,
   positionPlayer: ["All"],
-  timeSpeed: 2,
+  timeSpeed: 5,
   draftPlayers: [],
   draftCardDepth: 2,
   draftRandomness:2,
+  maxDraftCardDepth:8,
+  maxDraftRandomness:16,
   selectCardDepth: [],
   roundDepth:5,
   roundBPA: [],
+  fanaticChallenge: [],
   draftRandomnessTeam:[],
   pauseId: [],
   countRender: 0,
@@ -37,33 +40,36 @@ export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
-    setChangeTrade:(state,action) => {
+    setFanaticChallenge: (state, action) => {
+      state.fanaticChallenge = action.payload;
+    },
+    setChangeTrade: (state, action) => {
       state.changeTrade = action.payload;
     },
-    setSelectCardDepth:(state,action) => {
-      state.selectCardDepth.push(action.payload)
+    setSelectCardDepth: (state, action) => {
+      state.selectCardDepth.push(action.payload);
     },
-    setRoundBPA: (state,action)=> {
-      state.roundBPA = action.payload
+    setRoundBPA: (state, action) => {
+      state.roundBPA = action.payload;
     },
-    setRoundDepth: (state,action) => {
-      state.roundDepth = action.payload
+    setRoundDepth: (state, action) => {
+      state.roundDepth = action.payload;
     },
-    setAdvancedSetting: (state,action) => {
+    setAdvancedSetting: (state, action) => {
       state.advancedSetting = action.payload;
     },
     setTeamPickIndex: (state, action) => {
-      state.teamPickIndex = action.payload
-      state.teamPickIndexControl = action.payload
+      state.teamPickIndex = action.payload;
+      state.teamPickIndexControl = action.payload;
     },
-    setDraftCardDepth: (state,action) => {
+    setDraftCardDepth: (state, action) => {
       state.draftCardDepth = action.payload;
     },
     setDraftRandomnessTeam: (state, action) => {
-      state.draftRandomnessTeam = action.payload
+      state.draftRandomnessTeam = action.payload;
     },
-    setDraftRandomness: (state,action) => {
-      state.draftRandomness = action.payload
+    setDraftRandomness: (state, action) => {
+      state.draftRandomness = action.payload;
     },
     setTeams: (state, action) => {
       state.teamSelect = action.payload;
@@ -88,7 +94,7 @@ export const draftConfigSlice = createSlice({
       state.draftPlayers.push(action.payload);
     },
     changeTradeValue: (state, action) => {
-      state.tradeValue.results = action.payload
+      state.tradeValue.results = action.payload;
     },
 
     setPositionPlayer: (state, action) => {
@@ -111,7 +117,7 @@ export const draftConfigSlice = createSlice({
       state.teamSelectId = teamSelectSort;
     },
     setFirstTradeValue: (state, action) => {
-      state.tradeValue = action.payload
+      state.tradeValue = action.payload;
     },
 
     setTeamRemoveId: (state, action) => {
@@ -127,33 +133,31 @@ export const draftConfigSlice = createSlice({
       state.pauseId = [];
     },
     delTeamsRound: (state, action) => {
-      
       state.teamPickIndex = state.teamPickIndex.filter(
         (item) => action.payload !== item
       );
     },
     setResetRound: (state, _) => {
-      state.draftCardDepth = 2;
-      state.draftRandomness = 2;
-      state.draftRandomnessTeam = [];
-      state.teamSelectId = [];
-      state.teamRemoveId = [];
-      state.teamSelect = [];
-      state.round = "1";
-      state.countRender = 0;
-      state.positionPlayer = [];
-      state.pauseId = [];
-      state.timeSpeed = 2;
-      state.positionPlayer = ["All"];
-      state.positionalNeed = false;
-      state.teams = [];
-      state.loading = false;
-      state.draftPlayers = [];
-      state.status = "";
-      state.tradeValue = { mouthing: false };
-      state.advancedSetting = false
-      state.changeTrade = false;
-
+      state.draftCardDepth = initialState.draftCardDepth;
+      state.draftRandomness = initialState.draftRandomness;
+      state.draftRandomnessTeam = initialState.draftRandomnessTeam;
+      state.teamSelectId = initialState.teamSelectId;
+      state.teamRemoveId = initialState.teamRemoveId;
+      state.teamSelect = initialState.teamSelect
+      state.round = initialState.round;
+      state.countRender = initialState.countRender;
+      state.positionPlayer = initialState.positionPlayer;
+      state.pauseId = initialState.pauseId;
+      state.timeSpeed = initialState.timeSpeed;
+      state.positionPlayer = initialState.positionPlayer;
+      state.positionalNeed = initialState.positionalNeed;
+      state.teams = initialState.teams;
+      state.loading = initialState.loading;
+      state.draftPlayers = initialState.draftPlayers;
+      state.status = initialState.status;
+      state.tradeValue = initialState.tradeValue;
+      state.advancedSetting = initialState.advancedSetting;
+      state.changeTrade = initialState.changeTrade;
     },
   },
   extraReducers: {
@@ -170,20 +174,21 @@ export const draftConfigSlice = createSlice({
     [getTradeValue.fulfilled]: (state, action) => {
       state.loading = false;
       state.tradeValue = { mouthing: true, ...action.payload };
-      state.reserveTradeValue = action.payload.results
+      state.reserveTradeValue = action.payload.results;
     },
     [getTradeValue.pending]: (state, action) => {
       state.loading = true;
     },
     [getTradeValue.rejected]: (state, action) => {
       state.loading = false;
-    }
+    },
   },
 });
 
 export const selectDraftConfig = (state) => state.draftConfig;
 
 export const {
+  setFanaticChallenge,
   setChangeTrade,
   setRoundBPA,
   setRoundDepth,
@@ -232,6 +237,20 @@ export const checkRoundBPA = (round) => (dispatch, getState) => {
   const addOrRemove = roundBPA.includes(intRound) ? roundBPA.filter(i => i !== intRound) : [...roundBPA, intRound];
   dispatch(setRoundBPA(addOrRemove))
 }
+export const checkFanaticChallenge = (fanatic,iteration) => (dispatch, getState) => {
+
+  const { fanaticChallenge } = selectDraftConfig(getState());
+  const checkFanatic = fanaticChallenge.some(item => item.mode === fanatic)
+  const fanaticData =  checkFanatic ? fanaticChallenge.filter(item => item.mode !== fanatic) : [...fanaticChallenge,{mode: fanatic, iteration}]
+  if(fanaticData.length) {
+    dispatch(setDraftCardDepth(initialState.maxDraftCardDepth));
+    dispatch(setDraftRandomness(initialState.maxDraftRandomness));
+  } else {
+    dispatch(setDraftCardDepth(initialState.draftCardDepth));
+    dispatch(setDraftRandomness(initialState.draftRandomness));
+  }
+  dispatch(setFanaticChallenge(fanaticData));
+};
 
 export const delRoundBPA = (roundIndex) => (dispatch, getState) => {
   const { roundBPA } = selectDraftConfig(getState());
@@ -287,10 +306,10 @@ export const setDraftPlayersAction = (player) => (dispatch, getState) => {
   }
 };
 
-export const changeTradeTeam = (tradeValue,teamTrade) => (dispatch,getState) =>{
-  const { teamSelectId,teamSelect,team } = selectDraftConfig(getState());
-  const newTeamSelect = team.filter(item => item.name === teamTrade.round.name)
+// export const changeTradeTeam = (tradeValue,teamTrade) => (dispatch,getState) =>{
+//   const { teamSelectId,teamSelect,team } = selectDraftConfig(getState());
+//   const newTeamSelect = team.filter(item => item.name === teamTrade.round.name)
 
-}
+// }
 
 export default draftConfigSlice.reducer;

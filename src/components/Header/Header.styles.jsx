@@ -74,6 +74,12 @@ display: flex;
 align-items: center;
 gap: 15px;
 color: #fff;
+a{
+  display: flex;
+  align-items: center;
+  gap:6px;
+  color: #fff;
+}
   img {
     width: 22px;
     height: auto;

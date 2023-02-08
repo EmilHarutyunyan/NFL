@@ -37,9 +37,9 @@ const schema = yup.object().shape({
 const SignIn = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const { loading } = useSelector(selectUser);
-  const dispatch = useDispatch()
+
+  const { loading, success, error } = useSelector(selectUser);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
     register,
@@ -52,17 +52,15 @@ const SignIn = () => {
   });
   const onSubmit = (data) => {
     // alert(JSON.stringify(data));
-    const {email:username,password} = data
+    const { email: username, password } = data;
     dispatch(userLogin({ username, password }));
   };
   useEffect(() => {
-    if (loading) {
-      setTimeout(() => {
-        navigate("/");
-      }, 500);
+    if (success) {
+      navigate("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading]);
+  }, [success]);
   return (
     <AuthWrap>
       <AuthContent>
@@ -70,7 +68,17 @@ const SignIn = () => {
           <img src={logoMid} alt="logo" />
         </Link>
         <h2>Sign In</h2>
-        {errorMsg && <Error>{errorMsg}</Error>}
+        {error && (
+          <Error message={error}>
+            {typeof error === "object" ? (
+              Object.entries(error).map(([key, value]) => {
+                return <span>{`${key}: ${value}`}</span>;
+              })
+            ) : (
+              <span>{`${error}`}</span>
+            )}
+          </Error>
+        )}
         <form onSubmit={handleSubmit(onSubmit)}>
           <InputWrap>
             <input {...register("email")} placeholder="Email" />

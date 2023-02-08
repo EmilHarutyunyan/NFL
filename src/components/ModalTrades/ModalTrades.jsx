@@ -1,6 +1,5 @@
 import { Modal } from "@mui/material";
 import React from "react";
-import { useCallback } from "react";
 import { useMemo } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,14 +9,12 @@ import {
   setChangeTrade,
   setTeamPickIndex,
 } from "../../app/features/draftConfig/draftConfigSlice";
+// utils
 import { getFilterTwoData, objectSet, toggleArrObj } from "../../utils/utils";
 // icons
 import { CloseIcon } from "../Icons/Icons";
-import MySelect from "../MySelect/MySelect";
-import MySelectImg from "../MySelect/MySelectImg";
 import MySelectPlayer from "../MySelect/MySelectPlayer";
 import MySelectTeam from "../MySelect/MySelectTeam";
-import { dataTradeValue } from "./dataTradeValue";
 // styles
 import {
   BtnWrap,
@@ -53,7 +50,7 @@ const ModalTrades = ({ tradeValue, teamSelect }) => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(true);
   const handleClose = () => {
-    setOpen(false)
+    setOpen(false);
     dispatch(setChangeTrade(true));
   };
 
@@ -65,7 +62,7 @@ const ModalTrades = ({ tradeValue, teamSelect }) => {
   const [teamTrade, setTeamTrade] = useState(null);
   const [yourTeamTrade, setYourTeamTrade] = useState(null);
   const [acceptTrade, setAcceptTrade] = useState(false);
-  const [notAccept,setNotAccept] = useState(false)
+  const [notAccept, setNotAccept] = useState(false);
   const handlePickIndex = (pickArr, value, setPick) => {
     const newMyPickIndex = toggleArrObj(pickArr, value, (value) => value);
     setPick(newMyPickIndex);
@@ -89,25 +86,22 @@ const ModalTrades = ({ tradeValue, teamSelect }) => {
       setAcceptTrade(acceptTeam.acceptStatus);
     } else {
       setNotAccept(!acceptTeam.acceptStatus);
-
     }
   };
 
   const handleTryAgain = () => {
-    setMyTeamPick([])
-    setTeamPick([])
-    setAcceptTrade(false);
-    setNotAccept(false)
-
-    
-  }
-  const handleChangeTeam = (value,setTeam) => {
-    setTeam(value)
     setMyTeamPick([]);
     setTeamPick([]);
     setAcceptTrade(false);
     setNotAccept(false);
-  }
+  };
+  const handleChangeTeam = (value, setTeam) => {
+    setTeam(value);
+    setMyTeamPick([]);
+    setTeamPick([]);
+    setAcceptTrade(false);
+    setNotAccept(false);
+  };
 
   return (
     <Modal open={open}>

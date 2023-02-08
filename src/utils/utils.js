@@ -1,3 +1,5 @@
+import { tradeValueData } from "./data";
+
 export const toggleArrObj = (arr, item, getValue = (item) => item) => {
   if (arr.some((i) => getValue(i) === getValue(item)))
     return arr.filter((i) => getValue(i) !== getValue(item));
@@ -102,3 +104,31 @@ export const getRandom = (arr, n) => {
   }
   return result;
 };
+
+
+const fanatic = [
+  {
+    mode: 1,
+    iteration: 5,
+  },
+  {
+    mode: 2,
+    iteration: 10,
+  },
+  {
+    mode: 3,
+    iteration: 15,
+  },
+];
+const makeRepeated = (arr, repeats) => Array.from({ length: repeats }, () => arr).flat();
+
+
+export const iterationRound = ({_}) => {
+  let startSlice = 0;
+  let endSlice = undefined;
+ for (let i = 0; i < fanatic.length; ++i) {
+  for (let j = 0; j < tradeValueData.length; ++j) {
+       
+  }
+ }
+}

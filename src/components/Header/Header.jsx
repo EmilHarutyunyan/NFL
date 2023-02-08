@@ -8,18 +8,16 @@ import Button from "../Buttons/Button";
 import { BtnWrap, HeaderBody, HeaderInner, HeaderWrap, ProfileInfo } from './Header.styles';
 // Img
 import mainLogo from '../../assets/img/logo.png';
-import TokenService from '../../service/token.service';
 import profileImg from "../../assets/img/profile.png"
-import { useDispatch } from 'react-redux';
-import { logout } from '../../app/features/user/userSlice';
-import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, selectUser } from '../../app/features/user/userSlice';
 
 
-function Header(props) {
-    const user = TokenService.getUser() || null;
-    const [userLog, setUserLog] = useState(user);
+
+function Header() {
+    const {userInfo} = useSelector(selectUser)
     const dispatch = useDispatch()
-
+   
     return (
       <HeaderWrap>
         <div className="main-container">
@@ -32,7 +30,7 @@ function Header(props) {
             <HeaderBody>
               <Navbar />
               <BtnWrap>
-                {!userLog ? (
+                {!userInfo ? (
                   <>
                     <Link to="/sign-in">
                       <Button btnClassName={"sign-in"} btnText="Sign In" />
@@ -44,18 +42,21 @@ function Header(props) {
                 ) : (
                   <>
                     <ProfileInfo>
-                      <img
-                        src={profileImg}
-                        alt="profile"
-                        width={22}
-                        height={22}
-                      />
-                      {userLog?.first_name && <p>Hi, {userLog?.first_name}</p>}
+                      <Link to={"/profile"}>
+                        <img
+                          src={profileImg}
+                          alt="profile"
+                          width={22}
+                          height={22}
+                        />
+                        {userInfo?.first_name && (
+                          <p>Hi, {userInfo?.first_name}</p>
+                        )}
+                      </Link>
                       <Button
                         btnText="Logout"
                         onBtnClick={() => {
                           dispatch(logout());
-                          setUserLog(null);
                         }}
                       />
                     </ProfileInfo>

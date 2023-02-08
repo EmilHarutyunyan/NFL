@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { registerUser, userLogin } from './userActions'
+import { getUserMe, registerUser, userLogin, userUpdate } from './userActions'
 import TokenService from "../../../service/token.service"
 // initialize userToken from local storage
 
@@ -11,55 +11,90 @@ const initialState = {
   userInfo,
   userToken,
   error: null,
-  success: false,
-}
+  success: userInfo?.id ? true : false,
+  logout:false
+};
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     logout: (state) => {
       TokenService.removeUser(); // delete token from storage
-      state.loading = false
-      state.userInfo = null
-      state.userToken = null
-      state.error = null
-      state.success = false
-      
+      state.loading = false;
+      state.userInfo = null;
+      state.userToken = null;
+      state.error = null;
+      state.success = false;
+      state.logout = true;
+
     },
   },
   extraReducers: {
     // login user
     [userLogin.pending]: (state) => {
-
-      state.loading = true
-      state.error = null
+      state.loading = true;
+      state.error = null;
+      state.logout = false;
     },
     [userLogin.fulfilled]: (state, action) => {
-      state.loading = false
-      // state.userInfo = payload
-      // state.userToken = payload.userToken
+      state.loading = false;
+      state.success = true;
+      state.userInfo = action.payload;
+      state.userToken = action.payload.tokens;
     },
     [userLogin.rejected]: (state, action) => {
-      state.loading = false
-      state.error = action.payload
+      state.loading = false;
+      state.success = false;
+      state.error = action.payload;
     },
     // register user
     [registerUser.pending]: (state) => {
-      state.loading = true
-      state.error = null
+      state.loading = true;
+      state.error = null;
+      state.logout = false;
     },
     [registerUser.fulfilled]: (state, action) => {
-      state.loading = false
-      state.success = true // registration successful
+      state.loading = false;
+      state.success = true;
     },
     [registerUser.rejected]: (state, action) => {
-      state.loading = false
-      state.error = action.payload
-      
-    }
+      state.loading = false;
+      state.success = false;
+      state.error = action.payload;
+    },
+    [getUserMe.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getUserMe.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.success = true;
+      state.userInfo = action.payload;
+      state.userToken = action.payload.tokens;
+    },
+    [getUserMe.rejected]: (state, action) => {
+      state.loading = false;
+      state.success = false;
+      state.error = action.payload;
+    },
+    [userUpdate.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [userUpdate.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.success = true;
+      state.userInfo = action.payload;
+      state.userToken = action.payload?.tokens;
+    },
+    [userUpdate.rejected]: (state, action) => {
+      state.loading = false;
+      state.success = false;
+      state.error = action.payload;
+    },
   },
-})
+});
 
 export const { logout } = userSlice.actions
 

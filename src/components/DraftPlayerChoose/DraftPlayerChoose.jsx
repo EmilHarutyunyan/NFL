@@ -181,10 +181,10 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
               <TeamPickIndex>
                 {teamPickIndex.map((item,idx) => {
                 
-                  return <span>{item}{idx===teamPickIndex.length - 1 ? null: ','}</span>;
+                  return <span key={idx}>{item}{idx===teamPickIndex.length - 1 ? null: ','}</span>;
                 })}
               </TeamPickIndex>
-              {/* <p>{teamPickIndex.join(",")}</p> */}
+              
             </PicksInfo>
           </SelectTeam>
           <Search
@@ -229,6 +229,10 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
               <>
                 {playersDraft.results.length > 0 &&
                   currentTableData.playersDataSlice.map((item, idx) => {
+                    const positionPlayer =
+                      playersDraft.currentPage * PageSize -
+                      currentTableData.playersDataSlice.length +
+                      idx;
                     return (
                       <DraftPlayerItem
                         key={idx}
@@ -239,13 +243,13 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                         <div className="player-draft">
                           <div className="player-td player-rank">
                             <p>Rank</p>
-                            <span>{item.ranking}</span>
+                            <span>{positionPlayer+1}</span>
                           </div>
                           <div className="player-td player-adp">
                             <p>ADP</p>
                             <span>{item?.adp}</span>
                           </div>
-                          
+
                           <h4 className="player-td player-name">
                             {item.player}
                           </h4>
@@ -259,7 +263,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                           <button
                             className="player-td player-draft-btn"
                             disabled={draftBtnDisable}
-                            onClick={() => playerChoose(item, idx)}
+                            onClick={() => playerChoose(item, positionPlayer)}
                           >
                             Draft
                           </button>

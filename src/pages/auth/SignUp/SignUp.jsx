@@ -19,7 +19,6 @@ import { EyeCloseIcon, EyeOpenIcon } from "../../../components/Icons/Icons";
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../../../app/features/user/userActions";
-// import TokenService from "../../../service/token.service";
 import { selectUser } from "../../../app/features/user/userSlice";
 
 const schema = yup.object().shape({
@@ -58,10 +57,8 @@ const SignUp = () => {
   const [loader, setLoader] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [errorMsg, setErrorMsg] = useState(null);
-  
-  const { success, error } = useSelector(selectUser);
- 
+  const { success, error, loading } = useSelector(selectUser);
+   
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const {
@@ -87,21 +84,11 @@ const SignUp = () => {
   };
   useEffect(() => {
     if (success) {
-      setLoader(!loader);
-      setTimeout(() => {
+        setLoader(!loader);
         navigate("/");
-      }, 500);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
-  useEffect(()=> {
-    if(error) {
-      
-    console.log('error :', error);
-
-      setErrorMsg(error)
-    }
-  },[error])
   return (
     <AuthWrap>
       <AuthContent>
@@ -109,7 +96,16 @@ const SignUp = () => {
           <img src={logoMid} alt="logo" />
         </Link>
         <h2>Sign Up</h2>
-        {errorMsg && <Error>{errorMsg}</Error>}
+        {error && (
+          <Error message={error}>
+            {Object.entries(error) 
+              .map(([key, value]) => {
+                
+                return (
+              <span>{`${key}: ${value}`}</span>)
+              })}
+          </Error>
+        )}
         <form onSubmit={handleSubmit(onSubmit)}>
           <InputWrap>
             <input {...register("name")} placeholder="Name" />
@@ -133,7 +129,11 @@ const SignUp = () => {
             </Error>
           </InputWrap>
           <InputWrap>
-            <input {...register("email")} placeholder="Email" />
+            <input
+              {...register("email")}
+              placeholder="Email"
+              autoComplete={"off"}
+            />
 
             <Error message={errors.email?.message}>
               {errors.email?.message ? errors.email?.message : <br />}
@@ -144,6 +144,7 @@ const SignUp = () => {
               <input
                 {...register("password")}
                 placeholder="Password"
+                autoComplete="new-password"
                 type={showPassword ? "text" : "password"}
               />
 
@@ -164,6 +165,7 @@ const SignUp = () => {
               <input
                 {...register("confirmPwd")}
                 placeholder="Repeat password"
+                autoComplete="new-password"
                 type={showConfirmPassword ? "text" : "password"}
               />
               <button
@@ -196,7 +198,7 @@ const SignUp = () => {
           </CheckWrap>
           <BtnWrap>
             <button type="submit">
-              {loader ? (
+              {loading ? (
                 <CircularProgress size={17} color={"inherit"} />
               ) : (
                 <>Sign Up</>
