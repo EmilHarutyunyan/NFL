@@ -131,7 +131,16 @@ const TeamList = () => {
               <>
                 {playersDraft.results.length > 0 &&
                   currentTableData?.playersDataSlice.map((item, idx) => {
-                    const colorBackground = item.id === 1 ? "#FFF1ED" : (item.id > 1 && item.id < 9) ? '#FFF9E5' : '#fff'
+                    const positionPlayer =
+                      playersDraft.currentPage * PageSize -
+                      currentTableData.playersDataSlice.length +
+                      idx;
+                    const colorBackground =
+                      positionPlayer === 0
+                        ? "#FFF1ED"
+                        : positionPlayer > 0 && positionPlayer < 8
+                        ? "#FFF9E5"
+                        : "#fff";
                     return (
                       <DraftPlayerItem key={idx} backColor={colorBackground}>
                         <div className="player-draft">
@@ -143,15 +152,15 @@ const TeamList = () => {
                             <p>ADP</p>
                             <span>{item?.adp}</span>
                           </div>
-                          {/* <img src={playerImg} alt="" /> */}
+                       
                           <h4 className="player-td player-name">
                             {item.player}
                           </h4>
                           <h4 className="player-td player-position">
                             {item.position}
                           </h4>
-                          {/* <img src={colleageImg} alt="" /> */}
-                          <h4 className="player-td playyer-college">
+                          
+                          <h4 className="player-td player-college">
                             {item.school}
                           </h4>
                           <img src={infoImg} alt="" />

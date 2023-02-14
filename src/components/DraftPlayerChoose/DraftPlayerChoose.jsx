@@ -6,8 +6,10 @@ import Search from "../Search/Search";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGroup } from "../../app/features/group/groupSlice";
 import {
+  delFanaticPosition,
   delPauseId,
   delTeamsRound,
+  fanaticPlayer,
   selectDraftConfig,
   setCountRender,
   setDraftPlayersAction,
@@ -48,8 +50,13 @@ const PageSize = 10;
 const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
   const groups = useSelector(selectGroup);
   const [colorShow, setColorShow] = useState(true);
-  const { tradeValue, countRender, status, teamPickIndex } =
-    useSelector(selectDraftConfig);
+  const {
+    tradeValue,
+    countRender,
+    status,
+    teamPickIndex,
+    fanaticIndexPosition,
+  } = useSelector(selectDraftConfig);
   const dispatch = useDispatch();
   const draftBtnDisable = draftStatus === "red" ? true : false;
   const [searchValue, setSearchValue] = useState("");
@@ -84,7 +91,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
   }, [
     playersDraft.currentPage,
     playersDraft.search,
-    playersDraft.position.length,
+    playersDraft.position,
     playersDraft.results,
   ]);
 
@@ -101,24 +108,36 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
   }, [setSearchValue, searchValue]);
 
   const playerConcat = (playerItem, teamId, upPlayers = {}, idx) => {
+    
     const teamItem = structuredClone(tradeValue.results[teamId - 1]);
+    const pickTeam = teamItem["pick"];
     teamItem["player"] = playerItem;
     teamItem["playerDepth"] = idx + 1;
 
     const newTradeValue = tradeValue.results.map((item) => {
-      if (item.index === teamItem.index) {
+      if (item.index === teamItem.index && item?.index_position === teamItem?.index_position) {
         return teamItem;
       }
       return item;
     });
 
+    if (fanaticIndexPosition.length) {
+      dispatch(
+        fanaticPlayer({
+          pick: pickTeam - 1,
+          player: playerItem,
+          playerDepth: idx + 1,
+        })
+      );
+    }
     dispatch(delPlayersDraft([playerItem]));
     dispatch(setTradeValue({ ...tradeValue, results: newTradeValue }));
     dispatch(setDraftPlayersAction({ ...teamItem, upPlayers }));
   };
 
   const playerChoose = (item, idx) => {
-    let team = teamPickIndex[0];
+    
+    let team = teamPickIndex[0] ?? fanaticIndexPosition[0];
     let playerItem = { ...item };
     let percentPlayers = [];
 
@@ -142,9 +161,11 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     }
 
     dispatch(setCurrentPage(1));
-    dispatch(setPositionPlayersDraft("All"));
-    playerConcat(playerItem, teamPickIndex[0], percentPlayers, idx);
+    dispatch(setPositionPlayersDraft(["All"]));
+    playerConcat(playerItem, team, percentPlayers, idx);
     dispatch(delTeamsRound(teamPickIndex[0]));
+    dispatch(delFanaticPosition(fanaticIndexPosition[0]));
+    
     setThisId(teamPickIndex[0]);
     // setChangeId(true);
     dispatch(setCountRender());

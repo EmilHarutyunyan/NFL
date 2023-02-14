@@ -8,7 +8,13 @@ import { useDispatch } from 'react-redux';
 import { setDraftRandomnessTeam } from '../../app/features/draftConfig/draftConfigSlice';
 import { AllTeams } from './Teams.styles';
 
-export const Team = ({ teams, teamSelectId, teamSelect, draftRandomness }) => {
+export const Team = ({
+  teams,
+  teamSelectId,
+  teamSelect,
+  draftRandomness,
+  fanaticChallenge,
+}) => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (teams.length && teamSelect.length !== 32) {
@@ -37,6 +43,8 @@ export const Team = ({ teams, teamSelectId, teamSelect, draftRandomness }) => {
             teamName={item.name}
             teamLogo={item.logo}
             isChecked={isChecked}
+            fanaticChallenge={fanaticChallenge}
+            teamSelectId={teamSelectId}
           />
         );
       });

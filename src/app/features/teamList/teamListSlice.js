@@ -1,7 +1,7 @@
 import axios from "axios";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { API_ENDPOINT } from "../../../config/config";
+import { API_ENDPOINT, PLAYER_MAX } from "../../../config/config";
 
 const initialState = {
   loading: false,
@@ -9,7 +9,7 @@ const initialState = {
   count: 0,
   pageSize: 6,
   currentPage: 1,
-  limit: 700,
+  limit: PLAYER_MAX,
   offset: 0,
   results: [],
   search: "",
@@ -26,7 +26,7 @@ export const getTeamList = createAsyncThunk(
   async (ordName = "", { dispatch, getState, rejectWithValue }) => {
     try {
       const res = await axios.get(
-        `${API_ENDPOINT}players/?limit=700&offset=${0}&search=&position=&school&ordering=-${ordName}`
+        `${API_ENDPOINT}players/?limit=${PLAYER_MAX}&offset=${0}&search=&position=&school&ordering=-${ordName}`
       );
       const {
         playersDraft: { playerChoose },

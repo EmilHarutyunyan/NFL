@@ -7,18 +7,20 @@ import { DraftSimulatorWrapper, DraftStart, DraftStartBtn } from './DraftSimulat
 import pauseImg from "../../assets/img/pause.png";
 
 const DraftSimulator = () => {
-  const { countRender, round, teamPickIndex } =
-    useSelector(selectDraftConfig);
+  const {
+    countRender,
+    teamPickIndex,
+    fanaticIndexPosition,
+    tradeValue,
+  } = useSelector(selectDraftConfig);
   const dispatch = useDispatch();
   const count = useMemo(() => countRender, [countRender])
-
+  const index = teamPickIndex[0] ?? fanaticIndexPosition[0] 
  
   return (
     <DraftSimulatorWrapper>
       <DraftStart>
-        <p>
-          {teamPickIndex[0] ? teamPickIndex[0] - count - 1 : +round * 32 - count - 1}
-        </p>
+        <p>{!!index ? index - count - 1 : tradeValue.count - count}</p>
         <p>Picks until your turn ...</p>
       </DraftStart>
       <DraftStartBtn

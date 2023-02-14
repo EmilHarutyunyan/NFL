@@ -210,18 +210,18 @@ const Settings = ({teamSelect}) => {
               />
             </div>
             <div className="setting-fan-item">
-              <p>2st round fanatic challenge</p>
+              <p>2nd round fanatic challenge</p>
               <CheckBoxInputSecond
                 checked={fanaticChallenge.some((item) => item.mode === 2)}
                 nameClass={"setting-check"}
                 value={2}
                 onInputChange={(e) =>
-                  dispatch(checkFanaticChallenge(+e.target.value, 10))
+                  dispatch(checkFanaticChallenge(+e.target.value, 3))
                 }
               />
             </div>
             <div className="setting-fan-item">
-              <p>3st round fanatic challenge</p>
+              <p>3rd round fanatic challenge</p>
               <CheckBoxInputSecond
                 checked={fanaticChallenge.some((item) => item.mode === 3)}
                 nameClass={"setting-check"}

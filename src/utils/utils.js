@@ -1,5 +1,3 @@
-import { tradeValueData } from "./data";
-
 export const toggleArrObj = (arr, item, getValue = (item) => item) => {
   if (arr.some((i) => getValue(i) === getValue(item)))
     return arr.filter((i) => getValue(i) !== getValue(item));
@@ -78,17 +76,17 @@ export const getFilterTwoData = (
   }
 };
 
-export const objectSet = (arr,key) => {
+export const objectSet = (arr, key) => {
   const mySet = [];
-  const setObject = []
-  arr.forEach(item => {
-    if(!mySet.includes(item[key])) {
-      mySet.push(item[key])
-      setObject.push(item)
+  const setObject = [];
+  arr.forEach((item) => {
+    if (!mySet.includes(item[key])) {
+      mySet.push(item[key]);
+      setObject.push(item);
     }
-  })
-  return setObject
-}
+  });
+  return setObject;
+};
 
 // Get Random Team
 export const getRandom = (arr, n) => {
@@ -105,30 +103,57 @@ export const getRandom = (arr, n) => {
   return result;
 };
 
+export const makeRepeated = (arr, repeats) =>
+  Array.from({ length: repeats }, () => arr).flat();
 
-const fanatic = [
-  {
-    mode: 1,
-    iteration: 5,
-  },
-  {
-    mode: 2,
-    iteration: 10,
-  },
-  {
-    mode: 3,
-    iteration: 15,
-  },
-];
-const makeRepeated = (arr, repeats) => Array.from({ length: repeats }, () => arr).flat();
-
-
-export const iterationRound = ({_}) => {
+export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
   let startSlice = 0;
-  let endSlice = undefined;
- for (let i = 0; i < fanatic.length; ++i) {
-  for (let j = 0; j < tradeValueData.length; ++j) {
-       
+  let endSlice = 0;
+  let newIterationTrade = [];
+  let roundStart = [1];
+
+  for (let i = 0; i < fanaticChallenge.length; ++i) {
+    startSlice = endSlice;
+    for (let j = endSlice; j < tradeValueData.length; ++j) {
+      if (
+        fanaticChallenge[i].mode !== +tradeValueData[j].round_index_number ||
+        endSlice + 1  === tradeValueData.length 
+      ) {
+        
+        endSlice = endSlice + 1 === tradeValueData.length ? endSlice + 1 : endSlice;
+        const sliceTradeValue = tradeValueData.slice(startSlice, endSlice);
+        const iterationRound = makeRepeated(
+          sliceTradeValue,
+          fanaticChallenge[i].iteration
+        );
+        roundStart.push(endSlice + 1);
+        newIterationTrade.push(...iterationRound);
+        break;
+      }
+      endSlice++;
+    }
   }
- }
-}
+  // }
+
+  if (round === fanaticChallenge.length) {
+    const newTradeValue = newIterationTrade.map((item, idx) => {
+      const newItem = structuredClone(item);
+      newItem["index_position"] = idx+1;
+      return newItem;
+    });
+    return { count: newTradeValue.length, newTradeValue, roundStart };
+  } else {
+    const sliceTradeValue = tradeValueData.slice(
+      endSlice,
+      tradeValueData.length
+    );
+    const cutTradeValue = [...newIterationTrade, ...sliceTradeValue];
+    const newTradeValue = cutTradeValue.map((item, idx) => {
+      const newItem = structuredClone(item);
+      newItem["index_position"] = idx+1;
+      return newItem;
+    });
+
+    return { count: newTradeValue.length, newTradeValue, roundStart };
+  }
+};

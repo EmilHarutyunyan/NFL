@@ -5,7 +5,7 @@ import { getTradeValue } from "../../app/features/draftConfig/drafConfigAction";
 import {
   selectDraftConfig,
   setResetRound,
-  setStatus,
+  // setStatus,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { selectDraftResult, setDraftResultAction } from "../../app/features/draftResult/draftResultSlice";
 // import { getPositions } from '../../app/features/group/groupSlice'
@@ -19,7 +19,8 @@ import { ReactComponent as CircleSvg } from "../../assets/svg/circle.svg";
 import DraftPlayerChoose from "../../components/DraftPlayerChoose/DraftPlayerChoose";
 import DraftSimulator from "../../components/DraftSimulator/DraftSimulator";
 import DraftViewAsign from "../../components/DraftViewAsign/DraftViewAsign";
-import ModalTrades from "../../components/ModalTrades/ModalTrades";
+import Spinner from "../../components/Spinner/Spinner";
+// import ModalTrades from "../../components/ModalTrades/ModalTrades";
 import { PLAYER_MAX } from "../../config/config";
 
 // Styes
@@ -42,9 +43,9 @@ const DraftPlayer = () => {
     teamPickIndex,
     teamPickIndexControl,
     draftRandomnessTeam,
-    draftCardDepth,
     changeTrade,
-    reserveTradeValue,
+    draftCardDepth,
+    fanaticIndexPosition,
   } = useSelector(selectDraftConfig);
 
   const dispatch = useDispatch();
@@ -66,27 +67,30 @@ const DraftPlayer = () => {
 
   useEffect(() => {
     // if(false){
+      
     if (
-      (tradeValue.mouthing && countRender < teamPickIndex[0]) ||
+      (tradeValue.mouthing && countRender < teamPickIndex[0]) || countRender < fanaticIndexPosition[0] ||
       (tradeValue.mouthing &&
         !teamPickIndex.length &&
         countRender !== tradeValue.results.length)
     ) {
-      // if (changeTrade) {
+    //  if (changeTrade) {
         const team = tradeValue.results[countRender];
         const teamName = team.round.name;
+        const teamPosition = team["index_position"] ?? 0;
         let teamManual = teamSelect.some((item) => item.name === teamName);
         let playerCountGet = !teamManual
-          ? draftCardDepth + team.index
+          ? draftCardDepth + team.index + teamPosition
           : PLAYER_MAX;
         dispatch(getPlayersDraft({ playerCountGet, teamName }));
       // }
+
     }
     // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count, tradeValue.mouthing, changeTrade]);
 
- // Go To Result Page
+//  Go To Result Page
   useEffect(() => {
     if (draftResults.results.length > 0) {
       navigate("/draft-result");
@@ -146,6 +150,9 @@ const DraftPlayer = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countRender]);
 
+  if(!tradeValue.mouthing) {
+    return <Spinner />
+  }
   return (
     <Wrapper className="main-container">
       <Banner>
@@ -173,7 +180,9 @@ const DraftPlayer = () => {
               tradeValue={tradeValue}
             />
             <DraftViewSimulator>
-              {!teamPickIndex.includes(count) && status !== "red" ? (
+              {!teamPickIndex.includes(count) &&
+              status !== "red" &&
+              !fanaticIndexPosition.includes(count) ? (
                 <DraftSimulator />
               ) : playersDraft.results.length > 0 ? (
                 <DraftPlayerChoose

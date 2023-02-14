@@ -6,7 +6,9 @@ export const getDraftValue = createAsyncThunk(
   "draftConfig/getDraftValue",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.get(`${API_ENDPOINT}trade-value/?limit=224`);
+      const res = await axios.get(
+        `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${7}&tm=`
+      );
       return res.data;
     } catch (error) {
       if (error.response && error.response.data.message) {

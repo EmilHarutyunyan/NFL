@@ -1,7 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_ENDPOINT } from "../../../config/config";
-import { setTeamPickIndex } from "./draftConfigSlice";
+import { iterationRound } from "../../../utils/utils";
+import { setFanaticIndexPosition, setRoundStart, setTeamPickIndex } from "./draftConfigSlice";
 
 export const getHistoryBoard = createAsyncThunk(
   "draftConfig/getHistoryBoard",
@@ -45,30 +46,35 @@ export const getTradeValue = createAsyncThunk(
   async (_, { dispatch, rejectWithValue, getState }) => {
     try {
       const {
-        draftConfig: { round, teamSelectId },
+        draftConfig: { round, teamSelectId, fanaticChallenge },
       } = getState();
       const res = await axios.get(
         `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${round}&tm=`
       );
-      const teamPickIndex = res.data.results.filter((team) => teamSelectId.includes(team.round.index)).map(team => team.index)
       
+      const teamPickIndex = res.data.results.filter((team) => teamSelectId.includes(team.round.index)).map(team => team.index)
+  
       dispatch(setTeamPickIndex(teamPickIndex))
-      const copyResData = structuredClone(res.data)
-      const iterationRound = [
-        ...res.data.results,
-        ...res.data.results,
-        ...res.data.results,
-        ...res.data.results,
-        ...res.data.results,
-      ];
-      copyResData.results = iterationRound;
-      copyResData.count = iterationRound.count
-      console.log(
-        [...res.data.results, ...res.data.results, ...res.data.results],
-        "res.data"
-      );
-      // console.log([...res.data.status, ...res.data.status, ...res.data.sta, ...res.data, ...res.data],"5 iteration")
-      return copyResData;
+      
+      if (fanaticChallenge.length) {
+        
+        const { count, newTradeValue, roundStart, } = iterationRound({
+          fanaticChallenge,
+          tradeValueData: res.data.results,
+          round
+        });
+        console.log('newTradeValue :', newTradeValue);
+        const indexPositions = newTradeValue
+          .filter((team) => teamSelectId.includes(team.round.index))
+          .map((item) => item["index_position"]  );
+    
+        dispatch(setFanaticIndexPosition(indexPositions));
+        dispatch(setRoundStart(roundStart))
+        return { ...res.data, count, results: newTradeValue };
+
+      } else {
+        return res.data;
+      }
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);

@@ -13,7 +13,7 @@ const initialState = {
   offset: 0,
   results: [],
   search: "",
-  position:[],
+  position:['All'],
   colleage:"",
   playerChoose:[],
   playerItems:[],
@@ -251,10 +251,22 @@ export const positionAction = (positionValue) => (dispatch, getState) => {
 export const playerPositionMulti = (pos) => (dispatch,getState) => {
   const { playersDraft: {position} } = getState();
   let newPosition = []
-  if (position.length && position.includes(pos)) {
+  
+  if (position.length && position.includes(pos) && pos !== 'All') {
     newPosition = position.filter(item => item !== pos)
+  } else if(pos === 'All'){
+    newPosition = [pos]
+    
   } else {
-    newPosition = [...position,pos]
+    if (position.includes("All")) {
+      const exceptAll = position.filter((item) => item !== "All");
+      newPosition = [...exceptAll, pos];
+    } else {
+      newPosition = [...position, pos];
+    }
+  }
+  if (!newPosition.length) {
+    newPosition = ["All"];
   }
   dispatch(setPositionPlayersDraft(newPosition))
 

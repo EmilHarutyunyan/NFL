@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {  selectDraftConfig } from "../../app/features/draftConfig/draftConfigSlice";
+// import {  selectDraftConfig } from "../../app/features/draftConfig/draftConfigSlice";
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -88,18 +88,25 @@ const DraftValueChart = () => {
                     if (team >= item) {
                       return (
                         <tr key={item}>
-                          <td>{draftValue[`${((rt+1)*32) - (32-idx)}`]?.index}</td>
-                          {showHide.team ? (null) : (<td>{draftValue[`${((rt+1)*32) - (32-idx)}`]?.tm}</td>)}
-                          <td>{draftValue[`${((rt+1)*32) - (32-idx)}`]?.value}</td>
+                          <td>
+                            {draftValue[`${(rt + 1) * 32 - (32 - idx)}`]?.index}
+                          </td>
+                          {showHide.team ? null : (
+                            <td>
+                              {
+                                draftValue[`${(rt + 1) * 32 - (32 - idx)}`]
+                                  ?.city
+                              }
+                            </td>
+                          )}
+                          <td>
+                            {draftValue[`${(rt + 1) * 32 - (32 - idx)}`]?.value}
+                          </td>
                         </tr>
                       );
                     } else {
                       return (
-                        <tr key={item}>
-                          <td> </td>
-                          <td> </td>
-                          <td>{""}</td>
-                        </tr>
+                        null
                       );
                     }
                   })}

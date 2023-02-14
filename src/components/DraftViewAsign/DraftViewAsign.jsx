@@ -16,16 +16,13 @@ import { delPlayersDraft } from "../../app/features/playersDraft/playersDraftSli
 import { POSITIONS_COLOR } from "../../utils/constants";
 import draftAutoSettings from "./DraftAutoSettings";
 
-const Delayed = ({ children, waitBefore = 500, scroll = null, player }) => {
+const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
   const [isShow, setIsShow] = useState(false);
   const { countRender } = useSelector(selectDraftConfig);
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsShow(true);
-
-      if (countRender <= scroll.id && player) {
-        scroll.teamRef?.current?.scrollTo(0, (scroll.id - 1) * 75);
-      }
+      scroll.teamRef?.current?.scrollTo(0, (countRender - 1) * 75);
     }, waitBefore);
     return () => clearTimeout(timer);
 
@@ -54,7 +51,10 @@ const DraftViewAsign = ({ players, thisId }) => {
     roundDepth,
     round,
     selectCardDepth,
-    
+    roundStart,
+    fanaticIndexPosition,
+    fanaticPickId,
+    fanaticPlayerBefore,
   } = useSelector(selectDraftConfig);
   const divRef = useRef(null);
   const roundArr = useRef([]);
@@ -66,12 +66,16 @@ const DraftViewAsign = ({ players, thisId }) => {
       tradeValue?.mouthing &&
       !players.loading &&
       players.status &&
-      (countRender + 1 < teamPickIndex[0] || !teamPickIndex.length)
+      countRender < tradeValue.results.length &&
+      (countRender + 1 < teamPickIndex[0] || !teamPickIndex.length) &&
+      (countRender + 1 < fanaticIndexPosition[0] ||
+        !fanaticIndexPosition.length)
     ) {
       if (!pauseId.length) {
         let newTradeValue = {};
         let tradeValueTeam = structuredClone(tradeValue.results[countRender]);
-        let teamDepth = []
+        let teamDepth = [];
+
         const playersAll = players.results;
         let player = {};
         let roundIndexBool = false;
@@ -85,44 +89,55 @@ const DraftViewAsign = ({ players, thisId }) => {
             }
           });
         }
-         
-        if(roundBPA.length && !(roundBPA.includes(+tradeValueTeam.round_index_number))) {
-          roundIndexBool= true;
+
+        if (
+          roundBPA.length &&
+          !roundBPA.includes(+tradeValueTeam.round_index_number)
+        ) {
+          roundIndexBool = true;
           dispatch(delRoundBPA(tradeValueTeam.round_index_number));
         }
-        
 
-        player = draftAutoSettings(
-          draftCardDepth,
-          draftRandomnessTeam,
-          roundBPA,
-          roundDepth,
-          round,
-          playersAll,
-          teamDepth,
-          tradeValueTeam,
-          selectCardDepth,
-          roundIndexBool,
-          roundIndex
-        );
-
-        
-        const {player:playerItem, playerDepth} = player
+        if (fanaticPickId?.includes(tradeValueTeam["pick"])) {
+          player = fanaticPlayerBefore.filter(
+            (item) => item.pick === tradeValueTeam["pick"]
+          )[0];
+        } else {
+          player = draftAutoSettings(
+            draftCardDepth,
+            draftRandomnessTeam,
+            roundBPA,
+            roundDepth,
+            round,
+            playersAll,
+            teamDepth,
+            tradeValueTeam,
+            selectCardDepth,
+            roundIndexBool,
+            roundIndex
+          );
+        }
+        const { player: playerItem, playerDepth } = player;
         tradeValueTeam["player"] = playerItem;
         tradeValueTeam["playerDepth"] = playerDepth;
-        let newTradeValueResults = tradeValue.results.map((team) =>
-          team.index === tradeValueTeam.index ? tradeValueTeam : team
-        );
-          
+        let newTradeValueResults = tradeValue.results.map((team) => {
+          if (team["index_position"]) {
+            return team["index_position"] === tradeValueTeam["index_position"]
+              ? tradeValueTeam
+              : team;
+          } else {
+            return team.index === tradeValueTeam.index ? tradeValueTeam : team;
+          }
+        });
+
         newTradeValue = {
           ...tradeValue,
           results: newTradeValueResults,
         };
-        
+
         !selectCardDepth.includes(playerDepth) &&
           dispatch(setSelectCardDepth(playerDepth));
-      
-        
+
         dispatch(setTradeValue(newTradeValue));
         dispatch(setDraftPlayersAction(tradeValueTeam));
         dispatch(delPlayersDraft([playerItem]));
@@ -132,6 +147,19 @@ const DraftViewAsign = ({ players, thisId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tradeValue.mouthing, players.loading, pauseId]);
 
+  function delayTime({id,indexPosition}) {
+    const isTeamPick = (currentValue) => currentValue > id;
+    const isIndexPosition = (currentValue) => currentValue > indexPosition;
+
+    if (fanaticIndexPosition.length) {
+      return fanaticIndexPosition.every(isIndexPosition) ? indexPosition * (1000 / timeSpeed / indexPosition) : 0;
+    } else if (!fanaticIndexPosition.length) {
+      return teamPickIndex.every(isTeamPick) ? id * (1000 / timeSpeed / id) : 0;
+    } else {
+
+      return;
+    }
+  }
   return (
     <Wrapper ref={divRef}>
       {players.length > 0 && loading ? <CircularProgress /> : null}
@@ -139,18 +167,16 @@ const DraftViewAsign = ({ players, thisId }) => {
         {tradeValue?.results?.map((team, idx) => {
           const {
             index: id,
-
             round_index: roundIndex,
+            index_position: indexPosition,
             round: { logo },
           } = team;
 
-          const isBelowThreshold = (currentValue) => currentValue > id;
-          const checkTeam = teamPickIndex.every(isBelowThreshold)
-            ? id * (1000 / timeSpeed / id)
-            : 0;
+          const checkTeam = delayTime({id, indexPosition})
           const time = thisId ? +(id - thisId) * (1000 / timeSpeed) : checkTeam;
-
-          if (id === 1) {
+        
+          // Round Text
+          if (roundStart.includes(id)) {
             roundArr.current = [];
           }
           const roundCheck = roundArr.current.includes(roundIndex)
@@ -158,7 +184,7 @@ const DraftViewAsign = ({ players, thisId }) => {
             : roundArr.current.push(roundIndex);
 
           return (
-            <React.Fragment key={id}>
+            <React.Fragment key={idx}>
               {roundCheck ? (
                 <li className="round" key={Math.random()}>
                   {roundIndex}
@@ -167,7 +193,8 @@ const DraftViewAsign = ({ players, thisId }) => {
               <li
                 key={id}
                 className={`${
-                  teamPickIndex.includes(id)
+                  teamPickIndex.includes(id) ||
+                  fanaticIndexPosition.includes(indexPosition)
                     ? "player-team active"
                     : "player-team"
                 }`}
@@ -184,7 +211,7 @@ const DraftViewAsign = ({ players, thisId }) => {
                     <>
                       {teamPickIndex.includes(id) && pauseId[0] !== id ? (
                         <>
-                          <div className="player-click">One The Clock</div>
+                          <div className="player-click">On The Clock</div>
                         </>
                       ) : (
                         <>
@@ -211,7 +238,7 @@ const DraftViewAsign = ({ players, thisId }) => {
                           >
                             {team.player.position}
                           </PlayerPos>
-                          <p className="player-colleg">
+                          <p className="player-college">
                             {team?.player?.school}
                           </p>
                         </>

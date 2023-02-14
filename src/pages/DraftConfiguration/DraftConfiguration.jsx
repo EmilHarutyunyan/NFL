@@ -20,23 +20,18 @@ import {
 import { Switch } from "@mui/material";
 import { resDraftResult } from "../../app/features/draftResult/draftResultSlice";
 import { getTeams } from "../../app/features/draftConfig/drafConfigAction";
-import ModalTrades from "../../components/ModalTrades/ModalTrades";
+// import ModalTrades from "../../components/ModalTrades/ModalTrades";
 
  const DraftConfiguration = () => {
   const dispatch = useDispatch();
   const draftConfigRef = useRef(null);
-  const {
-    teamSelect,
-    teams,
-    teamSelectId,
-    draftRandomness,
-  } = useSelector(selectDraftConfig);
+  const { teamSelect, teams, teamSelectId, draftRandomness, fanaticChallenge } =
+    useSelector(selectDraftConfig);
 
   const handleChange = (e) => {
     dispatch(selectAllTeams(e.target.checked));
   };
   useEffect(() => {
-    draftConfigRef.current?.scrollIntoView({ behavior: "smooth" });
     dispatch(setResetRound());
     dispatch(getTeams());
     dispatch(resDraftResult())
@@ -66,6 +61,7 @@ import ModalTrades from "../../components/ModalTrades/ModalTrades";
               teamSelectId={teamSelectId}
               draftRandomness={draftRandomness}
               teamSelect={teamSelect}
+              fanaticChallenge={fanaticChallenge}
             />
           </DraftTeams>
           <TeamsSettings>
