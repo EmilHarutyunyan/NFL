@@ -216,7 +216,7 @@ const Settings = ({teamSelect}) => {
                 nameClass={"setting-check"}
                 value={2}
                 onInputChange={(e) =>
-                  dispatch(checkFanaticChallenge(+e.target.value, 3))
+                  dispatch(checkFanaticChallenge(+e.target.value, 10))
                 }
               />
             </div>
