@@ -108,7 +108,7 @@ export const DraftPlayerItem = styled.li`
   }
   .player-td {
     text-align: center;
-    width: calc(100% / 7);
+    width: calc(100% / 8);
   }
   .player-draft {
     padding: 16px;

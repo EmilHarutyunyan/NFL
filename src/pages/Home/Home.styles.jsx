@@ -16,6 +16,7 @@ export const HomeWrap = styled.section`
   img {
     max-width: 179px;
     width: 100%;
+    margin: 15px 0;
   }
   h1 {
     font-size: 55px;

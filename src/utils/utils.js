@@ -12,6 +12,18 @@ export const percentPick = (teamValue, playerValue, percent = 20) => {
   return +(((teamValue - playerValue) * percent) / 100).toFixed(2);
 };
 
+export const  dataURLtoBlob = (dataurl) => {
+  var arr = dataurl.split(","),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+}
+
 let sumNumber = (num) => {
   let sum = 0;
   for (let i = 1; i <= num; i++) {
@@ -104,7 +116,12 @@ export const getRandom = (arr, n) => {
 };
 
 export const makeRepeated = (arr, repeats) =>
-  Array.from({ length: repeats }, () => arr).flat();
+  Array.from({ length: repeats }, (v,idx) => {
+    const arrIteration = arr.map(item => {
+      return {...item, iteration: idx+1}
+    })
+    return arrIteration;
+  }).flat();
 
 export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
   let startSlice = 0;

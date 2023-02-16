@@ -140,7 +140,7 @@ const DraftViewAsign = ({ players, thisId }) => {
 
         dispatch(setTradeValue(newTradeValue));
         dispatch(setDraftPlayersAction(tradeValueTeam));
-        dispatch(delPlayersDraft([playerItem]));
+        dispatch(delPlayersDraft([playerItem], tradeValueTeam?.iteration));
         dispatch(setCountRender());
       }
     }

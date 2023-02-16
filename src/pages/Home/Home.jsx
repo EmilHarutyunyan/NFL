@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Button from "../../components/Buttons/Button";
 import { HomeWrap } from "./Home.styles";
-import homeLogo from "../../assets/img/home-logo.png";
+import homeLogo from "../../assets/img/logoBig.png";
 
 const Home = () => {
   return (

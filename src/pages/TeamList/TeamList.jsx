@@ -131,14 +131,11 @@ const TeamList = () => {
               <>
                 {playersDraft.results.length > 0 &&
                   currentTableData?.playersDataSlice.map((item, idx) => {
-                    const positionPlayer =
-                      playersDraft.currentPage * PageSize -
-                      currentTableData.playersDataSlice.length +
-                      idx;
+                    
                     const colorBackground =
-                      positionPlayer === 0
+                      item?.ranking === 1
                         ? "#FFF1ED"
-                        : positionPlayer > 0 && positionPlayer < 8
+                        : item?.ranking > 1 && item?.ranking < 9
                         ? "#FFF9E5"
                         : "#fff";
                     return (

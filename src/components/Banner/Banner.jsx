@@ -2,7 +2,7 @@ import React from 'react'
 // Styles
 import { BannerContent, BannerWrap } from './Banner.styles';
 // Image
-import nflLogo from "../../assets/img/nfl-logo.png";
+import nflLogo from "../../assets/img/logo.png";
 
 const Banner = () => {
   return (

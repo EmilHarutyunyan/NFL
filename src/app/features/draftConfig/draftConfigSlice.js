@@ -357,10 +357,15 @@ export const saveRound = (roundNum) => (dispatch, getState) => {
   dispatch(setRound(roundNum));
 };
 export const setDraftPlayersAction = (player) => (dispatch, getState) => {
-  const { draftPlayers } = selectDraftConfig(getState());
-  const checkPlayer = draftPlayers.some(
-    (item) => item?.player?.id === player?.player?.id
-  );
+  debugger
+  const { draftPlayers,fanaticChallenge } = selectDraftConfig(getState());
+  let checkPlayer = false;
+  if(!fanaticChallenge.length) {
+    checkPlayer = draftPlayers.some(
+      (item) => item?.player?.id === player?.player?.id
+    );
+
+  }
 
   if (!checkPlayer) {
     dispatch(setDraftPlayers(player));

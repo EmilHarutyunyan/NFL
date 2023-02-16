@@ -1,6 +1,6 @@
 import { getRandom } from "../../utils/utils";
 function draftAutoSettings(draftCardDepth, draftRandomnessTeam, roundBPA, roundDepth, round, playersAll, teamDepth, tradeValueTeam, selectCardDepth, roundIndexBool, roundIndex) {
-  const pointDepth = round - roundDepth - roundBPA.length
+ 
   const playerPosition = Array.from({ length: draftCardDepth }, (_, i) => i + 1)
   const playerRange = playersAll.slice(0, draftCardDepth);
   const tradeValueTeamId = tradeValueTeam.round.index;

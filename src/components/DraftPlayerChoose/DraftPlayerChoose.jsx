@@ -40,6 +40,7 @@ import {
   delPlayersDraft,
   playerPositionMulti,
   setCurrentPage,
+  setPlayerManualChoose,
   setPositionPlayersDraft,
   setSearchPlayers,
 } from "../../app/features/playersDraft/playersDraftSlice";
@@ -163,6 +164,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft(["All"]));
     playerConcat(playerItem, team, percentPlayers, idx);
+    dispatch(setPlayerManualChoose(playerItem))
     dispatch(delTeamsRound(teamPickIndex[0]));
     dispatch(delFanaticPosition(fanaticIndexPosition[0]));
     
@@ -250,10 +252,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
               <>
                 {playersDraft.results.length > 0 &&
                   currentTableData.playersDataSlice.map((item, idx) => {
-                    const positionPlayer =
-                      playersDraft.currentPage * PageSize -
-                      currentTableData.playersDataSlice.length +
-                      idx;
+                    
                     return (
                       <DraftPlayerItem
                         key={idx}
@@ -264,7 +263,11 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                         <div className="player-draft">
                           <div className="player-td player-rank">
                             <p>Rank</p>
-                            <span>{positionPlayer+1}</span>
+                            <span>{item?.ranking}</span>
+                          </div>
+                          <div className="player-td player-rank">
+                            <p>BPA</p>
+                            <span>{item?.bpa}</span>
                           </div>
                           <div className="player-td player-adp">
                             <p>ADP</p>
@@ -284,7 +287,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                           <button
                             className="player-td player-draft-btn"
                             disabled={draftBtnDisable}
-                            onClick={() => playerChoose(item, positionPlayer)}
+                            onClick={() => playerChoose(item, item?.bpa)}
                           >
                             Draft
                           </button>

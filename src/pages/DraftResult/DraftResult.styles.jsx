@@ -155,14 +155,28 @@ export const DraftResultPick = styled.div`
   width: 100%;
   max-width: 345px;
   .downland-btn {
-    display:flex;
+    display: flex;
     align-items: center;
-    color: #004EA3;
+    color: #004ea3;
     gap: 6px;
     margin-bottom: 12px;
+    cursor: pointer;
   }
-
-`
+  .downland-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #004ea3;
+    color: #fff;
+    gap: 6px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    max-width: 100px;
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+  }
+`;
 export const DraftResultPickWrap = styled.div`
   width: 100%;
   border-bottom-left-radius: 10px;

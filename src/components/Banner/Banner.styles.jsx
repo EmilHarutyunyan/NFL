@@ -26,4 +26,8 @@ export const BannerContent = styled.div`
     font-weight: 600;
     color: white;
   }
+  img {
+    max-width: 50px;
+    height: auto;
+  }
 `;

@@ -135,7 +135,7 @@ const DraftPlayer = () => {
 
         data.items.push(dataItem);
       });
-
+      debugger
       dispatch(
         setDraftResultAction(
           draftPlayers,

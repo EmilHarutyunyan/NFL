@@ -37,23 +37,26 @@ export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexCont
   const setRound = []
   const teamsSelectName = teamSelect.map(item => item.name)
   const teamsPlayer = {}
-  
+  debugger
   for (let i = 1; i <= round; ++i) {
     setRound.push(`Round ${i}`)
   }
+
   for (let index of teamPickIndexControl) {
-    const teamNameItem = teams[index - 1].round.name
-    if (teamsPlayer[teamNameItem]) {
-      teamsPlayer[teamNameItem].push(teams[index - 1])
-    } else {
-      teamsPlayer[teamNameItem] = [teams[index - 1]]
+    for (let team of teams) {
+      if (index === team.pick) {
+        const teamNameItem = team.round.name;
+        if (teamsPlayer[teamNameItem]) {
+          teamsPlayer[teamNameItem].push(team);
+        } else {
+          teamsPlayer[teamNameItem] = [team];
+        }
+      }
+
     }
   }
-
-  // dispatch(setRoundTeam(setRound))
+  
   dispatch(setDraftResult({ results: teams, roundTeam: setRound, teamsName: teamsSelectName, teamsPlayer, draftRandomnessTeam }));
-  // dispatch(setTeamsName(teamsSelectName))
-  // dispatch(setTeamsPlayer(teamsPlayer))
 };
 
 export default draftResultSlice.reducer;

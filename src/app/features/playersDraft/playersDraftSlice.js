@@ -7,39 +7,67 @@ const initialState = {
   loading: false,
   status: false,
   count: 0,
-  pageSize:6,
+  pageSize: 6,
   currentPage: 1,
   limit: 700,
   offset: 0,
   results: [],
   search: "",
-  position:['All'],
-  colleage:"",
-  playerChoose:[],
-  playerItems:[],
-  teamsPlayersData: []
+  position: ["All"],
+  colleage: "",
+  iteration: 1,
+  playerChoose: [],
+  playerManualChoose: [],
+  playerIterationChoose:[],
+  playerItems: [],
+  teamsPlayersData: [],
 };
 
 export const getPlayersDraft = createAsyncThunk(
   "playersDraft/getPlayersDraft",
-  async (config,{ dispatch, getState, rejectWithValue }) => {
+  async (config, { dispatch, getState, rejectWithValue }) => {
     try {
       const res = await axios.get(
-        `${API_ENDPOINT}players/?limit=${config.playerCountGet}&offset=${0}&search=&position=&school&ordering=-${config.teamName}`
+        `${API_ENDPOINT}players/?limit=${
+          config.playerCountGet
+        }&offset=${0}&search=&position=&school&ordering=-${config.teamName}`
       );
       const {
-        playersDraft: { playerChoose },
+        playersDraft: {
+          playerChoose,
+          playerManualChoose,    
+          playerIterationChoose,
+        },
+        draftConfig: { fanaticChallenge },
       } = getState();
       const resData = { ...res.data };
 
+
+      // Fanatic Choose
+      if(fanaticChallenge.length) {
+        const playerIteration = [
+          ...playerIterationChoose,
+          ...playerManualChoose,
+        ];
+        const playerChooseId = playerIteration.map((el) => el.id);
+        const resDataResult = resData.results.filter(
+          (player) => !playerChooseId.includes(player.id)
+        );
+        resData.results = resDataResult.map((item, idx) => {
+          return { ...item, bpa: idx + 1 };
+        });
+      }
       // Filter Choose Players
-      if(playerChoose.length) {
-        const playerChooseId = playerChoose.map(el => el.id)
-        const resDataResult = resData.results.filter(player => !playerChooseId.includes(player.id))
-        resData.results = resDataResult
+      if (playerChoose.length && !fanaticChallenge.length) {
+        const playerChooseId = playerChoose.map((el) => el.id);
+        const resDataResult = resData.results.filter(
+          (player) => !playerChooseId.includes(player.id)
+        );
+        resData.results = resDataResult.map((item, idx) => {
+          return { ...item, bpa: idx + 1 };
+        });
       }
       dispatch(setPlayersDraft(resData));
-      
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -50,13 +78,12 @@ export const getPlayersDraft = createAsyncThunk(
   }
 );
 
-
 export const searchPlayersDraft = createAsyncThunk(
   "playersDraft/searchPlayersDraft",
-  async (search, { dispatch,getState,rejectWithValue }) => {
+  async (search, { dispatch, getState, rejectWithValue }) => {
     try {
       const {
-        playersDraft: { position,colleage },
+        playersDraft: { position, colleage },
       } = getState();
       const res = await axios.get(
         `${API_ENDPOINT}players/?limit=${18}&offset=${0}&search=${search}&position=${position}&school=${colleage}`
@@ -75,18 +102,16 @@ export const searchPlayersDraft = createAsyncThunk(
 
 export const postitionPlayersDraft = createAsyncThunk(
   "playersDraft/postitionPlayersDraft",
-  async (position, { dispatch,getState,rejectWithValue }) => {
+  async (position, { dispatch, getState, rejectWithValue }) => {
     try {
-
       const {
-        players: { colleage,limit },
+        players: { colleage, limit },
       } = getState();
-        
-      
+
       const res = await axios.get(
         `${API_ENDPOINT}players/?limit=${limit}&offset=${0}&search=&position=${position}&school=${colleage}`
       );
-      const resData = {...initialState,...res.data,limit,position};
+      const resData = { ...initialState, ...res.data, limit, position };
 
       dispatch(setPlayersDraft(resData));
     } catch (error) {
@@ -101,7 +126,7 @@ export const postitionPlayersDraft = createAsyncThunk(
 
 export const colleagePlayersDraft = createAsyncThunk(
   "playersDraft/colleagePlayersDraft",
-  async (colleage, { dispatch,getState,rejectWithValue }) => {
+  async (colleage, { dispatch, getState, rejectWithValue }) => {
     try {
       const {
         playersDraft: { position },
@@ -109,9 +134,8 @@ export const colleagePlayersDraft = createAsyncThunk(
       const res = await axios.get(
         `${API_ENDPOINT}players/?limit=${18}&offset=${0}&search=&position=${position}&school=${colleage}`
       );
-      const resData = { ...initialState,...res.data, colleage };
+      const resData = { ...initialState, ...res.data, colleage };
       dispatch(setPlayersDraft(resData));
-      
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -127,7 +151,6 @@ export const playersDraftSlice = createSlice({
   initialState,
   reducers: {
     setPlayersDraft: (state, action) => {
-     
       state.limit = action.payload?.limit || state.limit;
       state.offset = action.payload?.offset || state.offset;
       state.currentPage = action.payload?.currentPage || state.currentPage;
@@ -141,58 +164,66 @@ export const playersDraftSlice = createSlice({
       state.status = true;
     },
     setSearchPlayers: (state, action) => {
-      state.search = action.payload
+      state.search = action.payload;
     },
     setPositionPlayersDraft: (state, action) => {
-     
-      state.position = action.payload
+      state.position = action.payload;
     },
     setColleagePlayers: (state, action) => {
-      state.colleage = action.payload
+      state.colleage = action.payload;
     },
     setCurrentPage: (state, action) => {
-      state.currentPage = action.payload
+      state.currentPage = action.payload;
     },
-    setPlayerItems: (state,action) => {
-      state.playerItems = action.payload
+    setPlayerItems: (state, action) => {
+      state.playerItems = action.payload;
     },
-    setNewPlayers : (state,action) => {
+    setNewPlayers: (state, action) => {
       state.results = action.payload;
-      state.limit = action.payload.length
+      state.limit = action.payload.length;
     },
     setTeamsPlayersData: (state, action) => {
       state.teamsPlayersData = action.payload;
     },
     setPlayerChoose: (state, action) => {
-      state.playerChoose= action.payload;
+      state.playerChoose = action.payload;
+    },
+    setPlayerManualChoose: (state, action) => {
+      state.playerManualChoose.push(action.payload);
+    },
+    setIteration: (state, action) => {
+      state.iteration = action.payload;
+    },
+    setPlayerIterationChoose: (state, action) => {
+      state.playerIterationChoose = action.payload;
     },
     resPlayersDraft: (state, action) => {
       // state = initialState
       state.loading = initialState.loading;
       state.status = initialState.status;
       state.colleage = initialState.colleage;
-      state.count= initialState.count;
+      state.count = initialState.count;
       state.currentPage = initialState.currentPage;
       state.limit = initialState.limit;
       state.offset = initialState.offset;
       state.pageSize = initialState.pageSize;
       state.playerChoose = initialState.playerChoose;
+      state.playerManualChoose = initialState.playerManualChoose;
       state.playerItems = initialState.playerItems;
-      state.position  = initialState.position;
+      state.position = initialState.position;
       state.results = initialState.results;
-      state.search = initialState.search    
+      state.search = initialState.search;
       state.teamsPlayersData = initialState.teamsPlayersData;
       state.position = initialState.position;
       state.colleage = initialState.colleage;
-    }
+      state.iteration = initialState.iteration;
+    },
   },
   extraReducers: {
     [getPlayersDraft.fulfilled]: (state, action) => {
-      
       state.loading = false;
     },
     [getPlayersDraft.pending]: (state, action) => {
-      
       state.loading = true;
     },
     [getPlayersDraft.rejected]: (state, action) => {
@@ -225,38 +256,48 @@ export const playersDraftSlice = createSlice({
     [colleagePlayersDraft.rejected]: (state, action) => {
       state.loading = false;
     },
-    
   },
 });
 
 export const selectPlayersDraft = (state) => state.playersDraft;
-export const { setPlayersDraft,setSearchPlayers,setPositionPlayersDraft,setColleagePlayers,setCurrentPage,setPlayerItems,setNewPlayers,resPlayersDraft,setPlayerChoose } = playersDraftSlice.actions;
-
-
-
+export const {
+  setPlayersDraft,
+  setSearchPlayers,
+  setPositionPlayersDraft,
+  setColleagePlayers,
+  setCurrentPage,
+  setPlayerItems,
+  setNewPlayers,
+  resPlayersDraft,
+  setPlayerChoose,
+  setPlayerManualChoose,
+  setIteration,
+  setPlayerIterationChoose,
+} = playersDraftSlice.actions;
 
 // Action Creator Thunk
 export const positionAction = (positionValue) => (dispatch, getState) => {
   const {
     playersDraft: { limit },
   } = getState();
-  if(positionValue === '') {
-    dispatch(setPositionPlayersDraft(""))
-    dispatch(getPlayersDraft(limit))
+  if (positionValue === "") {
+    dispatch(setPositionPlayersDraft(""));
+    dispatch(getPlayersDraft(limit));
   } else {
     dispatch(postitionPlayersDraft(positionValue));
   }
 };
 
-export const playerPositionMulti = (pos) => (dispatch,getState) => {
-  const { playersDraft: {position} } = getState();
-  let newPosition = []
-  
-  if (position.length && position.includes(pos) && pos !== 'All') {
-    newPosition = position.filter(item => item !== pos)
-  } else if(pos === 'All'){
-    newPosition = [pos]
-    
+export const playerPositionMulti = (pos) => (dispatch, getState) => {
+  const {
+    playersDraft: { position },
+  } = getState();
+  let newPosition = [];
+
+  if (position.length && position.includes(pos) && pos !== "All") {
+    newPosition = position.filter((item) => item !== pos);
+  } else if (pos === "All") {
+    newPosition = [pos];
   } else {
     if (position.includes("All")) {
       const exceptAll = position.filter((item) => item !== "All");
@@ -268,27 +309,42 @@ export const playerPositionMulti = (pos) => (dispatch,getState) => {
   if (!newPosition.length) {
     newPosition = ["All"];
   }
-  dispatch(setPositionPlayersDraft(newPosition))
-
-}
+  dispatch(setPositionPlayersDraft(newPosition));
+};
 
 export const colleageAction = (colleageValue) => (dispatch, getState) => {
-  if(colleageValue === '') {
-    dispatch(setColleagePlayers(""))
-    dispatch(getPlayersDraft())
+  if (colleageValue === "") {
+    dispatch(setColleagePlayers(""));
+    dispatch(getPlayersDraft());
   } else {
     dispatch(colleagePlayersDraft(colleageValue));
   }
 };
-export const delPlayersDraft = (players) => (dispatch,getState) => {
-
-  const { playersDraft: { results,playerChoose } } = getState();
+export const delPlayersDraft = (players,iter=1) => (dispatch, getState) => {
+  const {
+    playersDraft: { results, playerChoose, iteration, playerManualChoose,playerIterationChoose },
+  } = getState();
+  debugger
   // const delPlayers = [...players,...playerChoose]
-  dispatch(setPlayerChoose([...players,...playerChoose]))
-  const playersId = players.map(player => player.id)
-  const playerData = results.filter((item) => !playersId.includes(item.id))
-  dispatch(setNewPlayers(playerData))
-      
-}
+  debugger
+  dispatch(setPlayerChoose([...players, ...playerChoose]));
+  const playersId = players.map((player) => player.id);
+  const playerData = results.filter((item) => !playersId.includes(item.id));
+  debugger
+  if (iter !== iteration) {
+
+    dispatch(setIteration(iter))
+    dispatch(setPlayerIterationChoose([...players]));
+  } else {
+    dispatch(
+      setPlayerIterationChoose([
+        ...players,
+        ...playerIterationChoose,
+        ...playerManualChoose,
+      ])
+    );
+  }
+  dispatch(setNewPlayers(playerData));
+};
 
 export default playersDraftSlice.reducer;

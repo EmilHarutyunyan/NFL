@@ -4,7 +4,7 @@ import React, { useState, useRef, useMemo, useCallback } from "react";
 // import { toPng } from "html-to-image";
 import { useSelector } from "react-redux";
 import { selectDraftResult } from "../../app/features/draftResult/draftResultSlice";
-import { toPng } from "html-to-image";
+import * as htmlToImage from "html-to-image";
 import { useNavigate } from "react-router-dom";
 // components
 import Title from "../../components/Title/Title";
@@ -35,11 +35,13 @@ import {
   ImgWrap,
   Wrapper,
 } from "./DraftResult.styles";
+import { dataURLtoBlob } from "../../utils/utils";
 
 const DraftResult = () => {
   const domEl = useRef(null);
   const navigate = useNavigate();
   const [roundSelect, setRoundSelect] = useState(1);
+  const [copyShow,setCopyShow] = useState(false)
   const { results, roundTeam, teamsName, teamsPlayer } =
     useSelector(selectDraftResult);
   const [teamMain, setTeamMain] = useState(teamsName[0]);
@@ -56,27 +58,56 @@ const DraftResult = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roundSelect]);
 
-  // const handleCaptureClick = async () => {
-  //   const canvas = await html2canvas(domEl.current);
-  //   const dataURL = canvas.toDataURL("image/png");
-  //   downloadjs(dataURL, "download.png", "image/png");
-  // };
   const onButtonClick = useCallback(() => {
     if (domEl.current === null) {
       return;
     }
 
-    toPng(domEl.current, { cacheBust: true })
+    htmlToImage.toPng(domEl.current, { cacheBust: false })
       .then((dataUrl) => {
+        debugger
+      console.log('dataUrl :', dataUrl);
         const link = document.createElement("a");
         link.download = "my-image-name.png";
         link.href = dataUrl;
         link.click();
+        console.clear();
       })
       .catch((err) => {
         console.log(err);
       });
   }, [domEl]);
+
+
+   const onCopyImage = useCallback(() => {
+     if (domEl.current === null) {
+       return;
+     }
+     
+     setCopyShow(true);
+     htmlToImage
+       .toPng(domEl.current, { cacheBust: false })
+       .then((dataUrl) => {
+         const imgBlob = dataURLtoBlob(dataUrl);
+         const { ClipboardItem } = window;
+         try {
+           navigator.clipboard.write([
+             new ClipboardItem({
+               "image/png": imgBlob,
+             }),
+           ]);
+           setCopyShow(false);
+           console.clear()
+         } catch (error) {
+           setCopyShow(false);
+           console.clear();
+           console.error(error);
+         }
+       })
+       .catch((err) => {
+         console.log(err);
+       });
+   }, [domEl]);
 
   const gradingCalc = (count) => {
     if (count === 1) {
@@ -198,9 +229,12 @@ const DraftResult = () => {
           <DraftResultFooter>www.DraftSimulator.com</DraftResultFooter>
         </DraftResultWrap>
         <DraftResultPick>
-          <div className="downland-btn">
-            <img src={downlandImg} alt="" onClick={onButtonClick} />
+          <div className="downland-btn" onClick={onButtonClick}>
+            <img src={downlandImg} alt="" />
             <p>Download results image</p>
+          </div>
+          <div className="downland-copy" onClick={onCopyImage} >
+            <p>{copyShow ? 'COPIED!' :  'Copy Image'}</p>
           </div>
           <DraftResultHead>
             <MySelectImg

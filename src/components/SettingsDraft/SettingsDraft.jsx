@@ -215,6 +215,7 @@ const Settings = ({teamSelect}) => {
                 checked={fanaticChallenge.some((item) => item.mode === 2)}
                 nameClass={"setting-check"}
                 value={2}
+                disabled={!(round >= 2)}
                 onInputChange={(e) =>
                   dispatch(checkFanaticChallenge(+e.target.value, 10))
                 }
@@ -226,6 +227,7 @@ const Settings = ({teamSelect}) => {
                 checked={fanaticChallenge.some((item) => item.mode === 3)}
                 nameClass={"setting-check"}
                 value={3}
+                disabled={!(round >= 3)}
                 onInputChange={(e) =>
                   dispatch(checkFanaticChallenge(+e.target.value, 15))
                 }
