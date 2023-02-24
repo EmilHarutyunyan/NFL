@@ -12,7 +12,7 @@ function Button({btnType,btnClassName,onBtnClick,btnDisable,btnText,btnIcon}) {
         disabled={btnDisable}
       >
         {btnText}
-        {btnIcon && <img src={btnIcon} alt="" />}
+        {btnIcon && <img src={btnIcon} alt="icon" />}
       </Btn>
     );
 }

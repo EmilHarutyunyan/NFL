@@ -19,10 +19,11 @@ export const DraftValueContent = styled.article`
 export const RoundColumn = styled.div`
   width: 100%;
   max-width: 195px;
-  background: #e1edfb;
+
   table {
     border-collapse: collapse;
     width: 100%;
+    background: #e1edfb;
   }
   td,
   th {
@@ -76,4 +77,7 @@ export const RoundColumnHead = styled.div`
   font-weight: 600;
   font-size: 18px;
   line-height: 30px;
+  p {
+    text-transform: capitalize;
+  }
 `;

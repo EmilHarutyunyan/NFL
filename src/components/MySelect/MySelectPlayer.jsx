@@ -2,8 +2,7 @@ import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { MySelectPhotoWrap, PlayerName } from "./MySelect.styles";
-import { InputLabel } from "@mui/material";
+import { PlayerName } from "./MySelect.styles";
 const MySelectPlayer = ({
   label = "",
   name = "",
@@ -63,11 +62,19 @@ const MySelectPlayer = ({
         MenuProps={MenuProps}
         inputProps={{ "aria-label": "Without label" }}
       >
+        
         {dataValue.map((item, idx) => {
-          
+          const { position, player } = item;
           return (
-            <MenuItem key={idx} value={item} disabled={item==="Select Player"}>
-              <PlayerName>{item}</PlayerName>
+            <MenuItem
+              key={idx}
+              value={player}
+              disabled={player === "Select Player"}
+            >
+              <PlayerName>
+                <p>{player}</p>
+                <span>{position} </span>
+              </PlayerName>
             </MenuItem>
           );
         })}

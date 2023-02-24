@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getTradeValue } from "../../app/features/draftConfig/drafConfigAction";
@@ -7,7 +8,10 @@ import {
   setResetRound,
   // setStatus,
 } from "../../app/features/draftConfig/draftConfigSlice";
-import { selectDraftResult, setDraftResultAction } from "../../app/features/draftResult/draftResultSlice";
+import {
+  selectDraftResult,
+  setDraftResultAction,
+} from "../../app/features/draftResult/draftResultSlice";
 // import { getPositions } from '../../app/features/group/groupSlice'
 import {
   getPlayersDraft,
@@ -19,8 +23,9 @@ import { ReactComponent as CircleSvg } from "../../assets/svg/circle.svg";
 import DraftPlayerChoose from "../../components/DraftPlayerChoose/DraftPlayerChoose";
 import DraftSimulator from "../../components/DraftSimulator/DraftSimulator";
 import DraftViewAsign from "../../components/DraftViewAsign/DraftViewAsign";
+import ErrorFallBack from "../../components/ErrorFallBack/ErrorFallBack";
 import Spinner from "../../components/Spinner/Spinner";
-// import ModalTrades from "../../components/ModalTrades/ModalTrades";
+import ModalTrades from "../../components/ModalTrades/ModalTrades";
 import { PLAYER_MAX } from "../../config/config";
 
 // Styes
@@ -31,6 +36,11 @@ import {
   DraftViewSimulator,
   RenderCircle,
 } from "./DraftPlayer.styles";
+import {
+  getTrades,
+  selectTrades,
+  setResetTrades,
+} from "../../app/features/trades/tradesSlice";
 
 const DraftPlayer = () => {
   const {
@@ -43,15 +53,18 @@ const DraftPlayer = () => {
     teamPickIndex,
     teamPickIndexControl,
     draftRandomnessTeam,
-    changeTrade,
+
     draftCardDepth,
     fanaticIndexPosition,
   } = useSelector(selectDraftConfig);
 
+  const { tradesTeams, changeTrades } = useSelector(selectTrades);
+  console.log("changeTrade :", changeTrades);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const playersDraft = useSelector(selectPlayersDraft);
-  const draftResults  = useSelector(selectDraftResult);
+  const draftResults = useSelector(selectDraftResult);
 
   const [thisId, setThisId] = useState(0);
   const [changeId, setChangeId] = useState(0);
@@ -63,18 +76,17 @@ const DraftPlayer = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countRender, tradeValue.mouthing]);
 
-
-
   useEffect(() => {
     // if(false){
-      
+
     if (
-      (tradeValue.mouthing && countRender < teamPickIndex[0]) || countRender < fanaticIndexPosition[0] ||
+      (tradeValue.mouthing && countRender < teamPickIndex[0]) ||
+      countRender < fanaticIndexPosition[0] ||
       (tradeValue.mouthing &&
         !teamPickIndex.length &&
         countRender !== tradeValue.results.length)
     ) {
-    //  if (changeTrade) {
+      if (changeTrades) {
         const team = tradeValue.results[countRender];
         const teamName = team.round.name;
         const teamPosition = team["index_position"] ?? 0;
@@ -83,14 +95,13 @@ const DraftPlayer = () => {
           ? draftCardDepth + team.index + teamPosition
           : PLAYER_MAX;
         dispatch(getPlayersDraft({ playerCountGet, teamName }));
-      // }
-
+        // }
+      }
     }
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count, tradeValue.mouthing, changeTrade]);
+  }, [count, tradeValue.mouthing, changeTrades]);
 
-//  Go To Result Page
+  //  Go To Result Page
   useEffect(() => {
     if (draftResults.results.length > 0) {
       navigate("/draft-result");
@@ -100,19 +111,18 @@ const DraftPlayer = () => {
 
   useEffect(() => {
     dispatch(getTradeValue());
-    // dispatch(getPositions())
+    dispatch(getTrades());
     return () => {
       dispatch(resPlayersDraft());
       dispatch(setResetRound());
+      dispatch(setResetTrades());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   // Finished Set Data
   useEffect(() => {
     if (countRender === tradeValue?.results?.length) {
-      
       const data = { items: [] };
       draftPlayers.forEach((item) => {
         const {
@@ -135,7 +145,6 @@ const DraftPlayer = () => {
 
         data.items.push(dataItem);
       });
-      debugger
       dispatch(
         setDraftResultAction(
           draftPlayers,
@@ -150,61 +159,63 @@ const DraftPlayer = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countRender]);
 
-  if(!tradeValue.mouthing) {
-    return <Spinner />
+  if (!tradeValue.mouthing) {
+    return <Spinner />;
   }
+
   return (
-    <Wrapper className="main-container">
-      <Banner>
-        <h2>You’re on the Clock!</h2>
-        <div className="banner-info">
-          <p>Round 1</p>
+    <ErrorBoundary FallbackComponent={ErrorFallBack}>
+      <Wrapper className="main-container">
+        <Banner>
+          <h2>You’re on the Clock!</h2>
+          <div className="banner-info">
+            {/* <p>Round 1</p>
           <p className="banner-info-border"></p>
-          <p>Pick 2</p>
-          <p className="banner-info-border"></p>
-          <RenderCircle status={status}>
-            <CircleSvg />
-          </RenderCircle>
-        </div>
-      </Banner>
+          <p>Pick 2</p> */}
+            <p className="banner-info-border"></p>
+            <RenderCircle status={status}>
+              <CircleSvg />
+            </RenderCircle>
+          </div>
+        </Banner>
 
-      <DraftView>
-        {tradeValue.mouthing && (
-          <>
-            <DraftViewAsign
-              thisId={countRender}
-              setThisId={setThisId}
-              setChangeId={setChangeId}
-              changeId={changeId}
-              players={playersDraft}
-              tradeValue={tradeValue}
-            />
-            <DraftViewSimulator>
-              {!teamPickIndex.includes(count) &&
-              status !== "red" &&
-              !fanaticIndexPosition.includes(count) ? (
-                <DraftSimulator />
-              ) : playersDraft.results.length > 0 ? (
-                <DraftPlayerChoose
-                  playersDraft={playersDraft}
-                  draftStatus={status}
-                  thisId={thisId}
-                  setThisId={setThisId}
-                  setChangeId={setChangeId}
-                />
-              ) : null}
-            </DraftViewSimulator>
-          </>
+        <DraftView>
+          {tradeValue.mouthing && (
+            <>
+              <DraftViewAsign
+                thisId={countRender}
+                setThisId={setThisId}
+                setChangeId={setChangeId}
+                changeId={changeId}
+                players={playersDraft}
+                tradeValue={tradeValue}
+              />
+              <DraftViewSimulator>
+                {!teamPickIndex.includes(count) &&
+                status !== "red" &&
+                !fanaticIndexPosition.includes(count) ? (
+                  <DraftSimulator />
+                ) : playersDraft.results.length > 0 ? (
+                  <DraftPlayerChoose
+                    playersDraft={playersDraft}
+                    draftStatus={status}
+                    thisId={thisId}
+                    setThisId={setThisId}
+                    setChangeId={setChangeId}
+                  />
+                ) : null}
+              </DraftViewSimulator>
+            </>
+          )}
+        </DraftView>
+        {tradesTeams && tradesTeams.length > 0 && (
+          <ModalTrades tradesTeams={tradesTeams} teamSelect={teamSelect} />
         )}
-      </DraftView>
-      {/* {tradeValue.mouthing && (
-        <ModalTrades tradeValue={tradeValue.results} teamSelect={teamSelect} />
-      )} */}
 
-      <hr className="line" />
-    </Wrapper>
+        <hr className="line" />
+      </Wrapper>
+    </ErrorBoundary>
   );
 };
-
 
 export default DraftPlayer;

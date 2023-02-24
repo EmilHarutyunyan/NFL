@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Error } from "../../../pages/auth/Auth.styles";
-import TokenService from "../../../service/token.service";
 import { useDispatch, useSelector } from "react-redux";
 import { userUpdate } from "../../../app/features/user/userActions";
 import { CircularProgress } from "@mui/material";
@@ -19,15 +18,12 @@ const schema = yup.object().shape({
     .string()
     .max(40)
     .min(3, "Last Name must be at least 3 characters"),
-  twitter_link: yup
-    .string()
-    .required("Required Twitter handle")
-    .matches(/^@?(\w){1,15}$/, "Not valid twitter handle"),
+  twitter_link: yup.string().required("Required Twitter handle")
+  .matches(/^@?(\w){1,15}$/, "Not valid twitter handle"),
   email: yup.string().email("Email should have correct format"),
 });
 const PersonalInfo = () => {
-  const userInfo = TokenService.getUser() || null;
-  const {loading} = useSelector(selectUser)
+  const { loading,userInfo } = useSelector(selectUser);
   const dispatch = useDispatch();
   const {
     register,
@@ -43,7 +39,9 @@ const PersonalInfo = () => {
   const onSubmit = (data) => {
     dispatch(userUpdate(data));
     reset()
+    
   };
+
   return (
     <>
       <ProfileTitle>Personal info</ProfileTitle>

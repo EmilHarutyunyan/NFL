@@ -1,11 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // import {  selectDraftConfig } from "../../app/features/draftConfig/draftConfigSlice";
-import FormControl from '@mui/material/FormControl';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+import FormControl from "@mui/material/FormControl";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 import Spinner from "../../components/Spinner/Spinner";
 // Components
 import Title from "../../components/Title/Title";
@@ -17,17 +17,41 @@ import {
   RoundColumnHead,
   Wrapper,
 } from "./DraftValueChart.styles";
-import { resDraftValue, selectDraftValue } from "../../app/features/draftValue/draftValueSlice";
+import {
+  resDraftValue,
+  selectDraftValue,
+} from "../../app/features/draftValue/draftValueSlice";
 import { getDraftValue } from "../../app/features/draftValue/draftValueAction";
 
 const DraftValueChart = () => {
-  const dispatch = useDispatch()
-  const {draftValue,loading} = useSelector(selectDraftValue)
-  const initialRef = useRef(true)
-  const roundColumn = 7;
-  const team = 31;
-  const bodyCol = 32;
-  
+  const dispatch = useDispatch();
+  const { draftValue, loading } = useSelector(selectDraftValue);
+
+  const tableData = useMemo(() => {
+    const roundSet = new Set();
+    const allRound = draftValue.map((item) => item.round_index);
+    
+    allRound.forEach((item) => roundSet.add(item));
+    let roundArray = [...roundSet];
+    console.log(roundArray);
+    let table = {};
+    for (let roundItem of roundArray) {
+      for (let team of draftValue) {
+        if (roundItem === team.round_index) {
+          if (table[roundItem]) {
+            table[roundItem].push(team);
+          } else {
+            table[roundItem] = [team];
+          }
+        }
+      }
+    }
+    return table;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftValue]);
+  console.log('tableData :', tableData);
+  const initialRef = useRef(true);
+
   const [showHide, setShowHide] = useState({
     team: false,
   });
@@ -42,80 +66,70 @@ const DraftValueChart = () => {
   useEffect(() => {
     if (initialRef.current) {
       initialRef.current = false;
-      dispatch(getDraftValue())
+      dispatch(getDraftValue());
     }
-    return () => dispatch(resDraftValue())
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+    return () => dispatch(resDraftValue());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  if(loading) {
-    return <Spinner />
+  if (loading) {
+    return <Spinner />;
   }
 
   return (
     <Wrapper className="main-container">
       <Title titleText="Draft Value Chart" />
-      {loading ?  <Spinner /> : null}
+      {loading ? <Spinner /> : null}
       <FormControl component="fieldset" variant="standard">
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Switch checked={showHide.team} onChange={handleChange} name="team" />
-          }
-          label={`${showHide.team ? 'Hide Team' : 'Show Team'}`}
-        />
-      </FormGroup>
-    </FormControl>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={showHide.team}
+                onChange={handleChange}
+                name="team"
+              />
+            }
+            label={`${showHide.team ? "Hide Team" : "Show Team"}`}
+          />
+        </FormGroup>
+      </FormControl>
       <DraftValueContent>
-        {
-         draftValue.length > 0 ? ([...Array(roundColumn).keys()].map((rt) => {
-          return (
-            <RoundColumn key={rt}>
-              <RoundColumnHead>
-                <p>Round {rt + 1}</p>
-              </RoundColumnHead>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Selection</th>
-                    {showHide.team ? (null) : (<th>Team</th>)}
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...Array(bodyCol).keys()].map((item,idx) => {
-                    
-                    if (team >= item) {
-                      return (
-                        <tr key={item}>
-                          <td>
-                            {draftValue[`${(rt + 1) * 32 - (32 - idx)}`]?.index}
-                          </td>
-                          {showHide.team ? null : (
-                            <td>
-                              {
-                                draftValue[`${(rt + 1) * 32 - (32 - idx)}`]
-                                  ?.city
-                              }
-                            </td>
-                          )}
-                          <td>
-                            {draftValue[`${(rt + 1) * 32 - (32 - idx)}`]?.value}
-                          </td>
-                        </tr>
-                      );
-                    } else {
-                      return (
-                        null
-                      );
-                    }
-                  })}
-                </tbody>
-              </table>
-            </RoundColumn>
-          );
-          })) : null
-        }
+        {draftValue.length > 0 && tableData
+          ? Object.keys(tableData).map((round) => {
+              // return <>div</>;
+              console.log(tableData[`${round}`]);
+              return (
+                <RoundColumn key={round}>
+                  <RoundColumnHead>
+                    <p>{round}</p>
+                  </RoundColumnHead>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Selection</th>
+                        {showHide.team ? null : <th>Team</th>}
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tableData[`${round}`].map((item, idx) => {
+                      
+                          return (
+                            <tr key={idx}>
+                              <td>{item?.index}</td>
+                              {showHide.team ? null : <td>{item?.city}</td>}
+                              <td>{item?.value}</td>
+                            </tr>
+                          );
+                       
+                      })}
+                    </tbody>
+                  </table>
+                </RoundColumn>
+              );
+            })
+          : null}
       </DraftValueContent>
     </Wrapper>
   );

@@ -28,14 +28,6 @@ export const Wrapper = styled.div`
   }
 `;
 
-export const ImgWrap = styled.div`
-  > img {
-    display: block;
-    object-fit: cover;
-    width: 78px;
-    height: 98px;
-  }
-`;
 export const DraftResultShare = styled.div`
   display: flex;
   align-items: center;
@@ -62,6 +54,7 @@ export const DraftResultHead = styled.div`
   background: #022142;
   border-radius: 10px 10px 0px 0px;
   padding: 11px 16px 11px 16px;
+  flex-wrap: wrap;
 `;
 export const DraftResultRound = styled.div`
   display: flex;
@@ -142,7 +135,6 @@ export const DraftResultTeamItem = styled.div`
       padding-right: 22px;
       text-align: right;
       justify-content: flex-end;
-
     }
   }
 `;
@@ -191,7 +183,7 @@ export const DraftResultPickWrap = styled.div`
       padding: 12px 0 12px 15px;
       & img {
         display: block;
-        width:42px;
+        width: 42px;
         height: auto;
       }
       p {
@@ -295,4 +287,15 @@ export const DraftResultFooter = styled.div`
   color: #022142;
   text-align: center;
   padding: 12px 0;
+`;
+
+export const BadgesItems = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+`;
+export const MySelectWrap = styled.div`
+  width: 100%;
 `;

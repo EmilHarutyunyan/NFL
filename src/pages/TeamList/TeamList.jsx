@@ -35,6 +35,7 @@ const PageSize = 10;
 const TeamList = () => {
   const [searchParams] = useSearchParams();
   const { state: team } = useLocation();
+  console.log('team :', team);
   const listQuery = searchParams.get("list") || "";
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
@@ -50,6 +51,7 @@ const TeamList = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       dispatch(setSearchPlayerList(searchValue));
+      dispatch(setCurrentPageList(1));
     }, 500);
     return () => {
       clearTimeout(timer);
@@ -58,6 +60,7 @@ const TeamList = () => {
   }, [setSearchValue, searchValue]);
   const currentTableData = useMemo(() => {
     if (playersDraft?.results.length) {
+      
       const firstPageIndex = (playersDraft.currentPage - 1) * PageSize;
       const lastPageIndex = firstPageIndex + PageSize;
       // if (draftPlayers.length > 0) {
@@ -66,7 +69,7 @@ const TeamList = () => {
       if (playersDraft.search) {
         playersData = playersDraft.results.filter((player) => {
           const name = player.player.toLowerCase();
-          return name.includes(playersDraft.search);
+          return name.includes(playersDraft.search.toLowerCase());
         });
       }
       if (playersDraft.position && playersDraft.position !== "All") {
@@ -129,9 +132,8 @@ const TeamList = () => {
           <DraftPlayerWrapper>
             <DraftPlayerItems>
               <>
-                {playersDraft.results.length > 0 &&
+                {playersDraft.results.length > 0 ? (
                   currentTableData?.playersDataSlice.map((item, idx) => {
-                    
                     const colorBackground =
                       item?.ranking === 1
                         ? "#FFF1ED"
@@ -149,23 +151,29 @@ const TeamList = () => {
                             <p>ADP</p>
                             <span>{item?.adp}</span>
                           </div>
-                       
+                          <div className="player-td player-adp">
+                            <p>{item[`${team.name}`].toFixed(2)}</p>
+                          </div>
+
                           <h4 className="player-td player-name">
                             {item.player}
                           </h4>
                           <h4 className="player-td player-position">
                             {item.position}
                           </h4>
-                          
+
                           <h4 className="player-td player-college">
                             {item.school}
                           </h4>
-                          <img src={infoImg} alt="" />
+                          <img src={infoImg} alt="info" />
                         </div>
                       </DraftPlayerItem>
                     );
-                  })}
-                {currentTableData?.playersData.length && (
+                  })
+                ) : (
+                  <>Not Found</>
+                )}
+                {currentTableData?.playersData.length ? (
                   <Pagination
                     totalCount={currentTableData?.playersData.length}
                     pageSize={PageSize}
@@ -176,6 +184,8 @@ const TeamList = () => {
                       dispatch(setCurrentPageList(page));
                     }}
                   />
+                ) : (
+                  <>Not Found</>
                 )}
               </>
             </DraftPlayerItems>

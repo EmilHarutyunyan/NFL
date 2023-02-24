@@ -12,11 +12,11 @@ export const userLogin = createAsyncThunk(
         username,
         password,
       });
-
       const userToken = { tokens: res.data };
       
       TokenService.setUser(userToken);
       try {
+        
         const userInfo = await axiosInstance.get(`${API_ENDPOINT}user/me/`);
         TokenService.setUser(userInfo.data);
         return userInfo.data;
@@ -97,6 +97,7 @@ export const userUpdate = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      
       const res = await axiosInstance.put(`${API_ENDPOINT}user/me/`, data);
       const tokens = TokenService.getLocalAccessToken()
       TokenService.setUser({ ...res.data, tokens });

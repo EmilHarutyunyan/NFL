@@ -72,7 +72,7 @@ const SignIn = () => {
           <Error message={error}>
             {typeof error === "object" ? (
               Object.entries(error).map(([key, value]) => {
-                return <span>{`${key}: ${value}`}</span>;
+                return <span key={key}>{`${key}: ${value}`}</span>;
               })
             ) : (
               <span>{`${error}`}</span>

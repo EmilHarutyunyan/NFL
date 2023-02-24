@@ -2,7 +2,11 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_ENDPOINT } from "../../../config/config";
 import { iterationRound } from "../../../utils/utils";
-import { setFanaticIndexPosition, setRoundStart, setTeamPickIndex } from "./draftConfigSlice";
+import {
+  setFanaticIndexPosition,
+  setRoundStart,
+  setTeamPickIndex,
+} from "./draftConfigSlice";
 
 export const getHistoryBoard = createAsyncThunk(
   "draftConfig/getHistoryBoard",
@@ -29,8 +33,20 @@ export const getTeams = createAsyncThunk(
   "draftConfig/getTeams",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.get(`${API_ENDPOINT}rounds/?limit=33`);
-      return res.data;
+      const res = await axios.get(
+        `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=7&tm=`
+      );
+      const teams = res.data.results;
+
+      const teamSet = [];
+      for (let team of teams) {
+        const teamRound = team.round;
+        const checkTeam = teamSet?.some((team) => team.name === teamRound.name);
+        if (!checkTeam) {
+          teamSet.push({ ...teamRound, selection: team.index });
+        }
+      }
+      return teamSet;
     } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
@@ -46,32 +62,43 @@ export const getTradeValue = createAsyncThunk(
   async (_, { dispatch, rejectWithValue, getState }) => {
     try {
       const {
-        draftConfig: { round, teamSelectId, fanaticChallenge },
+        draftConfig: { round, teamSelect,teamSelectId, fanaticChallenge },
       } = getState();
       const res = await axios.get(
         `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${round}&tm=`
       );
-      
-      const teamPickIndex = res.data.results.filter((team) => teamSelectId.includes(team.round.index)).map(team => team.index)
-  
-      dispatch(setTeamPickIndex(teamPickIndex))
-      
+
+      let teamPickIndex;
+      if (!fanaticChallenge.length) {
+        teamPickIndex = res.data.results
+          .filter((team) => teamSelectId.includes(team.round.index))
+          .map((team) => team.index);
+          dispatch(setTeamPickIndex(teamPickIndex));
+      }
+
+
       if (fanaticChallenge.length) {
-        
-        const { count, newTradeValue, roundStart, } = iterationRound({
+        const { count, newTradeValue, roundStart } = iterationRound({
           fanaticChallenge,
           tradeValueData: res.data.results,
-          round
+          round,
         });
-        
+
         const indexPositions = newTradeValue
           .filter((team) => teamSelectId.includes(team.round.index))
-          .map((item) => item["index_position"]  );
-    
-        dispatch(setFanaticIndexPosition(indexPositions));
-        dispatch(setRoundStart(roundStart))
-        return { ...res.data, count, results: newTradeValue };
+          .map((item) => item["index_position"]);
 
+        dispatch(setFanaticIndexPosition(indexPositions));
+        dispatch(setRoundStart(roundStart));
+        
+        teamPickIndex = newTradeValue
+          .filter((team) => teamSelect[0].name === team.round.name)
+          .map((team) => team["index_position"]);
+  
+
+        dispatch(setTeamPickIndex(teamPickIndex));
+
+        return { ...res.data, count, results: newTradeValue };
       } else {
         return res.data;
       }

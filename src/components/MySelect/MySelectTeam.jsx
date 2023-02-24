@@ -65,16 +65,13 @@ const MySelectTeam = ({
         <MenuItem value="">{label}</MenuItem>
 
         {dataValue.map((item, idx) => {
-          const {
-            tm,
-            round: { logo },
-          } = item;
-
+          
+          const { name:nameTeam, logo } = item;
           return (
-            <MenuItem key={idx} value={tm} disabled={tm === disabled}>
+            <MenuItem key={idx} value={nameTeam} disabled={nameTeam === disabled}>
               <MySelectPhotoWrap>
-                <img src={logo} alt={tm} />
-                <span>{tm}</span>
+                <img src={logo} alt={nameTeam} />
+                <span>{nameTeam}</span>
               </MySelectPhotoWrap>
             </MenuItem>
           );

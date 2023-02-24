@@ -67,6 +67,7 @@ export const ProfileDesc = styled.p`
   line-height: 27px;
   color: #0e1118;
   margin-bottom: 16px;
+  font-weight: 500;
 `;
 export const InputWrap = styled.div`
   font-weight: 400;

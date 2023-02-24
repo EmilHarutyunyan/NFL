@@ -46,6 +46,8 @@ import {
 } from "../../app/features/playersDraft/playersDraftSlice";
 import { percentPick, upUsersCals } from "../../utils/utils";
 import { Switch } from "@mui/material";
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorFallBack from "../ErrorFallBack/ErrorFallBack";
 
 const PageSize = 10;
 const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
@@ -96,8 +98,6 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     playersDraft.results,
   ]);
 
- 
-
   useEffect(() => {
     const timer = setTimeout(() => {
       dispatch(setSearchPlayers(searchValue));
@@ -109,14 +109,16 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
   }, [setSearchValue, searchValue]);
 
   const playerConcat = (playerItem, teamId, upPlayers = {}, idx) => {
-    
     const teamItem = structuredClone(tradeValue.results[teamId - 1]);
     const pickTeam = teamItem["pick"];
     teamItem["player"] = playerItem;
     teamItem["playerDepth"] = idx + 1;
 
     const newTradeValue = tradeValue.results.map((item) => {
-      if (item.index === teamItem.index && item?.index_position === teamItem?.index_position) {
+      if (
+        item.index === teamItem.index &&
+        item?.index_position === teamItem?.index_position
+      ) {
         return teamItem;
       }
       return item;
@@ -136,16 +138,16 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     dispatch(setDraftPlayersAction({ ...teamItem, upPlayers }));
   };
 
-  const playerChoose = (item, idx) => {
-    
+  const playerChoose = (item, bpa) => {
     let team = teamPickIndex[0] ?? fanaticIndexPosition[0];
     let playerItem = { ...item };
     let percentPlayers = [];
-
     const teamName = tradeValue.results[team - 1].round.name;
     const teamValue = +tradeValue.results[team - 1].value;
-    if (teamValue >= item[teamName]) {
-      const pricentValue = percentPick(teamValue, item[teamName]);
+
+    const realValue = teamValue >= item[teamName] ? teamValue : item[teamName];
+    if (bpa > 0 && bpa < 11) {
+      const pricentValue = percentPick(realValue, item[teamName]);
       let playerItemsSlice = [];
 
       for (let i = 0; i < playersDraft.results.length; ++i) {
@@ -163,167 +165,180 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
 
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft(["All"]));
-    playerConcat(playerItem, team, percentPlayers, idx);
-    dispatch(setPlayerManualChoose(playerItem))
+    playerConcat(playerItem, team, percentPlayers, bpa);
+    dispatch(setPlayerManualChoose(playerItem));
     dispatch(delTeamsRound(teamPickIndex[0]));
     dispatch(delFanaticPosition(fanaticIndexPosition[0]));
-    
+
     setThisId(teamPickIndex[0]);
     // setChangeId(true);
     dispatch(setCountRender());
   };
+  
   return (
     <>
       {playersDraft.loading ? (
         <Spinner />
       ) : (
-        <Wrapper>
-          <SelectTeam>
-            <div className="team">
-              {tradeValue?.results && (
-                <>
-                  <img
-                    src={
-                      status === "red"
-                        ? tradeValue?.results[countRender - 1].round?.logo
-                        : tradeValue?.results[countRender].round?.logo
-                    }
-                    alt=""
-                    width={60}
-                  />
-                  <h2>
-                    {status === "red"
-                      ? tradeValue?.results[countRender - 1].round.name
-                      : tradeValue?.results[countRender].round.name}
-                  </h2>
-                </>
-              )}
-            </div>
-            <PicksInfo>
-              <p>Remaining picks</p>
-              <TeamPickIndex>
-                {teamPickIndex.map((item,idx) => {
-                
-                  return <span key={idx}>{item}{idx===teamPickIndex.length - 1 ? null: ','}</span>;
-                })}
-              </TeamPickIndex>
-              
-            </PicksInfo>
-          </SelectTeam>
-          <Search
-            value={searchValue}
-            handleChange={(e) => {
-              setSearchValue(e.target.value);
-            }}
-          />
-          <NumWrapper>
-            {groups?.positions &&
-              groups.positions.map((item, idx) => {
-                const id = idx + 1;
-                return (
-                  <NumItem
-                    key={id}
-                    backColor={POSITIONS_COLOR[item.split(" ")[0]]}
-                    onClick={() => {
-                      dispatch(setCurrentPage(1));
-                      dispatch(playerPositionMulti(item.split(" ")[0]));
-                    }}
-                    className={
-                      playersDraft.position.includes(item.split(" ")[0])
-                        ? "active"
-                        : null
-                    }
-                  >
-                    <span>{item.split(" ")[0]}</span>
-                    
-                  </NumItem>
-                );
-              })}
-            <div>
-              Show positions colors in list
-              <Switch
-                defaultChecked
-                onChange={() => setColorShow((prev) => !prev)}
-              />
-            </div>
-          </NumWrapper>
-          <DraftPlayerWrapper>
-            <DraftPlayerItems>
-              <>
-                {playersDraft.results.length > 0 &&
-                  currentTableData.playersDataSlice.map((item, idx) => {
-                    
+        <ErrorBoundary FallbackComponent={ErrorFallBack}>
+          <Wrapper>
+            <SelectTeam>
+              <div className="team">
+                {tradeValue?.results && (
+                  <>
+                    <img
+                      src={
+                        status === "red"
+                          ? tradeValue?.results[countRender - 1].round?.logo
+                          : tradeValue?.results[countRender].round?.logo
+                      }
+                      alt={
+                        status === "red"
+                          ? tradeValue?.results[countRender - 1].round.name
+                          : tradeValue?.results[countRender].round.name
+                      }
+                      width={60}
+                    />
+                    <h2>
+                      {status === "red"
+                        ? tradeValue?.results[countRender - 1].round.name
+                        : tradeValue?.results[countRender].round.name}
+                    </h2>
+                  </>
+                )}
+              </div>
+              <PicksInfo>
+                <p>Remaining picks</p>
+                <TeamPickIndex>
+                  {teamPickIndex.map((item, idx) => {
                     return (
-                      <DraftPlayerItem
-                        key={idx}
-                        backColor={
-                          colorShow ? POSITIONS_COLOR[item.position] : ""
-                        }
-                      >
-                        <div className="player-draft">
-                          <div className="player-td player-rank">
-                            <p>Rank</p>
-                            <span>{item?.ranking}</span>
-                          </div>
-                          <div className="player-td player-rank">
-                            <p>BPA</p>
-                            <span>{item?.bpa}</span>
-                          </div>
-                          <div className="player-td player-adp">
-                            <p>ADP</p>
-                            <span>{item?.adp}</span>
-                          </div>
-
-                          <h4 className="player-td player-name">
-                            {item.player}
-                          </h4>
-                          <h4 className="player-td player-position">
-                            {item.position}
-                          </h4>
-                          <h4 className="player-td player-college">
-                            {item.school}
-                          </h4>
-                          <img src={infoImg} alt="" />
-                          <button
-                            className="player-td player-draft-btn"
-                            disabled={draftBtnDisable}
-                            onClick={() => playerChoose(item, item?.bpa)}
-                          >
-                            Draft
-                          </button>
-                        </div>
-                      </DraftPlayerItem>
+                      <span key={idx}>
+                        {item}
+                        {idx === teamPickIndex.length - 1 ? null : ","}
+                      </span>
                     );
                   })}
-
-                <Pagination
-                  totalCount={currentTableData.playersData.length}
-                  pageSize={PageSize}
-                  currentPage={playersDraft.currentPage}
-                  previous={playersDraft.previous}
-                  next={playersDraft.next}
-                  onPageChange={(page) => {
-                    dispatch(setCurrentPage(page));
-                  }}
+                </TeamPickIndex>
+              </PicksInfo>
+            </SelectTeam>
+            <Search
+              value={searchValue}
+              handleChange={(e) => {
+                setSearchValue(e.target.value);
+              }}
+            />
+            <NumWrapper>
+              {groups?.positions &&
+                groups.positions.map((item, idx) => {
+                  const id = idx + 1;
+                  return (
+                    <NumItem
+                      key={id}
+                      backColor={POSITIONS_COLOR[item.split(" ")[0]]}
+                      onClick={() => {
+                        dispatch(setCurrentPage(1));
+                        dispatch(playerPositionMulti(item.split(" ")[0]));
+                      }}
+                      className={
+                        playersDraft.position.includes(item.split(" ")[0])
+                          ? "active"
+                          : null
+                      }
+                    >
+                      <span>{item.split(" ")[0]}</span>
+                    </NumItem>
+                  );
+                })}
+              <div>
+                Show positions colors in list
+                <Switch
+                  defaultChecked
+                  onChange={() => setColorShow((prev) => !prev)}
                 />
-              </>
-            </DraftPlayerItems>
-            {draftBtnDisable && (
-              <div className="player-draft-btn-wrap">
-                <button
-                  className="player-draft-btn"
-                  onClick={() => {
-                    dispatch(setStatus("green"));
-                    dispatch(delPauseId());
-                  }}
-                >
-                  <img src={pauseImg} alt="play_pause" />
-                  <span>Start Draft</span>
-                </button>
               </div>
-            )}
-          </DraftPlayerWrapper>
-        </Wrapper>
+            </NumWrapper>
+            <DraftPlayerWrapper>
+              <DraftPlayerItems>
+                <>
+                  {playersDraft.results.length > 0 &&
+                    currentTableData.playersDataSlice.map((item, idx) => {
+                      const teamName =
+                        tradeValue?.results[countRender].round.name;
+                      return (
+                        <DraftPlayerItem
+                          key={idx}
+                          backColor={
+                            colorShow ? POSITIONS_COLOR[item.position] : ""
+                          }
+                        >
+                          <div className="player-draft">
+                            <div className="player-td player-rank">
+                              <p>Rank</p>
+                              <span>{item?.ranking}</span>
+                            </div>
+                            <div className="player-td player-rank">
+                              <p>BPA</p>
+                              <span>{item?.bpa}</span>
+                            </div>
+                            <div className="player-td player-adp">
+                              <p>ADP</p>
+                              <span>{item?.adp}</span>
+                            </div>
+                            {/* <div className="player-td player-adp">
+                              <span>{item[`${teamName}`].toFixed(2)}</span>
+                            </div> */}
+
+                            <h4 className="player-td player-name">
+                              {item.player}
+                            </h4>
+                            <h4 className="player-td player-position">
+                              {item.position}
+                            </h4>
+                            <h4 className="player-td player-college">
+                              {item.school}
+                            </h4>
+                            <img src={infoImg} alt="info" />
+                            <button
+                              className="player-td player-draft-btn"
+                              disabled={draftBtnDisable}
+                              onClick={() => playerChoose(item, item?.bpa)}
+                            >
+                              Draft
+                            </button>
+                          </div>
+                        </DraftPlayerItem>
+                      );
+                    })}
+
+                  <Pagination
+                    totalCount={currentTableData.playersData.length}
+                    pageSize={PageSize}
+                    currentPage={playersDraft.currentPage}
+                    previous={playersDraft.previous}
+                    next={playersDraft.next}
+                    onPageChange={(page) => {
+                      dispatch(setCurrentPage(page));
+                    }}
+                  />
+                </>
+              </DraftPlayerItems>
+              {draftBtnDisable && (
+                <div className="player-draft-btn-wrap">
+                  <button
+                    className="player-draft-btn"
+                    onClick={() => {
+                      dispatch(setStatus("green"));
+                      dispatch(delPauseId());
+                    }}
+                  >
+                    <img src={pauseImg} alt="play_pause" />
+                    <span>Start Draft</span>
+                  </button>
+                </div>
+              )}
+            </DraftPlayerWrapper>
+          </Wrapper>
+        </ErrorBoundary>
       )}
     </>
   );

@@ -32,6 +32,7 @@ export const getPlayersDraft = createAsyncThunk(
           config.playerCountGet
         }&offset=${0}&search=&position=&school&ordering=-${config.teamName}`
       );
+      
       const {
         playersDraft: {
           playerChoose,
@@ -64,6 +65,10 @@ export const getPlayersDraft = createAsyncThunk(
           (player) => !playerChooseId.includes(player.id)
         );
         resData.results = resDataResult.map((item, idx) => {
+          return { ...item, bpa: idx + 1 };
+        });
+      } else {
+        resData.results = resData.results.map((item, idx) => {
           return { ...item, bpa: idx + 1 };
         });
       }
@@ -209,6 +214,7 @@ export const playersDraftSlice = createSlice({
       state.pageSize = initialState.pageSize;
       state.playerChoose = initialState.playerChoose;
       state.playerManualChoose = initialState.playerManualChoose;
+      state.playerIterationChoose = initialState.playerIterationChoose;
       state.playerItems = initialState.playerItems;
       state.position = initialState.position;
       state.results = initialState.results;
@@ -217,6 +223,7 @@ export const playersDraftSlice = createSlice({
       state.position = initialState.position;
       state.colleage = initialState.colleage;
       state.iteration = initialState.iteration;
+      
     },
   },
   extraReducers: {
@@ -324,13 +331,13 @@ export const delPlayersDraft = (players,iter=1) => (dispatch, getState) => {
   const {
     playersDraft: { results, playerChoose, iteration, playerManualChoose,playerIterationChoose },
   } = getState();
-  debugger
+  
   // const delPlayers = [...players,...playerChoose]
-  debugger
+  
   dispatch(setPlayerChoose([...players, ...playerChoose]));
   const playersId = players.map((player) => player.id);
   const playerData = results.filter((item) => !playersId.includes(item.id));
-  debugger
+  
   if (iter !== iteration) {
 
     dispatch(setIteration(iter))

@@ -9,7 +9,7 @@ const Banner = () => {
     <BannerWrap>
       <BannerContent>
         <h2>NFL DRAFT 2023</h2>
-        <img src={nflLogo} alt="" />
+        <img src={nflLogo} alt="Logo" />
       </BannerContent>
     </BannerWrap>
   );

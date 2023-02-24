@@ -28,10 +28,12 @@ import arrowLeft from "../../assets/img/arrow-left.png";
 import Button from "../Buttons/Button";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { selectUser } from "../../app/features/user/userSlice";
 
-const Settings = ({teamSelect}) => {
+const Settings = ({ teamSelect }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { userInfo } = useSelector(selectUser);
   const {
     round,
     timeSpeed,
@@ -42,15 +44,15 @@ const Settings = ({teamSelect}) => {
     roundBPA,
     fanaticChallenge,
   } = useSelector(selectDraftConfig);
- 
+
   const roundsArray = Array.from(Array(7).keys());
 
-  useEffect(()=> {
+  useEffect(() => {
     dispatch(setDraftRandomness(draftRandomness));
-  
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
-  
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <SettingItem>
@@ -63,7 +65,11 @@ const Settings = ({teamSelect}) => {
               <NumItem
                 key={id}
                 className={`${id === +round ? "active-round" : ""}`}
-                onClick={() => dispatch(saveRound(id))}
+                onClick={() => {
+                  if (!fanaticChallenge.length) {
+                    dispatch(saveRound(id));
+                  }
+                }}
               >
                 <span>{id}</span>
               </NumItem>
@@ -215,7 +221,7 @@ const Settings = ({teamSelect}) => {
                 checked={fanaticChallenge.some((item) => item.mode === 2)}
                 nameClass={"setting-check"}
                 value={2}
-                disabled={!(round >= 2)}
+                disabled={!(userInfo?.fanatic_mode > 0)}
                 onInputChange={(e) =>
                   dispatch(checkFanaticChallenge(+e.target.value, 10))
                 }
@@ -227,7 +233,7 @@ const Settings = ({teamSelect}) => {
                 checked={fanaticChallenge.some((item) => item.mode === 3)}
                 nameClass={"setting-check"}
                 value={3}
-                disabled={!(round >= 3)}
+                disabled={!(userInfo?.fanatic_mode > 1)}
                 onInputChange={(e) =>
                   dispatch(checkFanaticChallenge(+e.target.value, 15))
                 }

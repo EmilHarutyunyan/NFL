@@ -25,14 +25,14 @@ export const TeamItem = ({
   };
   return (
     <TeamItemDiv
-      onClick={()=>handleClick(item)}
+      onClick={() => handleClick(item)}
       className={`team-item ${isChecked ? "active" : ""}`}
     >
       <div>
-        <span className="num">{item.index}</span>
+        <span className="num">{item.selection}</span>
         <p className="name">{teamName}</p>
       </div>
-      <img src={teamLogo} alt="" />
+      <img src={teamLogo} alt={teamName} />
     </TeamItemDiv>
   );
 };

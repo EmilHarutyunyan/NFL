@@ -101,7 +101,7 @@ const TeamNeeds = () => {
                           <p className="tema-info-name-need">Needs</p>
                         </div>
                         <ImgWrap>
-                          <img src={round?.logo} alt="team-logo" />
+                          <img src={round?.logo} alt={round?.name} />
                           <p>{round?.name}</p>
                         </ImgWrap>
                       </TeamInfo>
@@ -179,100 +179,6 @@ const TeamNeeds = () => {
             );
           })
         : null}
-
-      {/* ------------ */}
-      {/* <AccardinWrapper>
-        <Accordion
-          expanded={expanded === "panel2"}
-          onChange={handleChange("panel2")}
-          sx={{ margin: 0 }}
-        >
-          <AccordionSummary
-            expandIcon={
-              <MdKeyboardArrowUp
-                style={{
-                  fontSize: "30px",
-                  boxShadow: "none",
-                  backgroundColor: "white",
-                }}
-              />
-            }
-            aria-controls="panel1bh-content"
-            id="panel2bh-header"
-            sx={{
-              padding: "0 20px 0 0",
-              margin: 0,
-              backgroundColor: "white",
-              marginTop: "2px",
-              "& .MuiAccordionSummary-content": { margin: "0 !important" },
-            }}
-          >
-            <TeamSummary>
-              <ImgWrap>
-                <img src={teamLogo} alt="team-logo" />
-              </ImgWrap>
-              <TeamPosition>
-                <TeamPositionItem primary>CB</TeamPositionItem>
-                <TeamPositionItem primary>OT</TeamPositionItem>
-                <TeamPositionItem primary>DL</TeamPositionItem>
-                <TeamPositionItem primary>EDGE</TeamPositionItem>
-                <TeamPositionItem primary>LB</TeamPositionItem>
-                <TeamPositionItem primary>RB</TeamPositionItem>
-                <TeamPositionItem primary>WR</TeamPositionItem>
-                <TeamPositionItem>S</TeamPositionItem>
-                <TeamPositionItem>IOL</TeamPositionItem>
-                <TeamPositionItem>QB</TeamPositionItem>
-                <TeamPositionItem>TE</TeamPositionItem>
-                <TeamPositionItem>P</TeamPositionItem>
-                <TeamPositionItem>K</TeamPositionItem>
-                <TeamPositionItem>LS</TeamPositionItem>
-              </TeamPosition>
-            </TeamSummary>
-          </AccordionSummary>
-          <AccordionDetails>
-            <DraftPicks
-              title={"2023 Pre-Draft Picks"}
-              dataRound={[
-                {
-                  round: "R1",
-                  roundValue: "21",
-                },
-                {
-                  round: "R1",
-                  roundValue: "21",
-                },
-                {
-                  round: "R1",
-                  roundValue: "21",
-                },
-                {
-                  round: "R1",
-                  roundValue: "21",
-                },
-                {
-                  round: "R1",
-                  roundValue: "21",
-                },
-                {
-                  round: "R1",
-                  roundValue: "21",
-                },
-                {
-                  round: "R1",
-                  roundValue: "21",
-                },
-              ]}
-            />
-
-            <HalfCircleChart
-              infoTitle={
-                "With pick21in the 2023 NFL Draft, the most likely selection for the Arizona Cardinals will be..."
-              }
-            />
-          </AccordionDetails>
-        </Accordion>
-      </AccardinWrapper> */}
-
     </Wrapper>
   );
 };

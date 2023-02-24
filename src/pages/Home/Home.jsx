@@ -7,7 +7,7 @@ import homeLogo from "../../assets/img/logoBig.png";
 const Home = () => {
   return (
     <HomeWrap>
-      <img src={homeLogo} alt="" />
+      <img src={homeLogo} alt="logo" />
       <h1>NFL Mock Draft Simulator</h1>
       <p>
         Practice for your draft with fast mocks against realistic opponents.

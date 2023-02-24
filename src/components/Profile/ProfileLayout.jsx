@@ -5,6 +5,7 @@ import { ProfileList, ProfileLists, ProfileNav, ProfileWrapper } from './Profile
 
 const ProfileLayout = () => {
   let {pathname} = useLocation();
+
   return (
     <ProfileWrapper >
       <ProfileNav>

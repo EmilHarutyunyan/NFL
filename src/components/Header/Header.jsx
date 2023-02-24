@@ -24,7 +24,7 @@ function Header() {
           <HeaderInner>
             <div>
               <Link to="/">
-                <img src={mainLogo} alt="" />
+                <img src={mainLogo} alt="logo" />
               </Link>
             </div>
             <HeaderBody>

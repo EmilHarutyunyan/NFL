@@ -8,11 +8,11 @@ export const searchInfo = (arr, item, getValue = (item) => item) => {
   return arr.filter((i) => getValue(i) === getValue(item));
 };
 
-export const percentPick = (teamValue, playerValue, percent = 20) => {
+export const percentPick = (teamValue, playerValue, percent = 50) => {
   return +(((teamValue - playerValue) * percent) / 100).toFixed(2);
 };
 
-export const  dataURLtoBlob = (dataurl) => {
+export const dataURLtoBlob = (dataurl) => {
   var arr = dataurl.split(","),
     mime = arr[0].match(/:(.*?);/)[1],
     bstr = atob(arr[1]),
@@ -22,7 +22,7 @@ export const  dataURLtoBlob = (dataurl) => {
     u8arr[n] = bstr.charCodeAt(n);
   }
   return new Blob([u8arr], { type: mime });
-}
+};
 
 let sumNumber = (num) => {
   let sum = 0;
@@ -116,10 +116,10 @@ export const getRandom = (arr, n) => {
 };
 
 export const makeRepeated = (arr, repeats) =>
-  Array.from({ length: repeats }, (v,idx) => {
-    const arrIteration = arr.map(item => {
-      return {...item, iteration: idx+1}
-    })
+  Array.from({ length: repeats }, (v, idx) => {
+    const arrIteration = arr.map((item) => {
+      return { ...item, iteration: idx + 1 };
+    });
     return arrIteration;
   }).flat();
 
@@ -134,10 +134,10 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
     for (let j = endSlice; j < tradeValueData.length; ++j) {
       if (
         fanaticChallenge[i].mode !== +tradeValueData[j].round_index_number ||
-        endSlice + 1  === tradeValueData.length 
+        endSlice + 1 === tradeValueData.length
       ) {
-        
-        endSlice = endSlice + 1 === tradeValueData.length ? endSlice + 1 : endSlice;
+        endSlice =
+          endSlice + 1 === tradeValueData.length ? endSlice + 1 : endSlice;
         const sliceTradeValue = tradeValueData.slice(startSlice, endSlice);
         const iterationRound = makeRepeated(
           sliceTradeValue,
@@ -155,7 +155,7 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
   if (round === fanaticChallenge.length) {
     const newTradeValue = newIterationTrade.map((item, idx) => {
       const newItem = structuredClone(item);
-      newItem["index_position"] = idx+1;
+      newItem["index_position"] = idx + 1;
       return newItem;
     });
     return { count: newTradeValue.length, newTradeValue, roundStart };
@@ -167,10 +167,20 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
     const cutTradeValue = [...newIterationTrade, ...sliceTradeValue];
     const newTradeValue = cutTradeValue.map((item, idx) => {
       const newItem = structuredClone(item);
-      newItem["index_position"] = idx+1;
+      newItem["index_position"] = idx + 1;
       return newItem;
     });
 
     return { count: newTradeValue.length, newTradeValue, roundStart };
   }
+};
+
+export const objectDeleteValue = ({ objectData, deleteKey }) => {
+  const objectDelete =  Object.keys(objectData)
+    .filter((key) => !deleteKey.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = objectData[key];
+      return obj;
+    }, {});
+  return objectDelete
 };

@@ -16,8 +16,15 @@ export const MySelectPhotoWrap = styled.div`
   }
 `;
 export const PlayerName = styled.div`
+display: flex;
+align-items: center;
+gap: 10px;
   font-weight: 400;
   font-size: 16px;
   line-height: 27px;
   color: #3e464f;
+  & > span {
+    color: #004ea3;
+    font-weight: 700;
+  }
 `;

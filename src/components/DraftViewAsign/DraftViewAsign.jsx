@@ -62,6 +62,7 @@ const DraftViewAsign = ({ players, thisId }) => {
   const teamRef = useRef(null);
 
   useEffect(() => {
+    
     if (
       tradeValue?.mouthing &&
       !players.loading &&
@@ -147,16 +148,17 @@ const DraftViewAsign = ({ players, thisId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tradeValue.mouthing, players.loading, pauseId]);
 
-  function delayTime({id,indexPosition}) {
+  function delayTime({ id, indexPosition }) {
     const isTeamPick = (currentValue) => currentValue > id;
     const isIndexPosition = (currentValue) => currentValue > indexPosition;
 
     if (fanaticIndexPosition.length) {
-      return fanaticIndexPosition.every(isIndexPosition) ? indexPosition * (1000 / timeSpeed / indexPosition) : 0;
+      return fanaticIndexPosition.every(isIndexPosition)
+        ? indexPosition * (1000 / timeSpeed / indexPosition)
+        : 0;
     } else if (!fanaticIndexPosition.length) {
       return teamPickIndex.every(isTeamPick) ? id * (1000 / timeSpeed / id) : 0;
     } else {
-
       return;
     }
   }
@@ -169,12 +171,14 @@ const DraftViewAsign = ({ players, thisId }) => {
             index: id,
             round_index: roundIndex,
             index_position: indexPosition,
-            round: { logo },
+            round: { logo, name },
+            value
           } = team;
 
-          const checkTeam = delayTime({id, indexPosition})
+          const checkTeam = delayTime({ id, indexPosition });
           const time = thisId ? +(id - thisId) * (1000 / timeSpeed) : checkTeam;
-        
+          const teamActive = fanaticIndexPosition.length ? fanaticIndexPosition.includes(indexPosition) : teamPickIndex.includes(id)
+                  
           // Round Text
           if (roundStart.includes(id)) {
             roundArr.current = [];
@@ -193,23 +197,33 @@ const DraftViewAsign = ({ players, thisId }) => {
               <li
                 key={id}
                 className={`${
-                  teamPickIndex.includes(id) ||
-                  fanaticIndexPosition.includes(indexPosition)
-                    ? "player-team active"
-                    : "player-team"
+                  teamActive ? "player-team active" : "player-team"
                 }`}
               >
-                <div className="pick">
-                  <p>Pick</p>
-                  <p>{id}</p>
-                </div>
+                {team?.index_position ? (
+                  <>
+                    <div className="pick">
+                      <p>Pick</p>
+                      <p>{id}</p>
+                    </div>
+                    <div className="pick">
+                      <p>Position</p>
+                      <p>{team?.index_position}</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="pick">
+                    <p>Pick</p>
+                    <p>{id}</p>
+                  </div>
+                )}
 
                 <div className="player-team-info">
-                  <img src={logo ? logo : ""} alt="" />
-
+                  <img src={logo ? logo : ""} alt={name} />
+                  {/* <p>{value}</p> */}
                   {!!checkTeam && team?.player ? null : (
                     <>
-                      {teamPickIndex.includes(id) && pauseId[0] !== id ? (
+                      {teamActive ? (
                         <>
                           <div className="player-click">On The Clock</div>
                         </>
