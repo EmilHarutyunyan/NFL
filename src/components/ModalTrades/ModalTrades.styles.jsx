@@ -1,6 +1,5 @@
 import styled, { css } from "styled-components";
 
-
 export const ModalWrap = styled.div`
   display: flex;
   align-items: center;
@@ -46,7 +45,6 @@ export const ModalBodyItems = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: stretch;
-
 `;
 
 export const ModalBodyItem = styled.div`
@@ -103,8 +101,38 @@ export const PickItem = styled.div`
       border: 2px solid #004ea3;
     }
   }
+  .pick-change {
+    display: flex;
+    align-items: center;
+    width: 38px;
+    height: auto;
+    border: 2px solid #004ea3;
+    border-radius: 4px;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+  }
 `;
-
+export const PlayerItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 10px;
+  .player {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 27px;
+    color: #50647b;
+  }
+  .player-name {
+    display: flex;
+    gap: 10px;
+    span {
+      color: #004ea3;
+      font-weight: 700;
+    }
+  }
+`;
 export const BtnWrap = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -147,7 +175,6 @@ export const ModalStatus = styled.div`
 export const TradeTeamItem = styled.div`
   max-width: 400px;
   width: 100%;
-
 `;
 export const TradeTeam = styled.div`
   display: flex;

@@ -10,6 +10,7 @@ const initialState = {
   loading:false,
   tradeValue:[],
   historyTrades:[],
+  tradePlayerYears:[],
 };
 
 
@@ -100,23 +101,31 @@ export const tradesSlice = createSlice({
     setTradesPlayers: (state, action) => {
       state.tradesPlayers = action.payload;
     },
+    setMyTradesPlayers: (state, action) => {
+      state.myTradesPlayers = action.payload;
+    },
     setChangeTrades: (state, action) => {
       state.changeTrades = action.payload;
     },
+    setTradePlayerYears: (state, action) => {
+      state.tradePlayerYears = action.payload;
+    },
+
     setResetTrades: (state, _) => {
       state.trades = initialState.trades;
-      state.tradesTeams = initialState.tradesTeams
-      state.changeTrades = initialState.changeTrades
-      state.tradesPlayers = initialState.tradesPlayers
-      state.myTradesPlayers = initialState.myTradesPlayers
-      state.loading = initialState.loading
+      state.tradesTeams = initialState.tradesTeams;
+      state.changeTrades = initialState.changeTrades;
+      state.tradesPlayers = initialState.tradesPlayers;
+      state.myTradesPlayers = initialState.myTradesPlayers;
+      state.loading = initialState.loading;
       state.tradeValue = initialState.tradeValue;
+      state.tradePlayerYears = initialState.tradePlayerYears;
     },
   },
   extraReducers: {
     [getTradesPlayer.fulfilled]: (state, action) => {
       state.loading = false;
-      
+
       state.tradesPlayers = action.payload;
     },
     [getTradesPlayer.pending]: (state, action) => {
@@ -160,29 +169,35 @@ export const {
   setChangeTrades,
   setTeamTradeValue,
   setHistoryTrades,
+  setMyTradesPlayers,
+  setTradePlayerYears,
 } = tradesSlice.actions;
 
 
 // Action Creator
-export const historyTradesAction = ({historyData,teamName}) =>  (dispatch, getState) => {
+export const historyTradesAction = (historyData) =>  (dispatch, getState) => {
   const {historyTrades} = selectTrades(getState())
-  debugger
-  if(historyTrades.length) {
-    const asd = []
-    const newHistoryData = [...historyTrades, historyData];
-    for (let tradeTeam of newHistoryData) {
-      const keyName = Object.keys(tradeTeam)[0];
-      if (keyName === teamName) {
-        let newObj = {};
-        newObj[`${keyName}`] = historyData;
-        asd.push(newObj);
-      } else {
-        asd.push(tradeTeam);
-      }
-    }
-  }
+  // debugger
+  // const {name} = historyData
+  // if(historyTrades.length) {
+  //   const historyName = historyTrades.map(item => item.name)
+  //   if (historyName.includes(name)) {
+  //     const changeData = historyTrades.map((team) => {
+  //       if (name === team.name) {
+  //         return historyData;
+  //       }
+  //       return team;
+  //     });
+  //     dispatch([...changeData])
+  //   } else {
+  //     dispatch(setHistoryTrades([...historyTrades, historyData]));
+  //   }
+    
+  // } else {
+    dispatch(setHistoryTrades([...historyTrades, historyData]));
 
-  dispatch(setHistoryTrades([...historyTrades, historyData]));
+  // }
+
   
 
 }

@@ -134,6 +134,7 @@ const TeamList = () => {
               <>
                 {playersDraft.results.length > 0 ? (
                   currentTableData?.playersDataSlice.map((item, idx) => {
+                  console.log('item :', item);
                     const colorBackground =
                       item?.ranking === 1
                         ? "#FFF1ED"
@@ -152,7 +153,7 @@ const TeamList = () => {
                             <span>{item?.adp}</span>
                           </div>
                           <div className="player-td player-adp">
-                            <p>{item[`${team.name}`].toFixed(2)}</p>
+                            {/* <p>{item[`${team.name}`].toFixed(2)}</p> */}
                           </div>
 
                           <h4 className="player-td player-name">

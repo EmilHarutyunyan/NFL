@@ -1,4 +1,10 @@
-import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+  useEffect,
+} from "react";
 // import downloadjs from "downloadjs";
 // import html2canvas from "html2canvas";
 // import { toPng } from "html-to-image";
@@ -32,6 +38,9 @@ import {
   DraftResultWrap,
   GradeBox,
   MySelectWrap,
+  TradesItem,
+  TradesItems,
+  TradesWrap,
   Wrapper,
 } from "./DraftResult.styles";
 import { dataURLtoBlob } from "../../utils/utils";
@@ -40,12 +49,13 @@ import { userUpdate } from "../../app/features/user/userActions";
 import { selectUser } from "../../app/features/user/userSlice";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallBack from "../../components/ErrorFallBack/ErrorFallBack";
+import { selectTrades } from "../../app/features/trades/tradesSlice";
 
 const DraftResult = () => {
   const domEl = useRef(null);
   const navigate = useNavigate();
   const [roundSelect, setRoundSelect] = useState(1);
-  const [copyShow,setCopyShow] = useState(false)
+  const [copyShow, setCopyShow] = useState(false);
   const {
     results,
     roundTeam,
@@ -54,8 +64,11 @@ const DraftResult = () => {
     bpa_badges,
     fanatic_mode,
   } = useSelector(selectDraftResult);
-  const {userInfo} = useSelector(selectUser)
-  const dispatch = useDispatch()
+
+  const { historyTrades } = useSelector(selectTrades);
+
+  const { userInfo } = useSelector(selectUser);
+  const dispatch = useDispatch();
   const [teamMain, setTeamMain] = useState(teamsName[0]);
 
   const teamSelect = useMemo(() => {
@@ -63,16 +76,16 @@ const DraftResult = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamMain]);
 
-  useEffect(()=> {
+  useEffect(() => {
     if (bpa_badges > 0 || fanatic_mode > 0) {
       const countBpa = userInfo?.bpa_badges + bpa_badges;
-      const fanaticCount = fanatic_mode ?  fanatic_mode : userInfo?.fanatic_mode
+      const fanaticCount = fanatic_mode ? fanatic_mode : userInfo?.fanatic_mode;
       dispatch(
         userUpdate({ bpa_badges: countBpa, fanatic_mode: fanaticCount })
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[bpa_badges,fanatic_mode])
+  }, [bpa_badges, fanatic_mode]);
   const teamTable = useMemo(() => {
     return results.filter(
       (res) => +res.round_index.split(" ")[1] === roundSelect
@@ -84,10 +97,10 @@ const DraftResult = () => {
     if (domEl.current === null) {
       return;
     }
-    htmlToImage.toPng(domEl.current, { cacheBust: false })
+    htmlToImage
+      .toPng(domEl.current, { cacheBust: false })
       .then((dataUrl) => {
-        
-      console.log('dataUrl :', dataUrl);
+        console.log("dataUrl :", dataUrl);
         const link = document.createElement("a");
         link.download = "my-image-name.png";
         link.href = dataUrl;
@@ -99,35 +112,34 @@ const DraftResult = () => {
       });
   }, [domEl]);
 
-
-   const onCopyImage = useCallback(() => {
-     if (domEl.current === null) {
-       return;
-     }
-     setCopyShow(true);
-     htmlToImage
-       .toPng(domEl.current, { cacheBust: false })
-       .then((dataUrl) => {
-         const imgBlob = dataURLtoBlob(dataUrl);
-         const { ClipboardItem } = window;
-         try {
-           navigator.clipboard.write([
-             new ClipboardItem({
-               "image/png": imgBlob,
-             }),
-           ]);
-           setCopyShow(false);
-           console.clear()
-         } catch (error) {
-           setCopyShow(false);
-           console.clear();
-           console.error(error);
-         }
-       })
-       .catch((err) => {
-         console.log(err);
-       });
-   }, [domEl]);
+  const onCopyImage = useCallback(() => {
+    if (domEl.current === null) {
+      return;
+    }
+    setCopyShow(true);
+    htmlToImage
+      .toPng(domEl.current, { cacheBust: false })
+      .then((dataUrl) => {
+        const imgBlob = dataURLtoBlob(dataUrl);
+        const { ClipboardItem } = window;
+        try {
+          navigator.clipboard.write([
+            new ClipboardItem({
+              "image/png": imgBlob,
+            }),
+          ]);
+          setCopyShow(false);
+          console.clear();
+        } catch (error) {
+          setCopyShow(false);
+          console.clear();
+          console.error(error);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [domEl]);
 
   const gradingCalc = (count) => {
     if (count === 1) {
@@ -307,6 +319,72 @@ const DraftResult = () => {
                             <p>{grading.grade}</p>
                           </div>
                         </div>
+                      </div>
+                      <div>
+                        {historyTrades?.map((team) => {
+                          if (team.myTeam === teamSelect[0]?.round?.name) {
+                            return (
+                              <TradesWrap>
+                                <TradesItems>
+                                  <TradesItem>
+                                    <div>
+                                      <img
+                                        src={team.roundMain.round.logo}
+                                        alt=""
+                                      />
+                                    </div>
+                                    <div>
+                                      <h6>Player</h6>
+                                      <p>
+                                        <span>{team.playerMain.position} </span>
+                                        {team.playerMain.player}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <h6>Pick</h6>
+                                      {team.pickMain?.map((pi) => {
+                                        return <span>{pi} </span>;
+                                      })}
+                                    </div>
+                                    <div>
+                                      <h6>2024</h6>
+                                      {team.mainNextYears?.map((pick) => {
+                                        return <span>{pick.round} </span>;
+                                      })}
+                                    </div>
+                                  </TradesItem>
+                                  <TradesItem>
+                                    <div>
+                                      <img
+                                        src={team.round.round.logo}
+                                        alt=""
+                                      />
+                                    </div>
+                                    <div>
+                                      <h6>Player</h6>
+                                      <p>
+                                        <span>{team.player.position} </span>
+                                        {team.player.player}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <h6>Pick</h6>
+                                      {team.pick?.map((pi) => {
+                                        return <span>{pi} </span>;
+                                      })}
+                                    </div>
+                                    <div>
+                                      <h6>2024</h6>
+                                      {team.nextYears?.map((pick) => {
+                                        return <span>{pick.round} </span>;
+                                      })}
+                                    </div>
+                                  </TradesItem>
+                                </TradesItems>
+                              </TradesWrap>
+                            );
+                          }
+                        })}
                       </div>
                     </React.Fragment>
                   );

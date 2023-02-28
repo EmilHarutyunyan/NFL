@@ -299,3 +299,29 @@ export const BadgesItems = styled.div`
 export const MySelectWrap = styled.div`
   width: 100%;
 `;
+
+export const TradesWrap = styled.div`
+  background-color: #fff;
+  border-radius: 8px;
+`;
+export const TradesItems = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 20px 0px;
+  margin-top: 16px;
+`;
+export const TradesItem = styled.div`
+  font-size: 14px;
+  width: calc(100% / 2 - 32px);
+  img {
+    width: 25px;
+    height: auto;
+  }
+  h6 {
+    font-size: 14px;
+  }
+  & > div:not(:first-child, :nth-child(2)) {
+    margin-top: 16px;
+  }
+`;

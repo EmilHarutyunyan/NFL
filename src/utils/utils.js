@@ -150,7 +150,7 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
       endSlice++;
     }
   }
-  // }
+  
 
   if (round === fanaticChallenge.length) {
     const newTradeValue = newIterationTrade.map((item, idx) => {
