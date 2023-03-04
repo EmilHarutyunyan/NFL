@@ -15,9 +15,12 @@ export const percentPick = (teamValue, playerValue, percent = 50) => {
 export const dataURLtoBlob = (dataurl) => {
   var arr = dataurl.split(","),
     mime = arr[0].match(/:(.*?);/)[1],
+   
+    
     bstr = atob(arr[1]),
     n = bstr.length,
     u8arr = new Uint8Array(n);
+     console.log("mime :", mime);
   while (n--) {
     u8arr[n] = bstr.charCodeAt(n);
   }
@@ -150,7 +153,6 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
       endSlice++;
     }
   }
-  
 
   if (round === fanaticChallenge.length) {
     const newTradeValue = newIterationTrade.map((item, idx) => {
@@ -176,11 +178,56 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
 };
 
 export const objectDeleteValue = ({ objectData, deleteKey }) => {
-  const objectDelete =  Object.keys(objectData)
+  const objectDelete = Object.keys(objectData)
     .filter((key) => !deleteKey.includes(key))
     .reduce((obj, key) => {
       obj[key] = objectData[key];
       return obj;
     }, {});
-  return objectDelete
+  return objectDelete;
 };
+
+// sort array
+export const sortArray = ({ arr, key }) => {
+  return arr.sort((a, b) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0));
+};
+
+export const filteredArray = ({ arr, arr2, key }) => {
+  const filterArr = arr.filter(function (array_el) {
+    return (
+      arr2.filter(function (anotherOne_el) {
+        return anotherOne_el[key] === array_el[key];
+      }).length === 0
+    );
+  });
+  return filterArr;
+};
+
+export const  loadImage = (src) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = src
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+
+      // Set the width and height of the canvas to be the same as the image
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      // Draw the image onto the canvas
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      // Get the PNG data URL from the canvas
+      const pngDataUrl = canvas.toDataURL("image/png");
+
+      // Use the PNG data URL as needed
+      console.log(pngDataUrl);
+      resolve(pngDataUrl);
+    };
+    img.onerror = (e) => {
+      reject(e);
+    };
+    img.src = src;
+  });
+}

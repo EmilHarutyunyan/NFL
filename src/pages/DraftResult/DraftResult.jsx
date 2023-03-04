@@ -21,35 +21,42 @@ import MySelectImg from "../../components/MySelect/MySelectImg";
 import twitterBlue from "../../assets/img/twitter-blue.png";
 import markaImg from "../../assets/img/marka.png";
 import downlandImg from "../../assets/img/downlandImg.png";
+import copyImg from "../../assets/img/copy.png";
 
 // styles
 import {
+  ActionWrap,
   BadgesItems,
   DraftResultFooter,
   DraftResultFull,
   DraftResultHead,
   DraftResultPick,
   DraftResultPickWrap,
+  DraftResultPos,
   DraftResultRound,
   DraftResultRoundItem,
   DraftResultShare,
   DraftResultTeam,
+  DraftResultTeamCol,
   DraftResultTeamItem,
   DraftResultWrap,
   GradeBox,
+  MockDraftWrap,
   MySelectWrap,
   TradesItem,
   TradesItems,
   TradesWrap,
   Wrapper,
 } from "./DraftResult.styles";
-import { dataURLtoBlob } from "../../utils/utils";
+import { dataURLtoBlob, loadImage } from "../../utils/utils";
 import BadgesIcon from "../../components/BadgesIcon/BadgesIcon";
 import { userUpdate } from "../../app/features/user/userActions";
 import { selectUser } from "../../app/features/user/userSlice";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallBack from "../../components/ErrorFallBack/ErrorFallBack";
 import { selectTrades } from "../../app/features/trades/tradesSlice";
+import { POSITIONS_COLOR } from "../../utils/constants";
+import Confetti from "react-confetti";
 
 const DraftResult = () => {
   const domEl = useRef(null);
@@ -70,12 +77,23 @@ const DraftResult = () => {
   const { userInfo } = useSelector(selectUser);
   const dispatch = useDispatch();
   const [teamMain, setTeamMain] = useState(teamsName[0]);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const teamSelect = useMemo(() => {
     return teamsPlayer[teamMain];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamMain]);
+  
+  function startConfetti() {
+    setShowConfetti(true);
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 5000); // 5000 milliseconds = 5 seconds
+  }
 
+  useEffect(()=> {
+    startConfetti()
+  },[])
   useEffect(() => {
     if (bpa_badges > 0 || fanatic_mode > 0) {
       const countBpa = userInfo?.bpa_badges + bpa_badges;
@@ -98,11 +116,10 @@ const DraftResult = () => {
       return;
     }
     htmlToImage
-      .toPng(domEl.current, { cacheBust: false })
+      .toJpeg(domEl.current)
       .then((dataUrl) => {
-        console.log("dataUrl :", dataUrl);
         const link = document.createElement("a");
-        link.download = "my-image-name.png";
+        link.download = `${teamSelect[0]?.round?.name}`;
         link.href = dataUrl;
         link.click();
         console.clear();
@@ -110,6 +127,8 @@ const DraftResult = () => {
       .catch((err) => {
         console.log(err);
       });
+      
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domEl]);
 
   const onCopyImage = useCallback(() => {
@@ -118,27 +137,33 @@ const DraftResult = () => {
     }
     setCopyShow(true);
     htmlToImage
-      .toPng(domEl.current, { cacheBust: false })
+      .toJpeg(domEl.current)
       .then((dataUrl) => {
-        const imgBlob = dataURLtoBlob(dataUrl);
-        const { ClipboardItem } = window;
-        try {
-          navigator.clipboard.write([
-            new ClipboardItem({
-              "image/png": imgBlob,
-            }),
-          ]);
-          setCopyShow(false);
-          console.clear();
-        } catch (error) {
-          setCopyShow(false);
-          console.clear();
-          console.error(error);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        
+        loadImage(dataUrl)
+          .then((png) => {
+            const imgBlob = dataURLtoBlob(png);
+            const { ClipboardItem } = window;
+            try {
+              navigator.clipboard.write([
+                new ClipboardItem({
+                  "image/png": imgBlob,
+                }),
+              ]);
+              setCopyShow(false);
+              console.clear();
+            } catch (error) {
+              setCopyShow(false);
+              console.clear();
+              console.error(error);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+          
+        });
+        
   }, [domEl]);
 
   const gradingCalc = (count) => {
@@ -166,7 +191,11 @@ const DraftResult = () => {
             <div className="share-draft">
               <p>Share Your Mock Draft Result</p>
               <div>
-                <img src={twitterBlue} onClick={onButtonClick} alt="twitter" />
+                <img
+                  src={twitterBlue}
+                  onClick={() => window.open("https://twitter.com/share")}
+                  alt="twitter"
+                />
               </div>
             </div>
             {/* <p>draftRandomnessTeam {draftRandomnessTeam.join(" ")}</p> */}
@@ -177,7 +206,160 @@ const DraftResult = () => {
             onBtnClick={() => navigate("/draft-configuration")}
           />
         </DraftResultShare>
+        <ActionWrap>
+          <div className="downland-btn" onClick={onButtonClick}>
+            <img src={downlandImg} alt="download" />
+            <p>Download results image</p>
+          </div>
+          <div className="downland-copy" onClick={onCopyImage}>
+            <img src={copyImg} alt="download" />
+            <p>{copyShow ? "COPIED!" : "Copy Image"}</p>
+          </div>
+        </ActionWrap>
         <DraftResultFull>
+          <DraftResultPick>
+            <div ref={domEl}>
+              <DraftResultHead>
+                <BadgesItems>
+                  {bpa_badges ? (
+                    <BadgesIcon
+                      badge="bpa_badges"
+                      count={bpa_badges}
+                      width={"50px"}
+                    />
+                  ) : null}
+                  {fanatic_mode ? (
+                    <BadgesIcon
+                      badge={`fanatic_mode_${fanatic_mode}`}
+                      count={fanatic_mode}
+                      width={"50px"}
+                    />
+                  ) : null}
+                </BadgesItems>
+                <MockDraftWrap>
+                  {teamSelect && (
+                    <div className="draft-result-pick-logo">
+                      <img
+                        src={teamSelect[0]?.round?.logo}
+                        alt={teamSelect[0]?.round?.name}
+                      />
+                      <p>{teamSelect[0]?.round?.name} Mock Draft</p>
+                    </div>
+                  )}
+                  <MySelectWrap>
+                    <MySelectImg
+                      name={teamMain}
+                      dataValue={teamsName}
+                      handleChange={(item) => setTeamMain(item.value)}
+                    />
+                  </MySelectWrap>
+                </MockDraftWrap>
+              </DraftResultHead>
+
+              <DraftResultPickWrap>
+                {teamSelect &&
+                  teamSelect?.map((team, idx) => {
+                    const round = +team?.round_index?.split(" ")[1];
+                    const grading = gradingCalc(team?.player?.bpa);
+                    return (
+                      <React.Fragment key={idx}>
+                        <div className="draft-result-pick-item">
+                          <div className="draft-result-pick-item-info">
+                            <div className="draft-result-pick-round">
+                              <p>
+                                R{round}:<span>{team?.index}</span>
+                              </p>
+                            </div>
+                            <div className="draft-result-pick-adp">
+                              <p>ADP</p>
+                            </div>
+                            <div className="draft-result-pick-name">
+                              {team?.player?.player}
+                              {/* <p>{team?.playerDepth}</p> */}
+                            </div>
+                            <DraftResultPos
+                              posColor={POSITIONS_COLOR[team?.player?.position]}
+                              className="draft-result-pick-pos"
+                            >
+                              <p>{team?.player?.position}</p>
+                            </DraftResultPos>
+                            <div className="draft-result-pick-college">
+                              <p>{team?.player?.school}</p>
+                            </div>
+                            <div className="draft-result-pick-rating">
+                              <GradeBox color={grading?.color}></GradeBox>
+                              <p>{grading.grade}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </React.Fragment>
+                    );
+                  })}
+                <div>
+                  {historyTrades?.map((team) => {
+                    if (team.myTeam.name === teamSelect[0]?.round?.name) {
+                      return (
+                        <TradesWrap>
+                          <TradesItems>
+                            <TradesItem>
+                              <div>
+                                <img src={team.mainTeam.logo} alt="" />
+                              </div>
+                              <div className="trades-player">
+                                <h6>Player</h6>
+                                <p>
+                                  <span>{team.mainTeam.player.position} </span>
+                                  {team.mainTeam.player.player}
+                                </p>
+                              </div>
+                              <div className="trades-pick">
+                                <h6>Pick</h6>
+                                {team.mainTeam.pick?.map((pi) => {
+                                  return <span>{pi.index} </span>;
+                                })}
+                              </div>
+                              <div className="trades-years">
+                                <h6>2024</h6>
+                                {team.mainTeam.pickYear?.map((pick) => {
+                                  return <span>{pick.round} </span>;
+                                })}
+                              </div>
+                            </TradesItem>
+                            <div class="line"></div>
+                            <TradesItem>
+                              <div>
+                                <img src={team.myTeam.logo} alt="" />
+                              </div>
+                              <div className="trades-player">
+                                <h6>Player</h6>
+                                <p>
+                                  <span>{team.myTeam.player.position} </span>
+                                  {team.myTeam.player.player}
+                                </p>
+                              </div>
+                              <div className="trades-pick">
+                                <h6>Pick</h6>
+                                {team.myTeam.pick?.map((pi) => {
+                                  return <span>{pi.index} </span>;
+                                })}
+                              </div>
+                              <div className="trades-years">
+                                <h6>2024</h6>
+                                {team.myTeam.pickYear?.map((pick) => {
+                                  return <span>{pick.round} </span>;
+                                })}
+                              </div>
+                            </TradesItem>
+                          </TradesItems>
+                        </TradesWrap>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              </DraftResultPickWrap>
+            </div>
+          </DraftResultPick>
           <DraftResultWrap>
             <DraftResultRound>
               {roundTeam?.map((item, idx) => {
@@ -209,189 +391,56 @@ const DraftResult = () => {
                   const grading = gradingCalc(team?.playerDepth);
                   return (
                     <DraftResultTeamItem key={idx}>
-                      <div className="draft-result-team-round">
-                        <p>
-                          R{roundSelect}:<span>{team?.index}</span>
-                        </p>
-                      </div>
-                      <div className="draft-result-team-adp">
-                        <p>ADP</p>
-                      </div>
-                      <div className="draft-result-team-log">
-                        <img
-                          src={team?.round?.logo}
-                          alt={team?.round?.name}
-                          width={65}
-                        />
-                        <p>{team?.player?.player}</p>
-                        {/* <p>{team?.playerDepth}</p> */}
-                      </div>
-                      <div className="draft-result-team-pos">
-                        <p>{team?.player?.position}</p>
-                      </div>
-                      <div className="draft-result-team-college">
-                        <p>{team?.player?.school}</p>
-                      </div>
-                      <div className="draft-result-team-rating">
-                        <GradeBox color={grading?.color}></GradeBox>
-                        <p>{grading.grade}</p>
-                      </div>
+                      <DraftResultTeamCol
+                        posColor={POSITIONS_COLOR[team?.player?.position]}
+                      >
+                        <div className="draft-result-team-round">
+                          <p>
+                            R{roundSelect}:<span>{team?.index}</span>
+                          </p>
+                        </div>
+                        <div className="draft-result-team-adp">
+                          <p>ADP</p>
+                        </div>
+
+                        <div className="draft-result-team-pos">
+                          <p>{team?.player?.position}</p>
+                        </div>
+
+                        <div className="draft-result-team-rating">
+                          <GradeBox color={grading?.color}></GradeBox>
+                          <p>{grading.grade}</p>
+                        </div>
+                      </DraftResultTeamCol>
+                      <DraftResultTeamCol>
+                        <div className="draft-result-team-log">
+                          <img
+                            src={team?.round?.logo}
+                            alt={team?.round?.name}
+                            width={65}
+                          />
+                          <p>{team?.player?.player}</p>
+                          {/* <p>{team?.playerDepth}</p> */}
+                        </div>
+                        <div className="draft-result-team-college">
+                          <p>{team?.player?.school}</p>
+                        </div>
+                      </DraftResultTeamCol>
                     </DraftResultTeamItem>
                   );
                 })}
             </DraftResultTeam>
             <DraftResultFooter>www.DraftSimulator.com</DraftResultFooter>
           </DraftResultWrap>
-          <DraftResultPick>
-            <div className="downland-btn" onClick={onButtonClick}>
-              <img src={downlandImg} alt="download" />
-              <p>Download results image</p>
-            </div>
-            <div className="downland-copy" onClick={onCopyImage}>
-              <p>{copyShow ? "COPIED!" : "Copy Image"}</p>
-            </div>
-            <DraftResultHead>
-              <BadgesItems>
-                {bpa_badges ? (
-                  <BadgesIcon
-                    badge="bpa_badges"
-                    count={bpa_badges}
-                    width={"47px"}
-                  />
-                ) : null}
-                {fanatic_mode ? (
-                  <BadgesIcon
-                    badge={`fanatic_mode_${fanatic_mode}`}
-                    count={fanatic_mode}
-                    width={"47px"}
-                  />
-                ) : null}
-              </BadgesItems>
-              <MySelectWrap>
-                <MySelectImg
-                  name={teamMain}
-                  dataValue={teamsName}
-                  handleChange={(item) => setTeamMain(item.value)}
-                />
-              </MySelectWrap>
-            </DraftResultHead>
-
-            <DraftResultPickWrap ref={domEl}>
-              {teamSelect && (
-                <div className="draft-result-pick-logo">
-                  <img
-                    src={teamSelect[0]?.round?.logo}
-                    alt={teamSelect[0]?.round?.name}
-                  />
-                  <p>{teamSelect[0]?.round?.name}</p>
-                </div>
-              )}
-              {teamSelect &&
-                teamSelect?.map((team, idx) => {
-                  const round = +team?.round_index?.split(" ")[1];
-                  const grading = gradingCalc(team?.player?.bpa);
-                  return (
-                    <React.Fragment key={idx}>
-                      <div className="draft-result-pick-item">
-                        <div className="draft-result-pick-item-info">
-                          <div className="draft-result-pick-round">
-                            <p>
-                              R{round}:<span>{team?.index}</span>
-                            </p>
-                          </div>
-                          <div className="draft-result-pick-adp">
-                            <p>ADP</p>
-                          </div>
-                          <div className="draft-result-pick-name">
-                            {team?.player?.player}
-                            {/* <p>{team?.playerDepth}</p> */}
-                          </div>
-                          <div className="draft-result-pick-pos">
-                            <p>{team?.player?.position}</p>
-                          </div>
-                        </div>
-                        <div className="draft-result-pick-item-text">
-                          <div className="draft-result-pick-college">
-                            <p>{team?.player?.school}</p>
-                          </div>
-                          <div className="draft-result-pick-rating">
-                            <GradeBox color={grading?.color}></GradeBox>
-                            <p>{grading.grade}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        {historyTrades?.map((team) => {
-                          if (team.myTeam === teamSelect[0]?.round?.name) {
-                            return (
-                              <TradesWrap>
-                                <TradesItems>
-                                  <TradesItem>
-                                    <div>
-                                      <img
-                                        src={team.roundMain.round.logo}
-                                        alt=""
-                                      />
-                                    </div>
-                                    <div>
-                                      <h6>Player</h6>
-                                      <p>
-                                        <span>{team.playerMain.position} </span>
-                                        {team.playerMain.player}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <h6>Pick</h6>
-                                      {team.pickMain?.map((pi) => {
-                                        return <span>{pi} </span>;
-                                      })}
-                                    </div>
-                                    <div>
-                                      <h6>2024</h6>
-                                      {team.mainNextYears?.map((pick) => {
-                                        return <span>{pick.round} </span>;
-                                      })}
-                                    </div>
-                                  </TradesItem>
-                                  <TradesItem>
-                                    <div>
-                                      <img
-                                        src={team.round.round.logo}
-                                        alt=""
-                                      />
-                                    </div>
-                                    <div>
-                                      <h6>Player</h6>
-                                      <p>
-                                        <span>{team.player.position} </span>
-                                        {team.player.player}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <h6>Pick</h6>
-                                      {team.pick?.map((pi) => {
-                                        return <span>{pi} </span>;
-                                      })}
-                                    </div>
-                                    <div>
-                                      <h6>2024</h6>
-                                      {team.nextYears?.map((pick) => {
-                                        return <span>{pick.round} </span>;
-                                      })}
-                                    </div>
-                                  </TradesItem>
-                                </TradesItems>
-                              </TradesWrap>
-                            );
-                          }
-                        })}
-                      </div>
-                    </React.Fragment>
-                  );
-                })}
-            </DraftResultPickWrap>
-          </DraftResultPick>
         </DraftResultFull>
+        {showConfetti && (
+          <Confetti
+            numberOfPieces={800}
+            width={window.innerWidth - 200}
+            height={window.innerHeight}
+            recycle={false}
+          />
+        )}
       </Wrapper>
     </ErrorBoundary>
   );

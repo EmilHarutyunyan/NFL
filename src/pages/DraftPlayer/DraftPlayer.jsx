@@ -39,8 +39,9 @@ import {
 import {
   getTrades,
   selectTrades,
-  setResetTrades,
+  
 } from "../../app/features/trades/tradesSlice";
+import PlayersSelected from "../../components/PlayersSelected/PlayersSelected";
 
 const DraftPlayer = () => {
   const {
@@ -53,13 +54,13 @@ const DraftPlayer = () => {
     teamPickIndex,
     teamPickIndexControl,
     draftRandomnessTeam,
-
+    fanaticChallenge,
     draftCardDepth,
     fanaticIndexPosition,
   } = useSelector(selectDraftConfig);
 
   const { tradesTeams, changeTrades } = useSelector(selectTrades);
-  console.log("changeTrade :", changeTrades);
+
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -86,7 +87,8 @@ const DraftPlayer = () => {
         !teamPickIndex.length &&
         countRender !== tradeValue.results.length)
     ) {
-      if (changeTrades) {
+      let madalFlag = fanaticChallenge.length && !changeTrades ? 1 : changeTrades
+      if (madalFlag) {
         const team = tradeValue.results[countRender];
         const teamName = team.round.name;
         const teamPosition = team["index_position"] ?? 0;
@@ -115,7 +117,6 @@ const DraftPlayer = () => {
     return () => {
       dispatch(resPlayersDraft());
       dispatch(setResetRound());
-      dispatch(setResetTrades());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -178,6 +179,7 @@ const DraftPlayer = () => {
             </RenderCircle>
           </div>
         </Banner>
+        <PlayersSelected draftPlayers={draftPlayers} teamSelect={teamSelect} />
 
         <DraftView>
           {tradeValue.mouthing && (
@@ -208,9 +210,10 @@ const DraftPlayer = () => {
             </>
           )}
         </DraftView>
-        {tradesTeams && tradesTeams.length > 0 && (
+        {fanaticChallenge.length === 0 ? (tradesTeams && tradesTeams.length > 0 && (
           <ModalTrades tradesTeams={tradesTeams} teamSelect={teamSelect} />
-        )}
+        )): null}
+        
 
         <hr className="line" />
       </Wrapper>

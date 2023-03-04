@@ -172,7 +172,7 @@ const DraftViewAsign = ({ players, thisId }) => {
             round_index: roundIndex,
             index_position: indexPosition,
             round: { logo, name },
-            value
+            
           } = team;
 
           const checkTeam = delayTime({ id, indexPosition });

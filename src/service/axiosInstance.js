@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(async (req) => {
   const user = jwt_decode(authTokens?.tokens?.access);
   console.log(dayjs.unix(user.exp));
   const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
-  debugger
+  
   if (!isExpired) return req;
 
   try {
@@ -45,7 +45,8 @@ axiosInstance.interceptors.request.use(async (req) => {
     req.headers.Authorization = `Bearer ${response.data.access}`;
     return req;
   } catch (error) {
-    window.location.href = window.location.origin;
+  console.log('error :', error);
+    // window.location.href = window.location.origin;
   }
 });
 

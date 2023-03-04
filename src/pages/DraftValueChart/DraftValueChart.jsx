@@ -33,7 +33,7 @@ const DraftValueChart = () => {
     
     allRound.forEach((item) => roundSet.add(item));
     let roundArray = [...roundSet];
-    console.log(roundArray);
+   
     let table = {};
     for (let roundItem of roundArray) {
       for (let team of draftValue) {
@@ -49,7 +49,7 @@ const DraftValueChart = () => {
     return table;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftValue]);
-  console.log('tableData :', tableData);
+ 
   const initialRef = useRef(true);
 
   const [showHide, setShowHide] = useState({
@@ -98,7 +98,7 @@ const DraftValueChart = () => {
         {draftValue.length > 0 && tableData
           ? Object.keys(tableData).map((round) => {
               // return <>div</>;
-              console.log(tableData[`${round}`]);
+             
               return (
                 <RoundColumn key={round}>
                   <RoundColumnHead>

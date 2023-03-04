@@ -27,7 +27,7 @@ border-radius: 4px;
 
 `
 export const DraftView = styled.div`
-  margin-top: 120px;
+  margin-top: 24px;
   margin-bottom: 90px;
   display: flex;
   gap: 20px;

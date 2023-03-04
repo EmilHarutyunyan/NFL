@@ -35,7 +35,7 @@ const PageSize = 10;
 const TeamList = () => {
   const [searchParams] = useSearchParams();
   const { state: team } = useLocation();
-  console.log('team :', team);
+
   const listQuery = searchParams.get("list") || "";
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
@@ -134,7 +134,7 @@ const TeamList = () => {
               <>
                 {playersDraft.results.length > 0 ? (
                   currentTableData?.playersDataSlice.map((item, idx) => {
-                  console.log('item :', item);
+                 
                     const colorBackground =
                       item?.ranking === 1
                         ? "#FFF1ED"

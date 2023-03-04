@@ -20,6 +20,7 @@ import {
 import { Switch } from "@mui/material";
 import { resDraftResult } from "../../app/features/draftResult/draftResultSlice";
 import { getTeams } from "../../app/features/draftConfig/drafConfigAction";
+import { setResetTrades } from "../../app/features/trades/tradesSlice";
 // import ModalTrades from "../../components/ModalTrades/ModalTrades";
 
  const DraftConfiguration = () => {
@@ -35,6 +36,7 @@ import { getTeams } from "../../app/features/draftConfig/drafConfigAction";
     dispatch(setResetRound());
     dispatch(getTeams());
     dispatch(resDraftResult())
+    dispatch(setResetTrades());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

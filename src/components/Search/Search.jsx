@@ -1,11 +1,11 @@
 import React from 'react'
-import { ReactComponent as Searchicon } from '../../assets/svg/search.svg'
+import { SearchIcon } from '../Icons/Icons'
 import { InputWrap } from './Search.styles'
 
 const Search = ({placeholder="Search", icon="",value,handleChange}) => {
   return (
     <InputWrap>
-      <label><Searchicon /></label>
+      <label><SearchIcon /></label>
       <input value={value} placeholder={placeholder} onChange={handleChange}/> 
     </InputWrap>
   )

@@ -146,9 +146,9 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     const teamValue = +tradeValue.results[team - 1].value;
 
     const realValue = teamValue >= item[teamName] ? teamValue : item[teamName];
-    if (bpa > 0 && bpa < 11) {
+    // if (bpa > 0 && bpa < 11) {
       const pricentValue = percentPick(realValue, item[teamName]);
-      let playerItemsSlice = [];
+      let playerItemsSlice = playersDraft.results.slice(0, 10);
 
       for (let i = 0; i < playersDraft.results.length; ++i) {
         if (playersDraft.results[i].id === playerItem.id) {
@@ -161,7 +161,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
 
       percentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
       playerItem = { ...item, [teamName]: item.value + pricentValue };
-    }
+    // }
 
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft(["All"]));
@@ -262,8 +262,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                 <>
                   {playersDraft.results.length > 0 &&
                     currentTableData.playersDataSlice.map((item, idx) => {
-                      const teamName =
-                        tradeValue?.results[countRender].round.name;
+                      
                       return (
                         <DraftPlayerItem
                           key={idx}

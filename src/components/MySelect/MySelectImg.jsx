@@ -15,7 +15,7 @@ const MySelectImg = ({
     color: "#fff",
     fontSize: 16,
     backgroundColor: "#022142",
-    width:"100%"
+    width: "100%",
   };
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -30,7 +30,6 @@ const MySelectImg = ({
 
   return (
     <FormControl sx={{ m: 1, minWidth: 180, margin: 0, ...styleForm }}>
-      
       <Select
         value={name}
         label={name}
@@ -61,7 +60,6 @@ const MySelectImg = ({
         MenuProps={MenuProps}
         inputProps={{ "aria-label": "Without label" }}
       >
-        
         <MenuItem value="">{label}</MenuItem>
         {dataValue.map((name) => (
           <MenuItem key={name} value={name}>

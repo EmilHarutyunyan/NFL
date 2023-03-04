@@ -2,12 +2,14 @@ import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { MySelectPhotoWrap } from "./MySelect.styles";
-const MySelectTeam = ({
+import styled from "styled-components";
+
+const TeamSelect = ({
   label = "",
   name = "",
   dataValue = [],
   disabled = "",
+  
   handleChange = (f) => f,
 }) => {
   const styleForm = {
@@ -31,7 +33,7 @@ const MySelectTeam = ({
   };
 
   return (
-    <FormControl sx={{ m: 1, minWidth: 491, margin: 0, ...styleForm }}>
+    <FormControl sx={{ m: 1,  margin: 0, ...styleForm }}>
       <Select
         value={name}
         label={name}
@@ -65,14 +67,12 @@ const MySelectTeam = ({
         <MenuItem value="">{label}</MenuItem>
 
         {dataValue.map((item, idx) => {
-          
-          const { name:nameTeam, logo } = item;
           return (
-            <MenuItem key={idx}  value={item.name} disabled={disabled.includes(nameTeam)}>
-              <MySelectPhotoWrap>
-                <img src={logo} alt={nameTeam} />
-                <span>{nameTeam}</span>
-              </MySelectPhotoWrap>
+            <MenuItem key={idx} value={item}>
+              <ItemWrap>
+              {item}
+
+              </ItemWrap>
             </MenuItem>
           );
         })}
@@ -81,4 +81,8 @@ const MySelectTeam = ({
   );
 };
 
-export default MySelectTeam;
+const ItemWrap = styled.p`
+  color:black;
+`
+
+export default TeamSelect;

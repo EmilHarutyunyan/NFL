@@ -40,11 +40,12 @@ export const DraftResultShare = styled.div`
 export const DraftResultWrap = styled.div`
   background: #ffffff;
   width: 100%;
-  max-width: 1075px;
+  max-width: 480px;
   background: #ffffff;
   margin: 0 auto;
   border-radius: 10px;
   margin-bottom: 100px;
+  min-height: 963px;
 `;
 
 export const DraftResultHead = styled.div`
@@ -60,6 +61,9 @@ export const DraftResultRound = styled.div`
   display: flex;
   align-items: center;
   border-bottom: 1px solid #cad2da;
+  overflow: hidden;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 `;
 
 export const DraftResultRoundItem = styled.div`
@@ -85,41 +89,68 @@ export const DraftResultTeam = styled.div`
   background-image: url(${(props) => props.backImg || ""});
   background-position: center;
   background-repeat: repeat-y;
+  height: 992px;
+  overflow-x: auto;
+  background-size: 70% 46%;
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background: #205a98;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+  }
 `;
 
 export const DraftResultTeamItem = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
+  /* align-items: center; */
+  flex-direction: column;
   border-bottom: 1px solid #e8ebef;
-  padding: 16px 0;
+  padding: 16px;
 
-  & div {
+  /* & div {
     width: calc(100% / 6);
     text-align: center;
+  } */
+`;
+export const DraftResultTeamCol = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  :last-child {
+    margin-top: 28px;
   }
   .draft-result-team {
     &-round {
       font-weight: 600;
-      font-size: 28px;
-      line-height: 60px;
+      font-size: 20px;
+      line-height: 26px;
       color: #3e464f;
-      margin-right: auto;
-      padding-left: 17px;
-      text-align: left;
     }
     &-adp {
       color: #50647b;
       font-weight: 400;
-      font-size: 20px;
-      line-height: 31px;
-      width: 35%;
+      font-size: 18px;
+      line-height: 27px;
     }
     &-log {
       display: flex;
       align-items: center;
-      gap: 15px;
-      width: 35%;
+      gap: 20px;
+      img {
+        width: 50px;
+        height: auto;
+      }
       p {
         font-weight: 600;
         font-size: 20px;
@@ -130,11 +161,22 @@ export const DraftResultTeamItem = styled.div`
     &-rating {
       display: flex;
       align-items: center;
-      margin-left: auto;
       gap: 5px;
       padding-right: 22px;
-      text-align: right;
       justify-content: flex-end;
+    }
+    &-college {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 31px;
+      color: #46484a;
+      margin-right: 50px;
+    }
+    &-pos {
+      padding: 4px 16px;
+      background-color: ${(props) => props.posColor || ""};
+      border-radius: 4px;
     }
   }
 `;
@@ -145,34 +187,13 @@ export const GradeBox = styled.p`
 `;
 export const DraftResultPick = styled.div`
   width: 100%;
-  max-width: 345px;
-  .downland-btn {
-    display: flex;
-    align-items: center;
-    color: #004ea3;
-    gap: 6px;
-    margin-bottom: 12px;
-    cursor: pointer;
-  }
-  .downland-copy {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #004ea3;
-    color: #fff;
-    gap: 6px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    max-width: 100px;
-    width: 100%;
-    padding: 8px;
-    border-radius: 5px;
-  }
+  max-width: 953px;
 `;
 export const DraftResultPickWrap = styled.div`
   width: 100%;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  overflow: hidden;
   & .draft-result-pick {
     &-logo {
       background-color: #022142;
@@ -183,12 +204,12 @@ export const DraftResultPickWrap = styled.div`
       padding: 12px 0 12px 15px;
       & img {
         display: block;
-        width: 42px;
+        width: 50px;
         height: auto;
       }
       p {
         font-weight: 400;
-        font-size: 20px;
+        font-size: 22px;
         line-height: 30px;
         color: #ffffff;
       }
@@ -202,16 +223,14 @@ export const DraftResultPickWrap = styled.div`
 
       padding: 0px 16px;
       border: 1px solid #e8ebef;
-      :last-child {
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-      }
+      
       &-info {
         display: flex;
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        margin-top: 20px;
+        margin-top: 27px;
+        margin-bottom: 26px;
       }
       &-text {
         display: flex;
@@ -222,53 +241,58 @@ export const DraftResultPickWrap = styled.div`
       }
     }
     &-round {
-      font-style: normal;
       font-weight: 600;
-      font-size: 14px;
-      line-height: 20px;
+      font-size: 20px;
+      line-height: 30px;
       color: #3e464f;
+      max-width: 60px;
+      width: 100%;
     }
     &-adp {
       font-style: normal;
       font-weight: 600;
-      font-size: 14px;
-      line-height: 20px;
+      font-size: 20px;
+      line-height: 30px;
       color: #50647b;
+      max-width: 60px;
+      width: 100%;
     }
     &-name {
-      font-style: normal;
       font-weight: 600;
-      font-size: 14px;
-      line-height: 20px;
-      text-align: center;
+      font-size: 20px;
+      line-height: 30px;
       color: #004ea3;
+      max-width: 200px;
+      width: 100%;
     }
     &-pos {
-      background: #dce6ee;
       border-radius: 4px;
       padding: 4px 16px;
       p {
         font-weight: 400;
-        font-size: 12px;
+        font-size: 14px;
         line-height: 20px;
         color: #0e1118;
       }
     }
     &-college {
-      font-style: normal;
       font-weight: 600;
-      font-size: 14px;
-      line-height: 20px;
+      font-size: 20px;
+      line-height: 30px;
       color: #46484a;
+      max-width: 140px;
+      width: 100%;
     }
     &-rating {
       display: flex;
       align-items: center;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 16px;
       line-height: 20px;
       color: #46484a;
       gap: 5px;
+      max-width: 60px;
+      width: 100%;
       &-block {
         width: 14px;
         height: 14px;
@@ -277,7 +301,9 @@ export const DraftResultPickWrap = styled.div`
     }
   }
 `;
-
+export const DraftResultPos = styled.div`
+  background-color: ${(props) => props.posColor || ""};
+`;
 export const DraftResultFooter = styled.div`
   background: #cad2da;
   border-radius: 0px 0px 10px 10px;
@@ -293,11 +319,13 @@ export const BadgesItems = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
+  column-gap: 30px;
   flex-wrap: wrap;
+  row-gap: 10px;
 `;
 export const MySelectWrap = styled.div`
   width: 100%;
+  max-width: 432px;
 `;
 
 export const TradesWrap = styled.div`
@@ -306,22 +334,132 @@ export const TradesWrap = styled.div`
 `;
 export const TradesItems = styled.div`
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-around;
-  padding: 20px 0px;
-  margin-top: 16px;
+  padding: 40px 32px;
+  margin-top: 24px;
+  .line {
+    width: 2px;
+    background-color: #cad2da;
+    
+  }
 `;
 export const TradesItem = styled.div`
   font-size: 14px;
-  width: calc(100% / 2 - 32px);
+  flex: 1;
+  :last-child {
+    margin-left: 40px;
+  }
   img {
-    width: 25px;
+    width: 70px;
     height: auto;
   }
-  h6 {
-    font-size: 14px;
+  .trades {
+    &-player {
+      margin-bottom: 8px;
+      h6 {
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 30px;
+        color: #0e1118;
+      }
+      p {
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 27px;
+        color: #0e1118;
+      }
+    }
+    &-pick {
+      margin-bottom: 24px;
+      h6 {
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 30px;
+        color: #0e1118;
+      }
+      span {
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 27px;
+        color: #0e1118;
+      }
+    }
+    &-years {
+      
+      h6 {
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 30px;
+        color: #0e1118;
+      }
+      span {
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 27px;
+        color: #0e1118;
+      }
+    }
+    
   }
   & > div:not(:first-child, :nth-child(2)) {
     margin-top: 16px;
+  }
+`;
+
+export const MockDraftWrap = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  & .draft-result-pick {
+    &-logo {
+      background-color: #022142;
+      display: flex;
+      align-items: center;
+      color: #fff;
+      gap: 20px;
+      padding: 12px 0 12px 15px;
+      & img {
+        display: block;
+        width: 50px;
+        height: auto;
+      }
+      p {
+        font-weight: 400;
+        font-size: 20px;
+        line-height: 30px;
+        color: #ffffff;
+      }
+    }
+  }
+`;
+
+export const ActionWrap = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 23px;
+  margin-bottom: 23px;
+  .downland-btn {
+    display: flex;
+    align-items: center;
+    color: #004ea3;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    color: #004ea3;
+    cursor: pointer;
+  }
+  .downland-copy {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    color: #004ea3;
+    cursor: pointer;
   }
 `;

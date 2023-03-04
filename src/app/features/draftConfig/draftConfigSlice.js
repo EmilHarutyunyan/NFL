@@ -310,7 +310,7 @@ export const fanaticPlayer = (data) => (dispatch, getState) => {
 export const checkFanaticChallenge =
   (fanatic, iteration) => (dispatch, getState) => {
     const { fanaticChallenge, teamSelectId } = selectDraftConfig(getState());
-    debugger
+    
     const checkFanatic = fanaticChallenge.some((item) => item.mode === fanatic);
     const fanaticData = checkFanatic
       ? fanaticChallenge.filter((item) => item.mode !== fanatic)
@@ -388,8 +388,11 @@ export const setDraftPlayersAction = (player) => (dispatch, getState) => {
 };
 
 export const changeTradeTeam = (tradeTeam) => (dispatch,getState) =>{
+
+  
   const { tradeValue } = selectDraftConfig(getState());
   const tradeValueSlice = tradeTeam.slice(0, tradeValue.results.length);
+  console.log('tradeValueSlice :', tradeValueSlice);
   dispatch(changeTradeValue(tradeValueSlice));
 
 }
