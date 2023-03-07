@@ -67,7 +67,7 @@ export const getTradeValue = createAsyncThunk(
       const res = await axios.get(
         `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${round}&tm=`
       );
-
+        debugger
       let teamPickIndex;
       if (!fanaticChallenge.length) {
         teamPickIndex = res.data.results

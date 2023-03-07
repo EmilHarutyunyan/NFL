@@ -325,7 +325,7 @@ export const checkFanaticChallenge =
     if (teamSelectId.length > 1) {
       dispatch(resetTeam());
     }
-    dispatch(saveRound(fanaticData.length));
+    dispatch(saveRound(fanatic));
     dispatch(setFanaticChallenge(fanaticData));
   };
 

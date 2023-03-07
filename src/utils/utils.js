@@ -131,42 +131,144 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
   let endSlice = 0;
   let newIterationTrade = [];
   let roundStart = [1];
-
+  let flagRound = false
+  let flagMode = false
+  
+  let fanaticSlices = [
+    {
+      round: 1,
+      start: null,
+      end: null,
+      challenge: false,
+      iteration: 5,
+      chose: true,
+    },
+    {
+      round: 2,
+      start: null,
+      end: null,
+      challenge: false,
+      iteration: 10,
+      chose: false,
+    },
+    {
+      round: 3,
+      start: null,
+      end: null,
+      challenge: false,
+      iteration: 15,
+      chose: false,
+    },
+  ];
   for (let i = 0; i < fanaticChallenge.length; ++i) {
-    startSlice = endSlice;
-    for (let j = endSlice; j < tradeValueData.length; ++j) {
-      if (
-        fanaticChallenge[i].mode !== +tradeValueData[j].round_index_number ||
-        endSlice + 1 === tradeValueData.length
-      ) {
-        endSlice =
-          endSlice + 1 === tradeValueData.length ? endSlice + 1 : endSlice;
-        const sliceTradeValue = tradeValueData.slice(startSlice, endSlice);
-        const iterationRound = makeRepeated(
-          sliceTradeValue,
-          fanaticChallenge[i].iteration
-        );
-        roundStart.push(endSlice + 1);
-        newIterationTrade.push(...iterationRound);
-        break;
-      }
-      endSlice++;
+    let roundName = fanaticChallenge[i].mode;
+    fanaticSlices[roundName - 1].challenge = true;
+    if (fanaticChallenge[i].mode === 3) {
+     
+      fanaticSlices[roundName - 1 - 1].chose = true;
+    }
+     fanaticSlices[roundName - 1].chose = true;
+  }
+  for (let i = 0; i < tradeValueData.length; i++) {
+    if(+tradeValueData[i].round_index_number === 1 && fanaticSlices[0].start === null ) {
+      fanaticSlices[0].start = i;
+      roundStart.push(i + 1);
+    }
+    if(+tradeValueData[i].round_index_number === 2 && fanaticSlices[1].start === null) {
+      fanaticSlices[0].end = i;
+      fanaticSlices[1].start = i;
+       roundStart.push(i + 1);
+    }
+    if(+tradeValueData[i].round_index_number === 3 && fanaticSlices[2].start === null) {
+      fanaticSlices[2].start = i;
+      fanaticSlices[1].end = i;
+       roundStart.push(i + 1);
+    }
+    if(tradeValueData.length - 1 === i) {
+      fanaticSlices[round - 1].end = i
     }
   }
+  for(let i = 0; i < fanaticSlices.length; i++) {
+    if(fanaticSlices[i].challenge) {
+        const sliceTradeValue = tradeValueData.slice(
+          fanaticSlices[i].start,
+          fanaticSlices[i].end
+        );
+        const iterationRound = makeRepeated(
+          sliceTradeValue,
+          fanaticSlices[i].iteration
+        );
+        
+        newIterationTrade.push(...iterationRound);
+    } else {
+      if(fanaticSlices[i].chose) {
+        const sliceTradeValue = tradeValueData.slice(
+          fanaticSlices[i].start,
+          fanaticSlices[i].end
+        );
+       
+        roundStart.push(endSlice + 1);
+        newIterationTrade.push(...sliceTradeValue);
+      }
+    }
+  }
+  // if(fanaticChallenge[0].mode === 1) {
+  //   const sliceTradeValue = tradeValueData.slice(fanaticSlices[0].start, fanaticSlices);
+  //         const iterationRound = makeRepeated(
+  //           sliceTradeValue,
+  //           fanaticChallenge[0].iteration
+  //         );
+  //         roundStart.push(endSlice + 1);
+  //         newIterationTrade.push(...iterationRound);
+  // }
 
-  if (round === fanaticChallenge.length) {
-    const newTradeValue = newIterationTrade.map((item, idx) => {
-      const newItem = structuredClone(item);
-      newItem["index_position"] = idx + 1;
-      return newItem;
-    });
-    return { count: newTradeValue.length, newTradeValue, roundStart };
-  } else {
-    const sliceTradeValue = tradeValueData.slice(
-      endSlice,
-      tradeValueData.length
-    );
-    const cutTradeValue = [...newIterationTrade, ...sliceTradeValue];
+  // for (let i = 0; i < fanaticChallenge.length; ++i) {
+  //   startSlice = endSlice;
+  //   for (let j = endSlice; j < tradeValueData.length; ++j) {
+  //     if(fanaticChallenge[i].mode === +tradeValueData[j].round_index_number) {
+  //       if (!flagMode) {
+  //         startSlice = j;
+  //         flagMode = true
+  //       }
+  //       flagRound = true
+  //     }
+  //     if(fanaticChallenge[i].mode < +tradeValueData[j].round_index_number && fanaticChallenge.length-1 === i) {
+  //       const sliceTradeValue = tradeValueData.slice(startSlice, endSlice);
+  //       const iterationRound = makeRepeated(
+  //         sliceTradeValue,
+  //         fanaticChallenge[i].iteration
+  //       );
+  //       roundStart.push(endSlice + 1);
+  //       newIterationTrade.push(...iterationRound);
+  //         flagMode = false
+  //     } if(!flagRound) {
+   
+  //       newIterationTrade.push(tradeValueData[j]) 
+  //     }
+  //     endSlice++;
+  //   }
+  //   //   if (
+  //   //     fanaticChallenge[i].mode !== +tradeValueData[j].round_index_number ||
+  //   //     endSlice + 1 === tradeValueData.length
+  //   //   ) {
+  //   //     endSlice =
+  //   //       endSlice + 1 === tradeValueData.length ? endSlice + 1 : endSlice;
+  //   //     const sliceTradeValue = tradeValueData.slice(startSlice, endSlice);
+  //   //     const iterationRound = makeRepeated(
+  //   //       sliceTradeValue,
+  //   //       fanaticChallenge[i].iteration
+  //   //     );
+  //   //     roundStart.push(endSlice + 1);
+  //   //     newIterationTrade.push(...iterationRound);
+  //   //     break;
+  //   //   }
+  //   //   endSlice++;
+  //   // } 
+  // }
+
+  
+
+    const cutTradeValue = [...newIterationTrade];
     const newTradeValue = cutTradeValue.map((item, idx) => {
       const newItem = structuredClone(item);
       newItem["index_position"] = idx + 1;
@@ -174,7 +276,7 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
     });
 
     return { count: newTradeValue.length, newTradeValue, roundStart };
-  }
+  
 };
 
 export const objectDeleteValue = ({ objectData, deleteKey }) => {
