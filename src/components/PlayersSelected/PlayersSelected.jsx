@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectDraftConfig } from "../../app/features/draftConfig/draftConfigSlice";
 import { selectGroup } from "../../app/features/group/groupSlice";
+import { teamNeedsData } from "../../app/features/teamNeeds/teamNeedsData";
 
 import PlayerCards from "./PlayerCards";
 import PlayerSearch from "./PlayerSearch";
@@ -10,6 +11,9 @@ import {
   PlayerFilter,
   PlayerFilterItems,
   SelectWrap,
+  TeamNeed,
+  TeamPosition,
+  TeamPositionItem,
   Wrapper,
 } from "./PlayersSelected.styles";
 import TeamSelect from "./TeamSelect";
@@ -23,8 +27,9 @@ const PlayersSelected = ({ draftPlayers, teamSelect }) => {
   const [position, setPosition] = useState("All Positions");
   const teamName = teamSelect.map((item) => item.name);
   teamName.unshift("All Team");
+  console.log('teamName :', teamName);
+  console.log('teamSelect :', teamSelect);
   const filterDraft = useMemo(() => {
-    
     const myDraft = draftPlayers.filter((item) =>
       teamPickIndexControl.includes(item.index)
     );
@@ -57,7 +62,12 @@ const PlayersSelected = ({ draftPlayers, teamSelect }) => {
     return draftData ?? myDraft;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [team, position, value, draftPlayers]);
+  debugger
+  const needsData = team !== 'All Team' ? [teamNeedsData.find(item => {
 
+    return item.round.name === team
+  })] : []
+  console.log('needsData :', needsData);
 
 
   const handleSearch = (e) => {
@@ -70,6 +80,7 @@ const PlayersSelected = ({ draftPlayers, teamSelect }) => {
     <Wrapper>
       <PlayerFilter>
         <h3>Players selected</h3>
+
         <PlayerFilterItems>
           <p>Filter</p>
           <SelectWrap>
@@ -101,6 +112,42 @@ const PlayersSelected = ({ draftPlayers, teamSelect }) => {
           </SelectWrap>
         </PlayerFilterItems>
       </PlayerFilter>
+      {needsData.length > 0 ? (
+        <TeamNeed>
+          <p>Team needs</p>
+          <TeamPosition>
+            {needsData.map((item, idx) => {
+              const { round, team_neads_info } = item;
+              console.log('team_neads_info :', team_neads_info);
+
+              debugger
+              const positions = team_neads_info
+                .map((item) => item.positions)
+                .flat();
+              return (
+                <TeamPosition>
+                  {positions.map((position, idx) => {
+                    return (
+                      <>
+                        {idx < 5 ? (
+                          <TeamPositionItem primary key={position.id}>
+                            {position.name}
+                          </TeamPositionItem>
+                        ) : (
+                          <TeamPositionItem key={position.id}>
+                            {position.name}
+                          </TeamPositionItem>
+                        )}
+                      </>
+                    );
+                  })}
+                </TeamPosition>
+              );
+            })}
+          </TeamPosition>
+        </TeamNeed>
+      ) : null}
+
       <PlayerCards draft={filterDraft} />
     </Wrapper>
   );

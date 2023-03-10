@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const Wrapper = styled.div`
   background: #f5faff;
@@ -161,4 +161,33 @@ gap:16px;
   .search-player {
     max-width: 442px;
   }
+`;
+
+export const TeamNeed = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 16px 24px;
+  p {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 27px;
+    color: #0e1118;
+  }
+`;
+export const TeamPosition = styled.ul`
+  display: flex;
+  align-items: center;
+`;
+export const TeamPositionItem = styled.li`
+  padding: 16px;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 30px;
+  color: #3e464f;
+  ${(props) =>
+    props.primary &&
+    css`
+      color: #004ea3;
+    `};
 `;
