@@ -59,6 +59,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     status,
     teamPickIndex,
     fanaticIndexPosition,
+    fanaticChallenge,
   } = useSelector(selectDraftConfig);
   const dispatch = useDispatch();
   const draftBtnDisable = draftStatus === "red" ? true : false;
@@ -110,6 +111,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
 
   const playerConcat = (playerItem, teamId, upPlayers = {}, idx) => {
     const teamItem = structuredClone(tradeValue.results[teamId - 1]);
+    console.log("teamItem :", teamItem);
     const pickTeam = teamItem["pick"];
     teamItem["player"] = playerItem;
     teamItem["playerDepth"] = idx + 1;
@@ -125,21 +127,31 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     });
 
     if (fanaticIndexPosition.length) {
-      dispatch(
-        fanaticPlayer({
-          pick: pickTeam - 1,
-          player: playerItem,
-          playerDepth: idx + 1,
-        })
-      );
+      if(fanaticChallenge[0].mode === +teamItem.round_index_number) {
+        dispatch(
+          fanaticPlayer({
+            pick: pickTeam - 1,
+            player: playerItem,
+            playerDepth: idx + 1,
+            round:+teamItem.round_index_number
+          })
+        );
+      }
     }
-    dispatch(delPlayersDraft([playerItem]));
+    const playerItemPos = {
+      ...playerItem,
+      roundTeam: +teamItem.round_index_number,
+    };
+    
+    console.log('playerItemPos :', playerItemPos);
+    dispatch(delPlayersDraft([playerItemPos]));
     dispatch(setTradeValue({ ...tradeValue, results: newTradeValue }));
     dispatch(setDraftPlayersAction({ ...teamItem, upPlayers }));
   };
 
   const playerChoose = (item, bpa) => {
     let team = teamPickIndex[0] ?? fanaticIndexPosition[0];
+    const teamItem = structuredClone(tradeValue.results[team - 1]);
     let playerItem = { ...item };
     let percentPlayers = [];
     const teamName = tradeValue.results[team - 1].round.name;
@@ -147,26 +159,32 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
 
     const realValue = teamValue >= item[teamName] ? teamValue : item[teamName];
     // if (bpa > 0 && bpa < 11) {
-      const pricentValue = percentPick(realValue, item[teamName]);
-      let playerItemsSlice = playersDraft.results.slice(0, 10);
+    const pricentValue = percentPick(realValue, item[teamName]);
+    let playerItemsSlice = playersDraft.results.slice(0, 10);
 
-      for (let i = 0; i < playersDraft.results.length; ++i) {
-        if (playersDraft.results[i].id === playerItem.id) {
-          playerItemsSlice.push(playersDraft.results[i]);
-          break;
-        } else {
-          playerItemsSlice.push(playersDraft.results[i]);
-        }
+    for (let i = 0; i < playersDraft.results.length; ++i) {
+      if (playersDraft.results[i].id === playerItem.id) {
+        playerItemsSlice.push(playersDraft.results[i]);
+        break;
+      } else {
+        playerItemsSlice.push(playersDraft.results[i]);
       }
+    }
 
-      percentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
-      playerItem = { ...item, [teamName]: item.value + pricentValue };
+    percentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
+    playerItem = { ...item, [teamName]: item.value + pricentValue };
     // }
+    const playerItemPos = {
+      ...playerItem,
+      roundTeam: +teamItem.round_index_number,
+    };
+
+    console.log("playerItemPos :", playerItemPos);
 
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft(["All"]));
     playerConcat(playerItem, team, percentPlayers, bpa);
-    dispatch(setPlayerManualChoose(playerItem));
+    dispatch(setPlayerManualChoose(playerItemPos));
     dispatch(delTeamsRound(teamPickIndex[0]));
     dispatch(delFanaticPosition(fanaticIndexPosition[0]));
 
@@ -174,7 +192,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     // setChangeId(true);
     dispatch(setCountRender());
   };
-  
+
   return (
     <>
       {playersDraft.loading ? (
@@ -207,19 +225,21 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                   </>
                 )}
               </div>
-              <PicksInfo>
-                <p>Remaining picks</p>
-                <TeamPickIndex>
-                  {teamPickIndex.map((item, idx) => {
-                    return (
-                      <span key={idx}>
-                        {item}
-                        {idx === teamPickIndex.length - 1 ? null : ","}
-                      </span>
-                    );
-                  })}
-                </TeamPickIndex>
-              </PicksInfo>
+              {fanaticChallenge.length === 0 ? (
+                <PicksInfo>
+                  <p>Remaining picks</p>
+                  <TeamPickIndex>
+                    {teamPickIndex.map((item, idx) => {
+                      return (
+                        <span key={idx}>
+                          {item}
+                          {idx === teamPickIndex.length - 1 ? null : ","}
+                        </span>
+                      );
+                    })}
+                  </TeamPickIndex>
+                </PicksInfo>
+              ) : null}
             </SelectTeam>
             <Search
               value={searchValue}
@@ -262,7 +282,6 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                 <>
                   {playersDraft.results.length > 0 &&
                     currentTableData.playersDataSlice.map((item, idx) => {
-                      
                       return (
                         <DraftPlayerItem
                           key={idx}

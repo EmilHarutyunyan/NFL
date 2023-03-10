@@ -15,12 +15,10 @@ export const percentPick = (teamValue, playerValue, percent = 50) => {
 export const dataURLtoBlob = (dataurl) => {
   var arr = dataurl.split(","),
     mime = arr[0].match(/:(.*?);/)[1],
-   
-    
     bstr = atob(arr[1]),
     n = bstr.length,
     u8arr = new Uint8Array(n);
-     console.log("mime :", mime);
+  console.log("mime :", mime);
   while (n--) {
     u8arr[n] = bstr.charCodeAt(n);
   }
@@ -127,14 +125,15 @@ export const makeRepeated = (arr, repeats) =>
   }).flat();
 
 export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
-  let startSlice = 0;
-  let endSlice = 0;
-  let newIterationTrade = [];
+  let newTradeValueIteration = [];
   let roundStart = [1];
-  let flagRound = false
-  let flagMode = false
-  
-  let fanaticSlices = [
+  const iterationSection = [];
+  let fanaticSlices = {
+    1: [],
+    2: [],
+    3: [],
+  };
+  let fanaticSlicesRound = [
     {
       round: 1,
       start: null,
@@ -142,6 +141,7 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
       challenge: false,
       iteration: 5,
       chose: true,
+      roundRange: [],
     },
     {
       round: 2,
@@ -150,6 +150,7 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
       challenge: false,
       iteration: 10,
       chose: false,
+      roundRange: [],
     },
     {
       round: 3,
@@ -158,125 +159,79 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
       challenge: false,
       iteration: 15,
       chose: false,
+      roundRange: [],
     },
   ];
-  for (let i = 0; i < fanaticChallenge.length; ++i) {
-    let roundName = fanaticChallenge[i].mode;
-    fanaticSlices[roundName - 1].challenge = true;
-    if (fanaticChallenge[i].mode === 3) {
-     
-      fanaticSlices[roundName - 1 - 1].chose = true;
-    }
-     fanaticSlices[roundName - 1].chose = true;
+  const iterationRound = makeRepeated(
+    tradeValueData,
+    fanaticChallenge[0].iteration
+  );
+  newTradeValueIteration.push(...iterationRound);
+  for (let i = 1; i <= fanaticChallenge[0].iteration; i++) {
+    iterationSection.push(tradeValueData.length * i);
   }
+
   for (let i = 0; i < tradeValueData.length; i++) {
-    if(+tradeValueData[i].round_index_number === 1 && fanaticSlices[0].start === null ) {
-      fanaticSlices[0].start = i;
+    if (
+      +tradeValueData[i].round_index_number === 1 &&
+      fanaticSlicesRound[0].start === null
+    ) {
+      fanaticSlicesRound[0].start = i;
       roundStart.push(i + 1);
     }
-    if(+tradeValueData[i].round_index_number === 2 && fanaticSlices[1].start === null) {
-      fanaticSlices[0].end = i;
-      fanaticSlices[1].start = i;
-       roundStart.push(i + 1);
+    if (
+      +tradeValueData[i].round_index_number === 2 &&
+      fanaticSlicesRound[1].start === null
+    ) {
+      fanaticSlicesRound[0].end = i;
+      fanaticSlicesRound[1].start = i;
+      roundStart.push(i + 1);
     }
-    if(+tradeValueData[i].round_index_number === 3 && fanaticSlices[2].start === null) {
-      fanaticSlices[2].start = i;
-      fanaticSlices[1].end = i;
-       roundStart.push(i + 1);
+    if (
+      +tradeValueData[i].round_index_number === 3 &&
+      fanaticSlicesRound[2].start === null
+    ) {
+      fanaticSlicesRound[2].start = i;
+      fanaticSlicesRound[1].end = i;
+      roundStart.push(i + 1);
     }
-    if(tradeValueData.length - 1 === i) {
-      fanaticSlices[round - 1].end = i
+    if (tradeValueData.length - 1 === i) {
+      fanaticSlicesRound[round - 1].end = i;
     }
   }
-  for(let i = 0; i < fanaticSlices.length; i++) {
-    if(fanaticSlices[i].challenge) {
-        const sliceTradeValue = tradeValueData.slice(
-          fanaticSlices[i].start,
-          fanaticSlices[i].end
-        );
-        const iterationRound = makeRepeated(
-          sliceTradeValue,
-          fanaticSlices[i].iteration
-        );
-        
-        newIterationTrade.push(...iterationRound);
-    } else {
-      if(fanaticSlices[i].chose) {
-        const sliceTradeValue = tradeValueData.slice(
-          fanaticSlices[i].start,
-          fanaticSlices[i].end
-        );
-       
-        roundStart.push(endSlice + 1);
-        newIterationTrade.push(...sliceTradeValue);
+
+  for(let i = 0; i < fanaticSlicesRound.length; i++) {
+    for (let j = 1; j <= fanaticChallenge[0].iteration; j++) {
+      if (fanaticSlicesRound[i].roundRange.length === 0) {
+        fanaticSlicesRound[i].roundRange.push({
+          start: fanaticSlicesRound[i].start + 1 * j,
+          end: fanaticSlicesRound[i].end * j,
+        });
+
+      } else {
+        fanaticSlicesRound[i].roundRange.push({
+          start: fanaticSlicesRound[i].roundRange[j - 2].end,
+          end: fanaticSlicesRound[i].end * j,
+        });
       }
     }
   }
-  // if(fanaticChallenge[0].mode === 1) {
-  //   const sliceTradeValue = tradeValueData.slice(fanaticSlices[0].start, fanaticSlices);
-  //         const iterationRound = makeRepeated(
-  //           sliceTradeValue,
-  //           fanaticChallenge[0].iteration
-  //         );
-  //         roundStart.push(endSlice + 1);
-  //         newIterationTrade.push(...iterationRound);
-  // }
 
-  // for (let i = 0; i < fanaticChallenge.length; ++i) {
-  //   startSlice = endSlice;
-  //   for (let j = endSlice; j < tradeValueData.length; ++j) {
-  //     if(fanaticChallenge[i].mode === +tradeValueData[j].round_index_number) {
-  //       if (!flagMode) {
-  //         startSlice = j;
-  //         flagMode = true
-  //       }
-  //       flagRound = true
-  //     }
-  //     if(fanaticChallenge[i].mode < +tradeValueData[j].round_index_number && fanaticChallenge.length-1 === i) {
-  //       const sliceTradeValue = tradeValueData.slice(startSlice, endSlice);
-  //       const iterationRound = makeRepeated(
-  //         sliceTradeValue,
-  //         fanaticChallenge[i].iteration
-  //       );
-  //       roundStart.push(endSlice + 1);
-  //       newIterationTrade.push(...iterationRound);
-  //         flagMode = false
-  //     } if(!flagRound) {
-   
-  //       newIterationTrade.push(tradeValueData[j]) 
-  //     }
-  //     endSlice++;
-  //   }
-  //   //   if (
-  //   //     fanaticChallenge[i].mode !== +tradeValueData[j].round_index_number ||
-  //   //     endSlice + 1 === tradeValueData.length
-  //   //   ) {
-  //   //     endSlice =
-  //   //       endSlice + 1 === tradeValueData.length ? endSlice + 1 : endSlice;
-  //   //     const sliceTradeValue = tradeValueData.slice(startSlice, endSlice);
-  //   //     const iterationRound = makeRepeated(
-  //   //       sliceTradeValue,
-  //   //       fanaticChallenge[i].iteration
-  //   //     );
-  //   //     roundStart.push(endSlice + 1);
-  //   //     newIterationTrade.push(...iterationRound);
-  //   //     break;
-  //   //   }
-  //   //   endSlice++;
-  //   // } 
-  // }
-
-  
-
-    const cutTradeValue = [...newIterationTrade];
-    const newTradeValue = cutTradeValue.map((item, idx) => {
-      const newItem = structuredClone(item);
-      newItem["index_position"] = idx + 1;
-      return newItem;
-    });
-
-    return { count: newTradeValue.length, newTradeValue, roundStart };
-  
+  const cutTradeValue = [...newTradeValueIteration];
+  const newTradeValue = cutTradeValue.map((item, idx) => {
+    const newItem = structuredClone(item);
+    fanaticSlices[`${item.round_index_number}`].push(idx + 1);
+    newItem["index_position"] = idx + 1;
+    return newItem;
+  });
+  const sliceRound = fanaticSlicesRound
+  return {
+    count: newTradeValue.length,
+    newTradeValue,
+    roundStart,
+    iterationSection,
+    fanaticSlicesRound: {sliceRound,iterationSection},
+  };
 };
 
 export const objectDeleteValue = ({ objectData, deleteKey }) => {
@@ -305,10 +260,10 @@ export const filteredArray = ({ arr, arr2, key }) => {
   return filterArr;
 };
 
-export const  loadImage = (src) => {
+export const loadImage = (src) => {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.src = src
+    img.src = src;
     img.onload = () => {
       const canvas = document.createElement("canvas");
 
@@ -332,4 +287,4 @@ export const  loadImage = (src) => {
     };
     img.src = src;
   });
-}
+};

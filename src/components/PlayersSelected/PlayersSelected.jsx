@@ -58,7 +58,7 @@ const PlayersSelected = ({ draftPlayers, teamSelect }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [team, position, value, draftPlayers]);
 
-  console.log("filterDraft :", filterDraft);
+
 
   const handleSearch = (e) => {
     const name = e.target.value;

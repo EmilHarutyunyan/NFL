@@ -221,7 +221,8 @@ const Settings = ({ teamSelect }) => {
                 checked={fanaticChallenge.some((item) => item.mode === 2)}
                 nameClass={"setting-check"}
                 value={2}
-                disabled={!(userInfo?.fanatic_mode > 0)}
+                // disabled={!(userInfo?.fanatic_mode > 0)}
+                disabled={false}
                 onInputChange={(e) =>
                   dispatch(checkFanaticChallenge(+e.target.value, 10))
                 }

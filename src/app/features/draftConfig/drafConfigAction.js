@@ -4,6 +4,7 @@ import { API_ENDPOINT } from "../../../config/config";
 import { iterationRound } from "../../../utils/utils";
 import {
   setFanaticIndexPosition,
+  setIterationSection,
   setRoundStart,
   setTeamPickIndex,
 } from "./draftConfigSlice";
@@ -67,7 +68,7 @@ export const getTradeValue = createAsyncThunk(
       const res = await axios.get(
         `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${round}&tm=`
       );
-        debugger
+        
       let teamPickIndex;
       if (!fanaticChallenge.length) {
         teamPickIndex = res.data.results
@@ -75,14 +76,20 @@ export const getTradeValue = createAsyncThunk(
           .map((team) => team.index);
           dispatch(setTeamPickIndex(teamPickIndex));
       }
-
-
+      
+      
       if (fanaticChallenge.length) {
-        const { count, newTradeValue, roundStart } = iterationRound({
+        const {
+          count,
+          newTradeValue,
+          roundStart,
+          fanaticSlicesRound,
+        } = iterationRound({
           fanaticChallenge,
           tradeValueData: res.data.results,
           round,
         });
+        console.log('fanaticSlicesRound :', fanaticSlicesRound);
 
         const indexPositions = newTradeValue
           .filter((team) => teamSelectId.includes(team.round.index))
@@ -90,6 +97,7 @@ export const getTradeValue = createAsyncThunk(
 
         dispatch(setFanaticIndexPosition(indexPositions));
         dispatch(setRoundStart(roundStart));
+        dispatch(setIterationSection(fanaticSlicesRound));
         
         teamPickIndex = newTradeValue
           .filter((team) => teamSelect[0].name === team.round.name)

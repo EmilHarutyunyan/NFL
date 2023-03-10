@@ -55,6 +55,7 @@ const DraftViewAsign = ({ players, thisId }) => {
     fanaticIndexPosition,
     fanaticPickId,
     fanaticPlayerBefore,
+    fanaticChallenge,
   } = useSelector(selectDraftConfig);
   const divRef = useRef(null);
   const roundArr = useRef([]);
@@ -76,7 +77,7 @@ const DraftViewAsign = ({ players, thisId }) => {
         let newTradeValue = {};
         let tradeValueTeam = structuredClone(tradeValue.results[countRender]);
         let teamDepth = [];
-
+        
         const playersAll = players.results;
         let player = {};
         let roundIndexBool = false;
@@ -98,8 +99,11 @@ const DraftViewAsign = ({ players, thisId }) => {
           roundIndexBool = true;
           dispatch(delRoundBPA(tradeValueTeam.round_index_number));
         }
-
-        if (fanaticPickId?.includes(tradeValueTeam["pick"])) {
+        
+        if (
+          fanaticPickId?.includes(tradeValueTeam["pick"]) &&
+          +tradeValueTeam["round_index_number"] === fanaticChallenge[0].mode
+        ) {
           player = fanaticPlayerBefore.filter(
             (item) => item.pick === tradeValueTeam["pick"]
           )[0];
@@ -206,10 +210,10 @@ const DraftViewAsign = ({ players, thisId }) => {
                       <p>Pick</p>
                       <p>{id}</p>
                     </div>
-                    <div className="pick">
+                    {/* <div className="pick">
                       <p>Position</p>
                       <p>{team?.index_position}</p>
-                    </div>
+                    </div> */}
                   </>
                 ) : (
                   <div className="pick">

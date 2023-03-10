@@ -36,20 +36,32 @@ export const getPlayersDraft = createAsyncThunk(
       const {
         playersDraft: {
           playerChoose,
-          playerManualChoose,    
+          playerManualChoose,
           playerIterationChoose,
         },
-        draftConfig: { fanaticChallenge },
+        draftConfig: { fanaticChallenge, iterationSection, countRender },
       } = getState();
       const resData = { ...res.data };
 
 
       // Fanatic Choose
       if(fanaticChallenge.length) {
-        const playerIteration = [
-          ...playerIterationChoose,
-          ...playerManualChoose,
-        ];
+      
+        const playerReset = iterationSection.iterationSection.includes(
+          countRender
+          )
+          ? []
+          : playerIterationChoose;
+        const playerManualFlag = playerReset.length > 0 ? false : true;
+        let playerManualFilter = playerManualChoose;
+        if (playerManualFlag) {
+
+          playerManualFilter = playerManualChoose.filter(item => !(item.roundTeam < fanaticChallenge[0].mode))
+          console.log('playerManualFilter :', playerManualFilter);
+         
+          dispatch(setPlayerManualChooseNew(playerManualFilter));
+        }
+        const playerIteration = [...playerReset, ...playerManualFilter];
         const playerChooseId = playerIteration.map((el) => el.id);
         const resDataResult = resData.results.filter(
           (player) => !playerChooseId.includes(player.id)
@@ -196,6 +208,9 @@ export const playersDraftSlice = createSlice({
     setPlayerManualChoose: (state, action) => {
       state.playerManualChoose.push(action.payload);
     },
+    setPlayerManualChooseNew: (state, action) => {
+      state.playerManualChoose = action.payload;
+    },
     setIteration: (state, action) => {
       state.iteration = action.payload;
     },
@@ -280,6 +295,7 @@ export const {
   setPlayerManualChoose,
   setIteration,
   setPlayerIterationChoose,
+  setPlayerManualChooseNew,
 } = playersDraftSlice.actions;
 
 // Action Creator Thunk
@@ -328,6 +344,7 @@ export const colleageAction = (colleageValue) => (dispatch, getState) => {
   }
 };
 export const delPlayersDraft = (players,iter=1) => (dispatch, getState) => {
+console.log('iter :', iter);
   const {
     playersDraft: { results, playerChoose, iteration, playerManualChoose,playerIterationChoose },
   } = getState();

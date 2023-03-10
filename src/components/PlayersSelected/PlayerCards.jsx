@@ -37,7 +37,7 @@ const PlayerCards = ({ draft }) => {
     const { isFirstItemVisible, scrollPrev } =
     React.useContext(VisibilityContext);
     
-    console.log('isFirstItemVisible :', isFirstItemVisible);
+  
     return (
       <Arrow disabled={isFirstItemVisible} onClick={() => scrollPrev()}>
         <MdOutlineKeyboardArrowLeft />
