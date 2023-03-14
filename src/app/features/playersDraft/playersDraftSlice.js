@@ -27,9 +27,10 @@ export const getPlayersDraft = createAsyncThunk(
   "playersDraft/getPlayersDraft",
   async (config, { dispatch, getState, rejectWithValue }) => {
     try {
+      
       const res = await axios.get(
         `${API_ENDPOINT}players/?limit=${
-          config.playerCountGet
+          1000
         }&offset=${0}&search=&position=&school&ordering=-${config.teamName}`
       );
       
@@ -39,26 +40,25 @@ export const getPlayersDraft = createAsyncThunk(
           playerManualChoose,
           playerIterationChoose,
         },
-        draftConfig: { fanaticChallenge, iterationSection, countRender },
+        draftConfig: { fanaticChallenge, iterationSection, countRender,tradeValue },
       } = getState();
       const resData = { ...res.data };
 
 
       // Fanatic Choose
       if(fanaticChallenge.length) {
-      
         const playerReset = iterationSection.iterationSection.includes(
           countRender
-          )
+        )
           ? []
           : playerIterationChoose;
         const playerManualFlag = playerReset.length > 0 ? false : true;
         let playerManualFilter = playerManualChoose;
         if (playerManualFlag) {
+          playerManualFilter = playerManualChoose.filter(
+            (item) => !(item.roundTeam < fanaticChallenge[0].mode)
+          );
 
-          playerManualFilter = playerManualChoose.filter(item => !(item.roundTeam < fanaticChallenge[0].mode))
-          console.log('playerManualFilter :', playerManualFilter);
-         
           dispatch(setPlayerManualChooseNew(playerManualFilter));
         }
         const playerIteration = [...playerReset, ...playerManualFilter];
@@ -66,10 +66,42 @@ export const getPlayersDraft = createAsyncThunk(
         const resDataResult = resData.results.filter(
           (player) => !playerChooseId.includes(player.id)
         );
-        resData.results = resDataResult.map((item, idx) => {
-          return { ...item, bpa: idx + 1 };
-        });
+        const playerFanaticFlag =
+          +tradeValue.results[countRender].round_index_number ===
+          fanaticChallenge[0].mode;
+
+        if (playerFanaticFlag) {
+          const playerSet = new Set(playerChooseId);;
+          if (fanaticChallenge[0].mode === 2) {
+              const newData = resDataResult.slice(
+                32,
+                resDataResult.length
+              );
+              
+              resData.results = newData.map((item, idx) => {
+                return { ...item, bpa: idx + 63 };
+              });
+          }
+          if (fanaticChallenge[0].mode === 3) {
+            const newData = resDataResult.slice(
+              27,
+              resDataResult.length
+            );
+              
+            resData.results = newData.map((item, idx) => {
+              return { ...item, bpa: idx + 90 };
+            });
+          }
+        } else {
+          resData.results = resDataResult.map((item, idx) => {
+            return { ...item, bpa: idx + 1 };
+          });
+        }
+        // resData.results = resDataResult.map((item, idx) => {
+        //   return { ...item, bpa: idx + 1 };
+        // });
       }
+      
       // Filter Choose Players
       if (playerChoose.length && !fanaticChallenge.length) {
         const playerChooseId = playerChoose.map((el) => el.id);
@@ -77,10 +109,6 @@ export const getPlayersDraft = createAsyncThunk(
           (player) => !playerChooseId.includes(player.id)
         );
         resData.results = resDataResult.map((item, idx) => {
-          return { ...item, bpa: idx + 1 };
-        });
-      } else {
-        resData.results = resData.results.map((item, idx) => {
           return { ...item, bpa: idx + 1 };
         });
       }
@@ -372,3 +400,32 @@ console.log('iter :', iter);
 };
 
 export default playersDraftSlice.reducer;
+
+
+// ----------------------
+// if (playerFanaticFlag) {
+//   if (fanaticChallenge[0].mode === 2) {
+//     resData.results = resDataResult
+//       .slice(
+//         iterationSection.sliceRound[fanaticChallenge[0].mode - 1].end + 49,
+//         resDataResult.length
+//       )
+//       .map((item, idx) => {
+//         return { ...item, bpa: idx + 63 };
+//       });
+//   }
+//   if (fanaticChallenge[0].mode === 3) {
+//     resData.results = resDataResult
+//       .slice(
+//         iterationSection.sliceRound[fanaticChallenge[0].mode - 1].end + 27,
+//         resDataResult.length
+//       )
+//       .map((item, idx) => {
+//         return { ...item, bpa: idx + 90 };
+//       });
+//   }
+// } else {
+//   resData.results = resDataResult.map((item, idx) => {
+//     return { ...item, bpa: idx + 1 };
+//   });
+// }

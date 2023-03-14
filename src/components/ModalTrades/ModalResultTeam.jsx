@@ -13,8 +13,7 @@ const ModalResultTeam = ({title='',historyTrades=[],mainTeam={},myTeam={},name='
               item.myTeam.name === myTeam.name &&
               item.mainTeam.name === mainTeam.name
             ) {
-              console.log(item);
-              console.log(item[`${name}`]);
+
               return (
                 <React.Fragment name={idx}>
                   <img src={item[name].logo} alt={item[name].name} />

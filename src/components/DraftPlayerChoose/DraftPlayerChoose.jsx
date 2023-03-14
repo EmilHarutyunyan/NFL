@@ -111,7 +111,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
 
   const playerConcat = (playerItem, teamId, upPlayers = {}, idx) => {
     const teamItem = structuredClone(tradeValue.results[teamId - 1]);
-    console.log("teamItem :", teamItem);
+    
     const pickTeam = teamItem["pick"];
     teamItem["player"] = playerItem;
     teamItem["playerDepth"] = idx + 1;
@@ -143,7 +143,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
       roundTeam: +teamItem.round_index_number,
     };
     
-    console.log('playerItemPos :', playerItemPos);
+
     dispatch(delPlayersDraft([playerItemPos]));
     dispatch(setTradeValue({ ...tradeValue, results: newTradeValue }));
     dispatch(setDraftPlayersAction({ ...teamItem, upPlayers }));
@@ -179,7 +179,6 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
       roundTeam: +teamItem.round_index_number,
     };
 
-    console.log("playerItemPos :", playerItemPos);
 
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft(["All"]));

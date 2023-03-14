@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectDraftConfig } from "../../app/features/draftConfig/draftConfigSlice";
 import { selectGroup } from "../../app/features/group/groupSlice";
-import { teamNeedsData } from "../../app/features/teamNeeds/teamNeedsData";
+
 
 import PlayerCards from "./PlayerCards";
 import PlayerSearch from "./PlayerSearch";
@@ -21,14 +21,13 @@ import TeamSelect from "./TeamSelect";
 const PlayersSelected = ({ draftPlayers, teamSelect }) => {
   const { teamPickIndexControl } = useSelector(selectDraftConfig);
   const { positions } = useSelector(selectGroup);
+  const {tradeValue} = useSelector(selectDraftConfig)
 
   const [value, setValue] = useState("");
   const [team, setTeam] = useState("All Team");
   const [position, setPosition] = useState("All Positions");
   const teamName = teamSelect.map((item) => item.name);
   teamName.unshift("All Team");
-  console.log('teamName :', teamName);
-  console.log('teamSelect :', teamSelect);
   const filterDraft = useMemo(() => {
     const myDraft = draftPlayers.filter((item) =>
       teamPickIndexControl.includes(item.index)
@@ -62,12 +61,10 @@ const PlayersSelected = ({ draftPlayers, teamSelect }) => {
     return draftData ?? myDraft;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [team, position, value, draftPlayers]);
-  debugger
-  const needsData = team !== 'All Team' ? [teamNeedsData.find(item => {
 
-    return item.round.name === team
+  const needsData = team !== 'All Team' ? [tradeValue.results.find(item => {
+    return item.team_neads_info.round.name === team;
   })] : []
-  console.log('needsData :', needsData);
 
 
   const handleSearch = (e) => {
@@ -117,11 +114,8 @@ const PlayersSelected = ({ draftPlayers, teamSelect }) => {
           <p>Team needs</p>
           <TeamPosition>
             {needsData.map((item, idx) => {
-              const { round, team_neads_info } = item;
-              console.log('team_neads_info :', team_neads_info);
-
-              debugger
-              const positions = team_neads_info
+              const { team_neads_info } = item;
+              const positions = team_neads_info.team_neads_info
                 .map((item) => item.positions)
                 .flat();
               return (

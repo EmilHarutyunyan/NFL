@@ -18,7 +18,7 @@ export const dataURLtoBlob = (dataurl) => {
     bstr = atob(arr[1]),
     n = bstr.length,
     u8arr = new Uint8Array(n);
-  console.log("mime :", mime);
+
   while (n--) {
     u8arr[n] = bstr.charCodeAt(n);
   }
@@ -279,7 +279,6 @@ export const loadImage = (src) => {
       const pngDataUrl = canvas.toDataURL("image/png");
 
       // Use the PNG data URL as needed
-      console.log(pngDataUrl);
       resolve(pngDataUrl);
     };
     img.onerror = (e) => {

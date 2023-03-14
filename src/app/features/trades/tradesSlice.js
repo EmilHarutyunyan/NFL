@@ -377,7 +377,7 @@ export const changeTeamInfo = () => (dispatch, getState) => {
     arr: newMyTeamPicksYears,
     key: "id",
   });
-  console.log('sortNewMyTeamPicksYears :', sortNewMyTeamPicksYears);
+;
 
   const newMainTeam = {
     ...mainTeam,

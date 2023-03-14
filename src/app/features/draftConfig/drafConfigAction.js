@@ -89,7 +89,7 @@ export const getTradeValue = createAsyncThunk(
           tradeValueData: res.data.results,
           round,
         });
-        console.log('fanaticSlicesRound :', fanaticSlicesRound);
+
 
         const indexPositions = newTradeValue
           .filter((team) => teamSelectId.includes(team.round.index))

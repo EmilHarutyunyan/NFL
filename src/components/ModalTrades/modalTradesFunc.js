@@ -11,7 +11,7 @@ export default function changeTeamPick({
   const teamPickIndex = structuredClone(teamPick);
   const myTeamPickIndex = structuredClone(myTeamPick);
   const dataTradeValue = structuredClone(tradeValue);
-  console.log('dataTradeValue first:', dataTradeValue);
+
   
   if (acceptFlag) {
     for (let i = 0; i < myTeamPickIndex.length; i++) {
@@ -22,7 +22,7 @@ export default function changeTeamPick({
         ...myTeamPickClone,
         ...teamMainData,
       };
-      console.log("myPick",dataTradeValue[myTeamPickSort[i] - 1]);
+
     }
     for (let i = 0; i < teamPickSort.length; i++) {
       let teamPickClone = JSON.parse(
@@ -32,9 +32,9 @@ export default function changeTeamPick({
         ...teamPickClone,
         ...myTeamData,
       };
-       console.log("mainPick", dataTradeValue[teamPickSort[i] - 1]);
+       
     }
-    console.log(dataTradeValue);
+
     return {
       tradeValue: dataTradeValue,
       teamPickIndex,

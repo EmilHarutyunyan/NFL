@@ -10,9 +10,10 @@ const Home = () => {
       <img src={homeLogo} alt="logo" />
       <h1>NFL Mock Draft Simulator</h1>
       <p>
-        Practice for your draft with fast mocks against realistic opponents.
+        Mock draft against fan picks for all 32 teams. See players move up and
+        down team specific player boards. Try your mock drafts here, this is not
+        your linear mock draft simulator
       </p>
-      <p>Take full control of your favorite team's every move</p>
       <Link to="/select-draft">
         <Button btnClassName="start-draft" btnText={"Start a mock draft"} />
       </Link>

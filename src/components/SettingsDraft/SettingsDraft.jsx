@@ -224,7 +224,7 @@ const Settings = ({ teamSelect }) => {
                 // disabled={!(userInfo?.fanatic_mode > 0)}
                 disabled={false}
                 onInputChange={(e) =>
-                  dispatch(checkFanaticChallenge(+e.target.value, 10))
+                  dispatch(checkFanaticChallenge(+e.target.value, 3))
                 }
               />
             </div>
@@ -236,7 +236,7 @@ const Settings = ({ teamSelect }) => {
                 value={3}
                 disabled={false}
                 onInputChange={(e) =>
-                  dispatch(checkFanaticChallenge(+e.target.value, 15))
+                  dispatch(checkFanaticChallenge(+e.target.value, 2))
                 }
               />
             </div>

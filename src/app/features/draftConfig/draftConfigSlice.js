@@ -305,7 +305,7 @@ export const fanaticPlayer = (data) => (dispatch, getState) => {
   const { fanaticPickId, fanaticPlayerBefore,  } =
     selectDraftConfig(getState());
   const {pick} = data;
-  debugger
+  
   const addOrIgnore = fanaticPickId.includes(pick)
     ? fanaticPickId
     : [...fanaticPickId, pick];
@@ -331,6 +331,8 @@ export const checkFanaticChallenge =
       dispatch(setFanaticChallenge([]));
 
     } else {
+      dispatch(setDraftCardDepth(initialState.maxDraftCardDepth));
+       dispatch(setDraftRandomness(initialState.maxDraftRandomness));
        dispatch(setFanaticChallenge([{ mode: fanatic, iteration }]));
     }
   };
