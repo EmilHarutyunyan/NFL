@@ -48,22 +48,39 @@ export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexCont
   for (let i = 1; i <= round; ++i) {
     setRound.push(`Round ${i}`)
   }
-  
-  for (let index of teamPickIndexControl) {
-    
-    for (let team of teams) {
-      if (index === team.index) {
-        const teamNameItem = team.round.name;
-        if (teamsPlayer[teamNameItem]) {
-          teamsPlayer[teamNameItem].push(team);
-        } else {
-          teamsPlayer[teamNameItem] = [team]; 
+debugger
+  if (fanatic_mode) {
+    for (let index of teamPickIndexControl) {
+
+        const team = teams[index-1]
+        if (index === team.index_position) {
+          const teamNameItem = team.round.name;
+          if (teamsPlayer[teamNameItem]) {
+            teamsPlayer[teamNameItem].push(team);
+          } else {
+            teamsPlayer[teamNameItem] = [team];
+          }
+          if (team?.player?.bpa === 1) {
+            bpa_badges++;
+          }
         }
-        if (team?.player?.bpa === 1) {
-          bpa_badges++;
+  
+    }
+  } else {
+    for (let index of teamPickIndexControl) {
+      for (let team of teams) {
+        if (index === team.index) {
+          const teamNameItem = team.round.name;
+          if (teamsPlayer[teamNameItem]) {
+            teamsPlayer[teamNameItem].push(team);
+          } else {
+            teamsPlayer[teamNameItem] = [team];
+          }
+          if (team?.player?.bpa === 1) {
+            bpa_badges++;
+          }
         }
       }
-
     }
   }
   

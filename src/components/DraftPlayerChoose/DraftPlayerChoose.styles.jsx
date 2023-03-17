@@ -43,6 +43,22 @@ export const NumWrapper = styled.div`
   align-items: center;
   flex-wrap: wrap;
   margin-top: 24px;
+  .trades-btn button{
+    background: #004ea3;
+    border-radius: 4px;
+    padding: 12px 24px;
+    font-weight: 400;
+    border: none;
+    color: #fff;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    cursor: pointer;
+    justify-content: center;
+  }
 `;
 export const NumItem = styled.div`
   width: 53.12px;

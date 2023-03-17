@@ -26,20 +26,30 @@ import { searchInfo } from "../../utils/utils";
 import { TEAM_NEEDS } from "../../utils/constants";
 import Spinner from "../../components/Spinner/Spinner";
 import { PlayerListIcon } from "../../components/Icons/Icons";
+import { getTeams, getTradeValue } from "../../app/features/draftConfig/drafConfigAction";
+import {
+  selectDraftConfig,
+} from "../../app/features/draftConfig/draftConfigSlice";
 const TeamNeeds = () => {
   const [expanded, setExpanded] = useState(false);
   const dispatch = useDispatch();
   const { teamNeeds,loading } = useSelector(selectTeamNeeds);
+  const { teams, tradeValue } = useSelector(selectDraftConfig);
+
   const initial = useRef(true);
   const navigate = useNavigate();
   useEffect(() => {
     if (initial.current) {
       initial.current = false;
+      dispatch(getTeams());
       dispatch(getTeamNeeds());
+      dispatch(getTradeValue(7));
     }
-    return () => dispatch(resTeamNeeds())
+    // return () => dispatch(resTeamNeeds())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
@@ -54,14 +64,29 @@ const TeamNeeds = () => {
   return (
     <Wrapper className="main-container">
       <Title titleText="Team Needs" />
-      {teamNeeds.length
-        ? teamNeeds.map((team, idx) => {
-            const { round, team_neads_info: teamNeedsInfo } = team;
-            
-            const teamInfo = searchInfo(TEAM_NEEDS, round, (item) => item.name);
+      {teams.length && tradeValue.mouthing
+        ? teams.map((team, idx) => {
+            const teamInfo = searchInfo(TEAM_NEEDS, team, (item) => item.name);
+            const teamNeedsInfo = teamNeeds.find(
+              (item) => item.round.index === team.index
+            ).team_neads_info;
+
             const positions = teamNeedsInfo
               .map((item) => item.positions)
               .flat();
+
+            const pickInfo = [];
+            
+            tradeValue.results.forEach((item) => {
+              if (item.round.index === team.index) {
+                if (pickInfo[`R${item.round_index_number}`]) {
+                  pickInfo[`R${item.round_index_number}`].push(item.index);
+                } else {
+                  pickInfo[`R${item.round_index_number}`] = [item.index];
+                }
+              }
+            });
+        
 
             return (
               <AccordionWrapper key={idx}>
@@ -101,8 +126,8 @@ const TeamNeeds = () => {
                           <p className="tema-info-name-need">Needs</p>
                         </div>
                         <ImgWrap>
-                          <img src={round?.logo} alt={round?.name} />
-                          <p>{round?.name}</p>
+                          <img src={team?.logo} alt={team?.name} />
+                          <p>{team?.name}</p>
                         </ImgWrap>
                       </TeamInfo>
 
@@ -126,46 +151,20 @@ const TeamNeeds = () => {
                     </TeamSummary>
                     <PlayerList
                       onClick={() =>
-                        handleNavigation(`/team-list?list=${round?.name}`,{name:round?.name,logo:round?.logo})
+                        handleNavigation(`/team-list?list=${team?.name}`, {
+                          name: team?.name,
+                          logo: team?.logo,
+                        })
                       }
                     >
-                        <PlayerListIcon />
-                        <p>Players list</p>
+                      <PlayerListIcon />
+                      <p>Players list</p>
                     </PlayerList>
                   </AccordionSummary>
                   <AccordionDetails>
                     <DraftPicks
                       title={"2023 Pre-Draft Picks"}
-                      dataRound={[
-                        {
-                          round: "R1",
-                          roundValue: "21",
-                        },
-                        {
-                          round: "R1",
-                          roundValue: "21",
-                        },
-                        {
-                          round: "R1",
-                          roundValue: "21",
-                        },
-                        {
-                          round: "R1",
-                          roundValue: "21",
-                        },
-                        {
-                          round: "R1",
-                          roundValue: "21",
-                        },
-                        {
-                          round: "R1",
-                          roundValue: "21",
-                        },
-                        {
-                          round: "R1",
-                          roundValue: "21",
-                        },
-                      ]}
+                      dataRound={pickInfo}
                     />
 
                     <HalfCircleChart

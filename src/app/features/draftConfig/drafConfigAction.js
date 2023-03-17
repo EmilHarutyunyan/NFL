@@ -60,13 +60,14 @@ export const getTeams = createAsyncThunk(
 
 export const getTradeValue = createAsyncThunk(
   "draftConfig/getTradeValue",
-  async (_, { dispatch, rejectWithValue, getState }) => {
+  async (manualRound, { dispatch, rejectWithValue, getState }) => {
     try {
       const {
         draftConfig: { round, teamSelect,teamSelectId, fanaticChallenge },
       } = getState();
+      const roundSet = manualRound || round
       const res = await axios.get(
-        `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${round}&tm=`
+        `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${roundSet}&tm=`
       );
         
       let teamPickIndex;

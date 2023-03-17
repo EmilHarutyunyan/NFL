@@ -48,6 +48,7 @@ import { percentPick, upUsersCals } from "../../utils/utils";
 import { Switch } from "@mui/material";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallBack from "../ErrorFallBack/ErrorFallBack";
+import { manualTradeAction, setAcceptTrade, setChangeTrades, setManualTrade, setResetSelectTeam, teamMountAction } from "../../app/features/trades/tradesSlice";
 
 const PageSize = 10;
 const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
@@ -275,6 +276,13 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                   onChange={() => setColorShow((prev) => !prev)}
                 />
               </div>
+              {fanaticChallenge.length === 0 ?  <div className="trades-btn"><button onClick={()=> {
+                dispatch(setChangeTrades(false))
+                dispatch(manualTradeAction({countRender, manualTrade:true}));
+                dispatch(setResetSelectTeam());
+                dispatch(setAcceptTrade(false));
+                }}>Trades</button></div> : null}
+             
             </NumWrapper>
             <DraftPlayerWrapper>
               <DraftPlayerItems>

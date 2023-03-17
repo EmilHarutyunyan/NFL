@@ -47,47 +47,64 @@ export const getPlayersDraft = createAsyncThunk(
 
       // Fanatic Choose
       if(fanaticChallenge.length) {
-        const playerReset = iterationSection.iterationSection.includes(
-          countRender
-        )
-          ? []
-          : playerIterationChoose;
-        const playerManualFlag = playerReset.length > 0 ? false : true;
-        let playerManualFilter = playerManualChoose;
-        if (playerManualFlag) {
-          playerManualFilter = playerManualChoose.filter(
-            (item) => !(item.roundTeam < fanaticChallenge[0].mode)
+        let playerReset;
+        let playerManualFlag = false;
+        let playerIteration;
+        let playerChooseId;
+        let resDataResult;
+        let playerFanaticFlag;
+        if(fanaticChallenge[0].mode !== 1) {
+          playerReset = iterationSection.iterationSection.includes(countRender)
+            ? []
+            : playerIterationChoose;
+          playerManualFlag = playerReset.length > 0 ? false : true;
+          let playerManualFilter = playerManualChoose;
+
+          if (playerManualFlag) {
+            playerManualFilter = playerManualChoose.filter(
+              (item) => !(item.roundTeam < fanaticChallenge[0].mode)
+            );
+
+            dispatch(setPlayerIterationChoose([]));
+            dispatch(setPlayerManualChooseNew(playerManualFilter));
+          }
+          playerIteration = [...playerReset, ...playerManualFilter];
+          playerChooseId = playerIteration.map((el) => el.id);
+          resDataResult = resData.results.filter(
+            (player) => !playerChooseId.includes(player.id)
           );
-
-          dispatch(setPlayerManualChooseNew(playerManualFilter));
-        }
-        const playerIteration = [...playerReset, ...playerManualFilter];
-        const playerChooseId = playerIteration.map((el) => el.id);
-        const resDataResult = resData.results.filter(
-          (player) => !playerChooseId.includes(player.id)
-        );
-        const playerFanaticFlag =
-          +tradeValue.results[countRender].round_index_number ===
-          fanaticChallenge[0].mode;
-
-        if (playerFanaticFlag) {
-          const playerSet = new Set(playerChooseId);;
-          if (fanaticChallenge[0].mode === 2) {
-              const newData = resDataResult.slice(
-                32,
-                resDataResult.length
+           playerFanaticFlag =
+            +tradeValue.results[countRender].round_index_number ===
+            fanaticChallenge[0].mode;
+        } else {
+              playerIteration = [
+                ...playerIterationChoose,
+                ...playerManualChoose,
+              ];
+              playerChooseId = playerIteration.map((el) => el.id);
+               resDataResult = resData.results.filter(
+                (player) => !playerChooseId.includes(player.id)
               );
-              
-              resData.results = newData.map((item, idx) => {
-                return { ...item, bpa: idx + 63 };
+              resData.results = resDataResult.map((item, idx) => {
+                return { ...item, bpa: idx + 1 };
               });
+            }
+        
+        
+        
+        
+            
+        if (playerFanaticFlag && fanaticChallenge.length !== 0 && fanaticChallenge[0].mode !== 1) {
+          if (fanaticChallenge[0].mode === 2) {
+            const newData = resDataResult.slice(31, resDataResult.length);
+
+            resData.results = newData.map((item, idx) => {
+              return { ...item, bpa: idx + 63 };
+            });
           }
           if (fanaticChallenge[0].mode === 3) {
-            const newData = resDataResult.slice(
-              27,
-              resDataResult.length
-            );
-              
+            const newData = resDataResult.slice(32, resDataResult.length);
+
             resData.results = newData.map((item, idx) => {
               return { ...item, bpa: idx + 90 };
             });
@@ -111,6 +128,13 @@ export const getPlayersDraft = createAsyncThunk(
         resData.results = resDataResult.map((item, idx) => {
           return { ...item, bpa: idx + 1 };
         });
+      }
+      if (!playerChoose.length && !fanaticChallenge.length) {
+        let resDataResult = structuredClone(resData.results);
+        resData.results = resDataResult.map((item, idx) => {
+          return { ...item, bpa: idx + 1 };
+        });
+
       }
       dispatch(setPlayersDraft(resData));
     } catch (error) {
@@ -374,7 +398,7 @@ export const colleageAction = (colleageValue) => (dispatch, getState) => {
 export const delPlayersDraft = (players,iter=1) => (dispatch, getState) => {
 console.log('iter :', iter);
   const {
-    playersDraft: { results, playerChoose, iteration, playerManualChoose,playerIterationChoose },
+    playersDraft: { results, playerChoose, playerManualChoose,playerIterationChoose },
   } = getState();
   
   // const delPlayers = [...players,...playerChoose]
@@ -383,19 +407,19 @@ console.log('iter :', iter);
   const playersId = players.map((player) => player.id);
   const playerData = results.filter((item) => !playersId.includes(item.id));
   
-  if (iter !== iteration) {
+  // if (iter !== iteration) {
 
-    dispatch(setIteration(iter))
-    dispatch(setPlayerIterationChoose([...players]));
-  } else {
+  //   dispatch(setIteration(iter))
+  //   dispatch(setPlayerIterationChoose([...players]));
+  // } else {
     dispatch(
       setPlayerIterationChoose([
         ...players,
         ...playerIterationChoose,
-        ...playerManualChoose,
+        
       ])
     );
-  }
+  // }
   dispatch(setNewPlayers(playerData));
 };
 

@@ -409,7 +409,7 @@ const DraftResult = () => {
 
                         <div className="draft-result-team-rating">
                           <GradeBox color={grading?.color}></GradeBox>
-                          <p>{grading.grade}</p>
+                          <p>{grading?.grade}</p>
                         </div>
                       </DraftResultTeamCol>
                       <DraftResultTeamCol>

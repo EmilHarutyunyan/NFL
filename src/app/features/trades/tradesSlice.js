@@ -19,6 +19,9 @@ const initialState = {
   tradeValue: [],
   historyTrades: [],
   tradePlayerYears: [],
+  manualTrade: false,
+
+
 };
 
 export const getTrades = createAsyncThunk(
@@ -129,8 +132,23 @@ export const tradesSlice = createSlice({
     setChangeTrades: (state, action) => {
       state.changeTrades = action.payload;
     },
+    setManualTrade: (state,action) => {
+      state.manualTrade = action.payload
+    },
     setTradePlayerYears: (state, action) => {
       state.tradePlayerYears = action.payload;
+    },
+    setTradeValueTrade: (state,action) => {
+      state.tradeValue = action.payload
+    },
+    setReserveTradeValue: (state,action) => {
+      state.reserveTradeValue = action.payload
+    },
+    setResetSelectTeam: (state,_) => {
+      state.myTeam = initialState.myTeam;
+      state.mainTeam = initialState.mainTeam;
+      state.mainTeams = initialState.mainTeams;
+      state.myTeams = initialState.mainTeams;
     },
 
     setResetTrades: (state, _) => {
@@ -151,6 +169,7 @@ export const tradesSlice = createSlice({
       state.tradeValue = initialState.tradeValue;
       state.historyTrades = initialState.historyTrades;
       state.tradePlayerYears = initialState.tradePlayerYears;
+      state.manualTrade = initialState.manualTrade;
     },
   },
   extraReducers: {
@@ -197,9 +216,37 @@ export const {
   setMyTeam,
   setMyTeams,
   setMainTeams,
+  setManualTrade,
+  setTradeValueTrade,
+  setReserveTradeValue,
+  setResetSelectTeam,
 } = tradesSlice.actions;
 
 // Action Creator
+
+export const manualTradeAction =
+  ({ countRender,manualTrade }) =>
+  (dispatch, getState) => {
+    const { tradeValue } = selectTrades(getState());
+    
+    if(manualTrade) {
+      console.log("tradeValue", tradeValue);
+      console.log(
+        "tradeValue Slice",
+        tradeValue.slice(countRender + 1, tradeValue.length)
+      );
+        dispatch(
+          setTradeValueTrade(
+            tradeValue.slice(countRender + 1, tradeValue.length)
+          )
+        );
+        dispatch(setManualTrade(manualTrade))
+       
+    } else {
+      dispatch(setManualTrade(manualTrade));
+    }
+  };
+
 export const historyTradesAction = (historyData) => (dispatch, getState) => {
   const { historyTrades } = selectTrades(getState());
   dispatch(setHistoryTrades([...historyTrades, historyData]));

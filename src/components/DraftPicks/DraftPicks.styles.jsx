@@ -17,17 +17,26 @@ export const DraftPicksWrap = styled.div`
 
 export const DraftPicksBlock = styled.div`
  
-  padding: 41px;
+  padding: 41px 0;
     background: #004EA3;
     border-radius: 4px;
+    max-width: 120px;
+    width: 100%;
+    p:last-child {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      justify-content: center;
+    }
 
 `
 
 export const DraftPicksBlocks = styled.div`
-     display: flex;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   color: #FFFFFF;
+  gap:10px;
     p {
       font-style: normal;
       font-weight: 600;

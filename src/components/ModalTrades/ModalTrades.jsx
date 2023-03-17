@@ -15,6 +15,7 @@ import {
   setAcceptCount,
   setAcceptTrade,
   setChangeTrades,
+  setManualTrade,
   setNotAccept,
   setTeamTradeValue,
   teamAddPicks,
@@ -52,16 +53,22 @@ const ModalTrades = ({ tradesTeams, teamSelect }) => {
     notAccept,
     acceptTrade,
     historyTrades,
+    changeTrades,
+    manualTrade,
+    reserveTradeValue,
   } = useSelector(selectTrades);
 
-  const [open, setOpen] = useState(true);
-  const [openFlag, seOpenFlag] = useState(true);
+  const {tradeValue:tradeValueResults} = useSelector(selectDraftConfig)
+
+  const [open, setOpen] = useState(!changeTrades);
+  const [openFlag, seOpenFlag] = useState(!changeTrades);
 
   const dispatch = useDispatch();
   const handleClose = () => {
     setOpen(false);
     dispatch(setChangeTrades(true));
     seOpenFlag(false);
+    dispatch(setManualTrade(false));
   };
 
   useEffect(() => {
@@ -71,6 +78,7 @@ const ModalTrades = ({ tradesTeams, teamSelect }) => {
   }, []);
 
   useEffect(() => {
+    
     const mainTeamData = mainTeams?.filter(
       (item) => item.name === mainTeam.name
     );
@@ -106,6 +114,7 @@ const ModalTrades = ({ tradesTeams, teamSelect }) => {
   }, [mainTeam?.name, tradeValue]);
 
   useEffect(() => {
+    
     const myTeamData = myTeams?.filter((item) => item.name === myTeam.name);
     if (myTeam?.name && tradeValue.length) {
       if (!myTeamData.length) {
@@ -194,11 +203,11 @@ const ModalTrades = ({ tradesTeams, teamSelect }) => {
           "pick",
         ],
       });
-      
+      const tradeValueData = manualTrade ? tradeValueResults.results : tradeValue;
       const newTradesValue = changeTeamPick({
         teamPick: mainTeam.pick.map((item) => item.index),
         myTeamPick: myTeam.pick.map((item) => item.index),
-        tradeValue,
+        tradeValue: tradeValueData,
         acceptFlag,
         teamMainData,
         myTeamData,

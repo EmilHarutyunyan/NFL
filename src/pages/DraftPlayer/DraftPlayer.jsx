@@ -210,10 +210,13 @@ const DraftPlayer = () => {
             </>
           )}
         </DraftView>
-        {fanaticChallenge.length === 0 ? (tradesTeams && tradesTeams.length > 0 && (
-          <ModalTrades tradesTeams={tradesTeams} teamSelect={teamSelect} />
-        )): null}
-        
+        {fanaticChallenge.length === 0
+          ? tradesTeams &&
+            tradesTeams.length > 0 &&
+            !changeTrades && (
+              <ModalTrades tradesTeams={tradesTeams} teamSelect={teamSelect} />
+            )
+          : null}
 
         <hr className="line" />
       </Wrapper>
