@@ -19,7 +19,7 @@ const initialState = {
   positionPlayer: ["All"],
   timeSpeed: 5,
   draftPlayers: [],
-  draftCardDepth: 2,
+  draftCardDepth: 8,
   draftRandomness: 2,
   maxDraftCardDepth: 8,
   maxDraftRandomness: 16,

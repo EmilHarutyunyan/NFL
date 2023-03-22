@@ -153,9 +153,9 @@ const TeamList = () => {
                             <p>ADP</p>
                             <span>{item?.adp}</span>
                           </div>
-                          {/* <div className="player-td player-adp">
+                          <div className="player-td player-adp">
                             <p>{item[`${team.name}`].toFixed(2)}</p>
-                          </div> */}
+                          </div>
 
                           <h4 className="player-td player-name">
                             {item.player}
