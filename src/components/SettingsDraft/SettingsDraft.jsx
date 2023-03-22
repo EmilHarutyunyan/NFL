@@ -22,6 +22,9 @@ import {
   setDraftRandomness,
   setRoundDepth,
   setTimeSpeed,
+  setFanaticMode,
+  setFanaticModeValue,
+  fanaticModeAction,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { CheckBoxInputSecond } from "../Inputs/CheckBoxInputSecond";
 import arrowLeft from "../../assets/img/arrow-left.png";
@@ -43,6 +46,8 @@ const Settings = ({ teamSelect }) => {
     roundDepth,
     roundBPA,
     fanaticChallenge,
+    fanaticMode,
+    fanaticModeValue,
   } = useSelector(selectDraftConfig);
 
   const roundsArray = Array.from(Array(7).keys());
@@ -170,7 +175,7 @@ const Settings = ({ teamSelect }) => {
               label={"1nd round BPA"}
               nameClass={"setting-check"}
               value={1}
-              disabled={!(round >= 1)}
+              disabled={!(round >= 1 && !fanaticMode)}
               onInputChange={(e) => dispatch(checkRoundBPA(e.target.value))}
             />
             <CheckBoxInputSecond
@@ -178,7 +183,7 @@ const Settings = ({ teamSelect }) => {
               label={"2nd round BPA"}
               nameClass={"setting-check"}
               value={2}
-              disabled={!(round >= 2)}
+              disabled={!(round >= 2 && !fanaticMode)}
               onInputChange={(e) => dispatch(checkRoundBPA(e.target.value))}
             />
           </SettingItem>
@@ -222,9 +227,9 @@ const Settings = ({ teamSelect }) => {
                 nameClass={"setting-check"}
                 value={2}
                 // disabled={!(userInfo?.fanatic_mode > 0)}
-                disabled={false}
+                disabled={fanaticMode}
                 onInputChange={(e) =>
-                  dispatch(checkFanaticChallenge(+e.target.value, 10))
+                  dispatch(checkFanaticChallenge(+e.target.value, 3))
                 }
               />
             </div>
@@ -234,16 +239,42 @@ const Settings = ({ teamSelect }) => {
                 checked={fanaticChallenge.some((item) => item.mode === 3)}
                 nameClass={"setting-check"}
                 value={3}
-                disabled={false}
+                // disabled={!(userInfo?.fanatic_mode > 1)}
+                disabled={fanaticMode}
                 onInputChange={(e) =>
-                  dispatch(checkFanaticChallenge(+e.target.value, 15))
+                  dispatch(checkFanaticChallenge(+e.target.value, 3))
                 }
               />
             </div>
             <div className="setting-fan-item">
               <p>Fanatic mode</p>
-              <Switch />
+              <Switch
+                checked={fanaticMode}
+                onChange={(e) => dispatch(fanaticModeAction(e.target.checked))}
+              />
             </div>
+            {fanaticMode && (
+              <div className="setting-fan-item">
+                <Box sx={{ width: "100%" }}>
+                  <Slider
+                    step={1}
+                    min={2}
+                    max={8}
+                    value={fanaticModeValue}
+                    defaultValue={1}
+                    onChange={(e) =>
+                      dispatch(setFanaticModeValue(e.target.value))
+                    }
+                    aria-label="Default"
+                    valueLabelDisplay="auto"
+                  />
+                  <SettingMarks>
+                    <span>Less (2)</span>
+                    <span>More (8)</span>
+                  </SettingMarks>
+                </Box>
+              </div>
+            )}
           </SettingItem>
         </>
       )}

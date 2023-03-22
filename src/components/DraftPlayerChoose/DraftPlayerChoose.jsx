@@ -61,6 +61,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     teamPickIndex,
     fanaticIndexPosition,
     fanaticChallenge,
+    fanaticMode,
   } = useSelector(selectDraftConfig);
   const dispatch = useDispatch();
   const draftBtnDisable = draftStatus === "red" ? true : false;
@@ -127,7 +128,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
       return item;
     });
 
-    if (fanaticIndexPosition.length) {
+    if (fanaticChallenge.length) {
       if(fanaticChallenge[0].mode === +teamItem.round_index_number) {
         dispatch(
           fanaticPlayer({
@@ -276,7 +277,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                   onChange={() => setColorShow((prev) => !prev)}
                 />
               </div>
-              {fanaticChallenge.length === 0 ?  <div className="trades-btn"><button onClick={()=> {
+              {fanaticChallenge.length === 0 && !fanaticMode ?  <div className="trades-btn"><button onClick={()=> {
                 dispatch(setChangeTrades(false))
                 dispatch(manualTradeAction({countRender, manualTrade:true}));
                 dispatch(setResetSelectTeam());

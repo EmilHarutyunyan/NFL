@@ -56,6 +56,7 @@ const DraftViewAsign = ({ players, thisId }) => {
     fanaticPickId,
     fanaticPlayerBefore,
     fanaticChallenge,
+    fanaticMode,
   } = useSelector(selectDraftConfig);
   const divRef = useRef(null);
   const roundArr = useRef([]);
@@ -176,12 +177,12 @@ const DraftViewAsign = ({ players, thisId }) => {
             round_index: roundIndex,
             index_position: indexPosition,
             round: { logo, name },
-            
+            iteration,
           } = team;
 
           const checkTeam = delayTime({ id, indexPosition });
           const time = thisId ? +(id - thisId) * (1000 / timeSpeed) : checkTeam;
-          const teamActive = fanaticIndexPosition.length ? fanaticIndexPosition.includes(indexPosition) : teamPickIndex.includes(id)
+          const teamActive = fanaticIndexPosition.length  ? fanaticIndexPosition.includes(indexPosition) : teamPickIndex.includes(id)
                   
           // Round Text
           if (roundStart.includes(id)) {
@@ -195,7 +196,7 @@ const DraftViewAsign = ({ players, thisId }) => {
             <React.Fragment key={idx}>
               {roundCheck ? (
                 <li className="round" key={Math.random()}>
-                  {roundIndex}
+                  {roundIndex} {iteration && `Iteration ${iteration}`}
                 </li>
               ) : null}
               <li

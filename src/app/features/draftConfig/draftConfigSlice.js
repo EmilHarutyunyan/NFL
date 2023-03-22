@@ -37,21 +37,27 @@ const initialState = {
   tradeValue: { mouthing: false },
   iterationSection: [],
   changeTrade: false,
+  fanaticMode:false,
+  fanaticModeValue:2
 };
 
 export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
-    setIterationSection: (state,action) => {
-    
-      state.iterationSection = action.payload
+    setFanaticModeValue: (state, action) => {
+      state.fanaticModeValue = action.payload;
+    },
+    setFanaticMode: (state, action) => {
+      state.fanaticMode = action.payload;
+    },
+    setIterationSection: (state, action) => {
+      state.iterationSection = action.payload;
     },
     setFanaticPickId: (state, action) => {
       state.fanaticPickId = action.payload;
     },
     setFanaticPlayerBefore: (state, action) => {
-      
       state.fanaticPlayerBefore = action.payload;
     },
     setFanaticIndexPosition: (state, action) => {
@@ -172,11 +178,11 @@ export const draftConfigSlice = createSlice({
         (item) => action.payload !== item
       );
     },
-    resetTeam:(state,_) => {
+    resetTeam: (state, _) => {
       state.teamSelectId = initialState.teamSelectId;
       state.teamSelect = initialState.teamSelect;
     },
-    
+
     setResetRound: (state, _) => {
       state.draftCardDepth = initialState.draftCardDepth;
       state.draftRandomness = initialState.draftRandomness;
@@ -206,12 +212,13 @@ export const draftConfigSlice = createSlice({
       state.roundStart = initialState.roundStart;
       state.fanaticIndexPosition = initialState.fanaticIndexPosition;
       state.fanaticPlayerBefore = initialState.fanaticPlayerBefore;
-      state.bpaCalculated = initialState.bpaCalculated
-      state.selectCardDepth = initialState.selectCardDepth
-      state.roundDepth = initialState.roundDepth
-      state.roundBPA = initialState.roundBPA
+      state.bpaCalculated = initialState.bpaCalculated;
+      state.selectCardDepth = initialState.selectCardDepth;
+      state.roundDepth = initialState.roundDepth;
+      state.roundBPA = initialState.roundBPA;
       state.iterationSection = initialState.iterationSection;
-
+      state.fanaticMode = initialState.fanaticMode;
+      state.fanaticModeValue = initialState.fanaticModeValue;
     },
   },
   extraReducers: {
@@ -241,6 +248,8 @@ export const draftConfigSlice = createSlice({
 export const selectDraftConfig = (state) => state.draftConfig;
 
 export const {
+  setFanaticModeValue,
+  setFanaticMode,
   setIterationSection,
   setFanaticPickId,
   setFanaticPlayerBefore,
@@ -292,6 +301,17 @@ const teamRound = (round, teamSelectId) => {
 
 // Actions Creator
 
+export const fanaticModeAction = (checked) => (dispatch,getState) =>{
+  dispatch(setFanaticMode(checked))
+  if(checked) {
+    // dispatch(setDraftCardDepth(initialState.maxDraftCardDepth));
+    // dispatch(setDraftRandomness(initialState.maxDraftRandomness));
+  }
+  dispatch(setRoundBPA([]))
+  dispatch(setFanaticChallenge([]));
+
+
+}
 
 export const checkRoundBPA = (round) => (dispatch, getState) => {
   const { roundBPA } = selectDraftConfig(getState());
@@ -331,8 +351,8 @@ export const checkFanaticChallenge =
       dispatch(setFanaticChallenge([]));
 
     } else {
-      dispatch(setDraftCardDepth(initialState.maxDraftCardDepth));
-       dispatch(setDraftRandomness(initialState.maxDraftRandomness));
+      //  dispatch(setDraftCardDepth(initialState.maxDraftCardDepth));
+      //  dispatch(setDraftRandomness(initialState.maxDraftRandomness));
        dispatch(setFanaticChallenge([{ mode: fanatic, iteration }]));
     }
   };

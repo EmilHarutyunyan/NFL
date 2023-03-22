@@ -84,6 +84,7 @@ export const DraftResultRoundItem = styled.div`
 export const DraftResultFull = styled.div`
   display: flex;
   gap: 21px;
+  align-items: flex-start;
 `;
 export const DraftResultTeam = styled.div`
   background-image: url(${(props) => props.backImg || ""});

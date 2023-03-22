@@ -36,8 +36,10 @@ let sumNumber = (num) => {
 export const upUsersCals = (players, pricentValuePlayer, key) => {
   const point = sumNumber(players.length - 1);
   const midPoint = pricentValuePlayer / point;
+
   return players.map((player, idx) => {
     const pricentValue = +(midPoint * (players.length - idx - 1)).toFixed(2);
+    console.log(+(player[key] - pricentValue));
     if (idx === players.length - 1) {
       return {
         ...player,
@@ -233,6 +235,17 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
     fanaticSlicesRound: {sliceRound,iterationSection},
   };
 };
+
+export const iterationFanaticMode = ({fanaticModeValue, tradeValueData}) => {
+
+  const iterationRound = makeRepeated(tradeValueData, fanaticModeValue);
+  const newTradeValue = iterationRound.map((item, idx) => {
+    const newItem = structuredClone(item);
+    newItem["index_position"] = idx + 1;
+    return newItem;
+  });
+  return {newTradeValue};
+}
 
 export const objectDeleteValue = ({ objectData, deleteKey }) => {
   const objectDelete = Object.keys(objectData)

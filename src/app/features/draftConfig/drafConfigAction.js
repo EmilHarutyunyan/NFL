@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_ENDPOINT } from "../../../config/config";
-import { iterationRound } from "../../../utils/utils";
+import { iterationFanaticMode, iterationRound } from "../../../utils/utils";
 import {
   setFanaticIndexPosition,
   setIterationSection,
@@ -63,7 +63,7 @@ export const getTradeValue = createAsyncThunk(
   async (manualRound, { dispatch, rejectWithValue, getState }) => {
     try {
       const {
-        draftConfig: { round, teamSelect,teamSelectId, fanaticChallenge },
+        draftConfig: { round, teamSelect,teamSelectId, fanaticChallenge,fanaticMode,fanaticModeValue },
       } = getState();
       const roundSet = manualRound || round
       const res = await axios.get(
@@ -71,7 +71,7 @@ export const getTradeValue = createAsyncThunk(
       );
         
       let teamPickIndex;
-      if (!fanaticChallenge.length) {
+      if (!fanaticChallenge.length && !fanaticMode) {
         teamPickIndex = res.data.results
           .filter((team) => teamSelectId.includes(team.round.index))
           .map((team) => team.index);
@@ -79,7 +79,7 @@ export const getTradeValue = createAsyncThunk(
       }
       
       
-      if (fanaticChallenge.length) {
+      if (fanaticChallenge.length && !fanaticMode) {
         const {
           count,
           newTradeValue,
@@ -108,7 +108,25 @@ export const getTradeValue = createAsyncThunk(
         dispatch(setTeamPickIndex(teamPickIndex));
 
         return { ...res.data, count, results: newTradeValue };
-      } else {
+      } 
+      if(fanaticMode) {
+        const { newTradeValue } = iterationFanaticMode({
+          fanaticModeValue,
+          tradeValueData: res.data.results,
+        });
+        const indexPositions = newTradeValue
+          .filter((team) => teamSelectId.includes(team.round.index))
+          .map((item) => item["index_position"]);
+
+          teamPickIndex = newTradeValue
+          .filter((team) => teamSelect[0].name === team.round.name)
+          .map((team) => team["index_position"]);
+          
+        dispatch(setFanaticIndexPosition(indexPositions));
+        dispatch(setTeamPickIndex(teamPickIndex));
+        return { ...res.data, count: newTradeValue.length, results: newTradeValue };
+      }
+      else {
         return res.data;
       }
     } catch (error) {

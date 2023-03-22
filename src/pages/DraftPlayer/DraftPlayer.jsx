@@ -57,6 +57,7 @@ const DraftPlayer = () => {
     fanaticChallenge,
     draftCardDepth,
     fanaticIndexPosition,
+    fanaticMode,
   } = useSelector(selectDraftConfig);
 
   const { tradesTeams, changeTrades } = useSelector(selectTrades);
@@ -87,16 +88,21 @@ const DraftPlayer = () => {
         !teamPickIndex.length &&
         countRender !== tradeValue.results.length)
     ) {
-      let madalFlag = fanaticChallenge.length && !changeTrades ? 1 : changeTrades
-      if (madalFlag) {
+      let modalFlag = ((fanaticChallenge.length && !changeTrades) || fanaticMode) ? 1 : changeTrades
+      if (modalFlag) {
         const team = tradeValue.results[countRender];
         const teamName = team.round.name;
         const teamPosition = team["index_position"] ?? 0;
         let teamManual = teamSelect.some((item) => item.name === teamName);
-        let playerCountGet = !teamManual
-          ? draftCardDepth + team.index + teamPosition
-          : PLAYER_MAX;
-        dispatch(getPlayersDraft({ playerCountGet, teamName }));
+        let playerCountGet = !teamManual 
+        ? draftCardDepth + team.index + teamPosition
+        : PLAYER_MAX;
+        dispatch(
+          getPlayersDraft({
+            playerCountGet: playerCountGet,
+            teamName,
+          })
+        );
         // }
       }
     }
@@ -143,7 +149,6 @@ const DraftPlayer = () => {
           position: player.position,
           upPlayers,
         };
-
         data.items.push(dataItem);
       });
       dispatch(
@@ -210,7 +215,7 @@ const DraftPlayer = () => {
             </>
           )}
         </DraftView>
-        {fanaticChallenge.length === 0
+        {fanaticChallenge.length === 0 && !fanaticMode
           ? tradesTeams &&
             tradesTeams.length > 0 &&
             !changeTrades && (

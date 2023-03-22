@@ -37,34 +37,31 @@ export const { setDraftResult, setRoundTeam, setTeamsName, setTeamsPlayer, resDr
 
 export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexControl, draftRandomnessTeam) => (dispatch, getState) => {
 
-  const {draftConfig: {fanaticChallenge}} = getState()
+  const {draftConfig: {fanaticChallenge,fanaticMode}} = getState()
   
   const setRound = []
   const teamsSelectName = teamSelect.map(item => item.name)
   const teamsPlayer = {}
   let bpa_badges = 0;
   const fanatic_mode = fanaticChallenge.length;
-  
+  const fanatic = fanaticChallenge.length || fanaticMode;
   for (let i = 1; i <= round; ++i) {
     setRound.push(`Round ${i}`)
   }
-debugger
-  if (fanatic_mode) {
+  if (fanatic) {
     for (let index of teamPickIndexControl) {
-
-        const team = teams[index-1]
-        if (index === team.index_position) {
-          const teamNameItem = team.round.name;
-          if (teamsPlayer[teamNameItem]) {
-            teamsPlayer[teamNameItem].push(team);
-          } else {
-            teamsPlayer[teamNameItem] = [team];
-          }
-          if (team?.player?.bpa === 1) {
-            bpa_badges++;
-          }
+      const team = teams[index - 1];
+      if (index === team.index_position) {
+        const teamNameItem = team.round.name;
+        if (teamsPlayer[teamNameItem]) {
+          teamsPlayer[teamNameItem].push(team);
+        } else {
+          teamsPlayer[teamNameItem] = [team];
         }
-  
+        if (team?.player?.bpa === 1) {
+          bpa_badges++;
+        }
+      }
     }
   } else {
     for (let index of teamPickIndexControl) {

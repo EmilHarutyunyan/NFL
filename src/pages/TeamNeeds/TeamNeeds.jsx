@@ -58,7 +58,7 @@ const TeamNeeds = () => {
     navigate(query, { state: team });
   }
 
-  if (loading) {
+  if (!tradeValue.mouthing) {
     return <Spinner />;
   }
   return (
