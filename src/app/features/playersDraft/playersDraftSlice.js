@@ -43,15 +43,13 @@ export const getPlayersDraft = createAsyncThunk(
           fanaticChallenge,
           iterationSection,
           countRender,
-          tradeValue,
-          fanaticIndexPosition,
         },
       } = getState();
       const resData = { ...res.data };
       let playerReset = []
       let playerManualFlag = false;
       // Fanatic Choose
-      console.log('iterationSection :', iterationSection);
+  
       if (fanaticChallenge.length) {
           playerReset = iterationSection.iterationSection.includes(countRender)
             ? []
@@ -350,9 +348,9 @@ export const colleageAction = (colleageValue) => (dispatch, getState) => {
   }
 };
 export const delPlayersDraft = (players,iter=1) => (dispatch, getState) => {
-console.log('iter :', iter);
+
   const {
-    playersDraft: { results, playerChoose, playerManualChoose,playerIterationChoose },
+    playersDraft: { results, playerChoose, playerIterationChoose },
   } = getState();
   
   // const delPlayers = [...players,...playerChoose]

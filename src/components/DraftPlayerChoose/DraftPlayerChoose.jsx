@@ -48,7 +48,7 @@ import { percentPick, upUsersCals } from "../../utils/utils";
 import { Switch } from "@mui/material";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallBack from "../ErrorFallBack/ErrorFallBack";
-import { manualTradeAction, setAcceptTrade, setChangeTrades, setManualTrade, setResetSelectTeam, teamMountAction } from "../../app/features/trades/tradesSlice";
+import { manualTradeAction, setAcceptTrade, setChangeTrades, setResetSelectTeam, } from "../../app/features/trades/tradesSlice";
 
 const PageSize = 10;
 const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
@@ -163,18 +163,20 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     // if (bpa > 0 && bpa < 11) {
     const pricentValue = percentPick(realValue, item[teamName]);
     let playerItemsSlice = playersDraft.results.slice(0, 10);
-
-    for (let i = 0; i < playersDraft.results.length; ++i) {
-      if (playersDraft.results[i].id === playerItem.id) {
-        playerItemsSlice.push(playersDraft.results[i]);
-        break;
-      } else {
-        playerItemsSlice.push(playersDraft.results[i]);
-      }
-    }
+    playerItemsSlice.push(playerItem);
+    
+    // for (let i = 0; i < playersDraft.results.length; ++i) {
+    //   if (playersDraft.results[i].id === playerItem.id) {
+    //     playerItemsSlice.push(playersDraft.results[i]);
+    //     break;
+    //   } else {
+    //     playerItemsSlice.push(playersDraft.results[i]);
+    //   }
+    // }
 
     percentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
     playerItem = { ...item, [teamName]: item.value + pricentValue };
+  
     // }
     const playerItemPos = {
       ...playerItem,

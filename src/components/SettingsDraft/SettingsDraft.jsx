@@ -22,7 +22,6 @@ import {
   setDraftRandomness,
   setRoundDepth,
   setTimeSpeed,
-  setFanaticMode,
   setFanaticModeValue,
   fanaticModeAction,
 } from "../../app/features/draftConfig/draftConfigSlice";
@@ -215,6 +214,7 @@ const Settings = ({ teamSelect }) => {
                 checked={fanaticChallenge.some((item) => item.mode === 1)}
                 nameClass={"setting-check"}
                 value={1}
+                disabled={fanaticMode}
                 onInputChange={(e) =>
                   dispatch(checkFanaticChallenge(+e.target.value, 5))
                 }
@@ -226,10 +226,9 @@ const Settings = ({ teamSelect }) => {
                 checked={fanaticChallenge.some((item) => item.mode === 2)}
                 nameClass={"setting-check"}
                 value={2}
-                // disabled={!(userInfo?.fanatic_mode > 0)}
-                disabled={fanaticMode}
+                disabled={!(userInfo?.fanatic_mode > 0 && !fanaticMode)}
                 onInputChange={(e) =>
-                  dispatch(checkFanaticChallenge(+e.target.value, 3))
+                  dispatch(checkFanaticChallenge(+e.target.value, 10))
                 }
               />
             </div>
@@ -239,10 +238,9 @@ const Settings = ({ teamSelect }) => {
                 checked={fanaticChallenge.some((item) => item.mode === 3)}
                 nameClass={"setting-check"}
                 value={3}
-                // disabled={!(userInfo?.fanatic_mode > 1)}
-                disabled={fanaticMode}
+                disabled={!(userInfo?.fanatic_mode > 1 && !fanaticMode)}
                 onInputChange={(e) =>
-                  dispatch(checkFanaticChallenge(+e.target.value, 3))
+                  dispatch(checkFanaticChallenge(+e.target.value, 15))
                 }
               />
             </div>

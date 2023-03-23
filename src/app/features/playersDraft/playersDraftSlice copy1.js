@@ -422,7 +422,7 @@ export const colleageAction = (colleageValue) => (dispatch, getState) => {
   }
 };
 export const delPlayersDraft = (players,iter=1) => (dispatch, getState) => {
-console.log('iter :', iter);
+
   const {
     playersDraft: { results, playerChoose, playerManualChoose,playerIterationChoose },
   } = getState();

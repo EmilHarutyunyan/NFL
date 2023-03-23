@@ -230,11 +230,6 @@ export const manualTradeAction =
     const { tradeValue } = selectTrades(getState());
     
     if(manualTrade) {
-      console.log("tradeValue", tradeValue);
-      console.log(
-        "tradeValue Slice",
-        tradeValue.slice(countRender + 1, tradeValue.length)
-      );
         dispatch(
           setTradeValueTrade(
             tradeValue.slice(countRender + 1, tradeValue.length)
