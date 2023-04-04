@@ -171,7 +171,7 @@ const Settings = ({ teamSelect }) => {
           <SettingItem className="setting-round-check">
             <CheckBoxInputSecond
               checked={roundBPA.includes(1)}
-              label={"1nd round BPA"}
+              label={"1st round BPA"}
               nameClass={"setting-check"}
               value={1}
               disabled={!(round >= 1 && !fanaticMode)}
@@ -226,7 +226,8 @@ const Settings = ({ teamSelect }) => {
                 checked={fanaticChallenge.some((item) => item.mode === 2)}
                 nameClass={"setting-check"}
                 value={2}
-                disabled={!(userInfo?.fanatic_mode > 0 && !fanaticMode)}
+                // disabled={!(userInfo?.fanatic_mode > 0 && !fanaticMode)}
+                disabled={fanaticMode}
                 onInputChange={(e) =>
                   dispatch(checkFanaticChallenge(+e.target.value, 10))
                 }
@@ -238,7 +239,8 @@ const Settings = ({ teamSelect }) => {
                 checked={fanaticChallenge.some((item) => item.mode === 3)}
                 nameClass={"setting-check"}
                 value={3}
-                disabled={!(userInfo?.fanatic_mode > 1 && !fanaticMode)}
+                // disabled={!(userInfo?.fanatic_mode > 1 && !fanaticMode)}
+                disabled={fanaticMode}
                 onInputChange={(e) =>
                   dispatch(checkFanaticChallenge(+e.target.value, 15))
                 }

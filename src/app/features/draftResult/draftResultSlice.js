@@ -9,6 +9,7 @@ const initialState = {
   teamsPlayer: {},
   bpa_badges: 0,
   fanatic_mode: 0,
+  fanaticChallenge:[]
 };
 
 
@@ -24,6 +25,7 @@ const draftResultSlice = createSlice({
       state.draftRandomnessTeam = action.payload.draftRandomnessTeam;
       state.bpa_badges = action.payload.bpa_badges;
       state.fanatic_mode = action.payload.fanatic_mode;
+      state.fanaticChallenge = action.payload.fanaticChallenge;
     },
     resDraftResult: (state, action) => {
       state.results = []
@@ -90,6 +92,7 @@ export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexCont
       draftRandomnessTeam,
       bpa_badges,
       fanatic_mode,
+      fanaticChallenge,
     })
   );
 };

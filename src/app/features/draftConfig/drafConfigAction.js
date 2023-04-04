@@ -110,7 +110,7 @@ export const getTradeValue = createAsyncThunk(
         return { ...res.data, count, results: newTradeValue };
       } 
       if(fanaticMode) {
-        const { newTradeValue } = iterationFanaticMode({
+        const { newTradeValue, iterationSection } = iterationFanaticMode({
           fanaticModeValue,
           tradeValueData: res.data.results,
         });
@@ -124,6 +124,7 @@ export const getTradeValue = createAsyncThunk(
           
         dispatch(setFanaticIndexPosition(indexPositions));
         dispatch(setTeamPickIndex(teamPickIndex));
+        dispatch(setIterationSection({iterationSection}));
         return { ...res.data, count: newTradeValue.length, results: newTradeValue };
       }
       else {

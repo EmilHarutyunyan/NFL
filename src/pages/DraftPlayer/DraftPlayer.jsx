@@ -58,6 +58,7 @@ const DraftPlayer = () => {
     draftCardDepth,
     fanaticIndexPosition,
     fanaticMode,
+    iterationSection,
   } = useSelector(selectDraftConfig);
 
   const { tradesTeams, changeTrades } = useSelector(selectTrades);
@@ -91,18 +92,29 @@ const DraftPlayer = () => {
       let modalFlag = ((fanaticChallenge.length && !changeTrades) || fanaticMode) ? 1 : changeTrades
       if (modalFlag) {
         const team = tradeValue.results[countRender];
+        
         const teamName = team.round.name;
         const teamPosition = team["index_position"] ?? 0;
         let teamManual = teamSelect.some((item) => item.name === teamName);
-        let playerCountGet = !teamManual 
-        ? draftCardDepth + team.index + teamPosition
-        : PLAYER_MAX;
-        dispatch(
-          getPlayersDraft({
-            playerCountGet: playerCountGet,
-            teamName,
-          })
-        );
+        let playerCountGet;
+        if (fanaticMode) {
+          let count = draftCardDepth  + teamPosition;
+          playerCountGet = !teamManual ? count : PLAYER_MAX;
+        } else {
+          const manualLength = playersDraft?.playerManualChoose?.length ?? 1
+         
+          playerCountGet = !teamManual
+          ? draftCardDepth + team.index + manualLength
+          : PLAYER_MAX;
+        }
+          
+
+          dispatch(
+            getPlayersDraft({
+              playerCountGet: playerCountGet,
+              teamName,
+            })
+          );
         // }
       }
     }
@@ -129,7 +141,9 @@ const DraftPlayer = () => {
 
   // Finished Set Data
   useEffect(() => {
-    if (countRender === tradeValue?.results?.length) {
+    const iter = iterationSection.iterationSection ?? [];
+    debugger
+    if (countRender === tradeValue?.results?.length && iter.length === 0) {
       const data = { items: [] };
       draftPlayers.forEach((item) => {
         const {
@@ -162,8 +176,52 @@ const DraftPlayer = () => {
       );
       dispatch(setHistoryBoard(data));
     }
+    
+    if (iter?.length > 0 && iter?.includes(countRender)) {
+      const data = { items: [] };
+      debugger;
+      const startSlice =
+        tradeValue.results[countRender - 1].iteration - 2 >= 0
+          ? iter[tradeValue.results[countRender - 1].iteration - 2]
+          : 0;
+      const iterationDraftPlayers = draftPlayers.slice(startSlice, countRender);
+      console.log("iterationDraftPlayers :", iterationDraftPlayers);
+      iterationDraftPlayers.forEach((item) => {
+        const {
+          round_index,
+          count = null,
+          tm,
+          round,
+          player,
+          upPlayers,
+        } = item;
+        const dataItem = {
+          round_index: +round_index.split(" ")[0],
+          count,
+          team: tm,
+          draft: round.id,
+          player: player.id,
+          position: player.position,
+          upPlayers,
+        };
+        data.items.push(dataItem);
+      });
+      dispatch(setHistoryBoard(data));
+      if (countRender === iter.at(-1)) {
+        dispatch(
+          setDraftResultAction(
+            draftPlayers,
+            teamSelect,
+            round,
+            teamPickIndexControl,
+            draftRandomnessTeam
+          )
+        );
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countRender]);
+
 
   if (!tradeValue.mouthing) {
     return <Spinner />;

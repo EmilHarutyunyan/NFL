@@ -70,6 +70,7 @@ const DraftResult = () => {
     teamsPlayer,
     bpa_badges,
     fanatic_mode,
+    fanaticChallenge,
   } = useSelector(selectDraftResult);
 
   const { historyTrades } = useSelector(selectTrades);
@@ -255,7 +256,7 @@ const DraftResult = () => {
                   </MySelectWrap>
                 </MockDraftWrap>
               </DraftResultHead>
-
+              
               <DraftResultPickWrap>
                 {teamSelect &&
                   teamSelect?.map((team, idx) => {

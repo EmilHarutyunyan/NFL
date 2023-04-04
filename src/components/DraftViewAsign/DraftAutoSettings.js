@@ -1,15 +1,11 @@
 import { getRandom } from "../../utils/utils";
 function draftAutoSettings(draftCardDepth, draftRandomnessTeam, roundBPA, roundDepth, round, playersAll, teamDepth, tradeValueTeam, selectCardDepth, roundIndexBool, roundIndex) {
- 
+  debugger
   const playerPosition = Array.from({ length: draftCardDepth }, (_, i) => i + 1)
   const playerRange = playersAll.slice(0, draftCardDepth);
   const tradeValueTeamId = tradeValueTeam.round.index;
   const positionPlayers = []
   const playerChoose = {};
-
-  // if (roundDepth - round && roundDepth.length === 0) {
-
-  // }
   
   // Round BPA Set
   if (roundBPA.length && !roundIndexBool) {
@@ -36,7 +32,8 @@ function draftAutoSettings(draftCardDepth, draftRandomnessTeam, roundBPA, roundD
   } 
   // Round 1
   else {
-    const [randomPosition] = getRandom(playerPosition.slice(0, draftCardDepth), 1)
+    // const [randomPosition] = getRandom(playerPosition.slice(0, draftCardDepth), 1)
+    const randomPosition = playerPosition[0]
     const playerRandomId = playerRange[randomPosition - 1]
     positionPlayers.push(randomPosition)
     playerChoose["player"] = playerRandomId;

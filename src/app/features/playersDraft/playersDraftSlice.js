@@ -70,6 +70,9 @@ export const getPlayersDraft = createAsyncThunk(
         const resDataResult = resData.results.filter(
           (player) => !playerChooseId.includes(player.id)
         );
+         if (resData.results.length === 0) {
+           debugger;
+         }
         resData.results = resDataResult.map((item, idx) => {
           return { ...item, bpa: idx + 1 };
         });
@@ -80,6 +83,9 @@ export const getPlayersDraft = createAsyncThunk(
         const resDataResult = resData.results.filter(
           (player) => !playerChooseId.includes(player.id)
         );
+         if (resData.results.length === 0) {
+           debugger;
+         }
         resData.results = resDataResult.map((item, idx) => {
           return { ...item, bpa: idx + 1 };
         });
@@ -87,6 +93,9 @@ export const getPlayersDraft = createAsyncThunk(
         resData.results = resData.results.map((item, idx) => {
           return { ...item, bpa: idx + 1 };
         });
+      }
+      if (resData.results.length === 0)  {
+        debugger
       }
       dispatch(setPlayersDraft(resData));
     } catch (error) {

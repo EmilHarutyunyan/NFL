@@ -48,7 +48,7 @@ export const upUsersCals = (players, pricentValuePlayer, key) => {
     }
     return {
       ...player,
-      value: +(player[key] - pricentValue),
+      value:  +(player[key] - pricentValue) <= 0 ? 0 : - pricentValue,
       pricentValue: +(player[key] - pricentValue) <= 0 ? 0 : - pricentValue,
     };
   });
@@ -238,12 +238,16 @@ export const iterationRound = ({ fanaticChallenge, tradeValueData, round }) => {
 export const iterationFanaticMode = ({fanaticModeValue, tradeValueData}) => {
 
   const iterationRound = makeRepeated(tradeValueData, fanaticModeValue);
+  const iterationSection = [];
+  for (let i = 1; i <= fanaticModeValue; i++) {
+    iterationSection.push(tradeValueData.length * i);
+  }
   const newTradeValue = iterationRound.map((item, idx) => {
     const newItem = structuredClone(item);
     newItem["index_position"] = idx + 1;
     return newItem;
   });
-  return {newTradeValue};
+  return { newTradeValue, iterationSection };
 }
 
 export const objectDeleteValue = ({ objectData, deleteKey }) => {

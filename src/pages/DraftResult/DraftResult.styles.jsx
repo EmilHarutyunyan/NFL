@@ -64,6 +64,7 @@ export const DraftResultRound = styled.div`
   overflow: hidden;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  flex-wrap: wrap;
 `;
 
 export const DraftResultRoundItem = styled.div`
@@ -221,10 +222,12 @@ export const DraftResultPickWrap = styled.div`
       align-items: center;
       flex-wrap: wrap;
       background: #ffffff;
-
       padding: 0px 16px;
       border: 1px solid #e8ebef;
-      
+      :nth-last-child(2) {
+        margin-bottom: 20px;
+      }
+
       &-info {
         display: flex;
         align-items: center;
