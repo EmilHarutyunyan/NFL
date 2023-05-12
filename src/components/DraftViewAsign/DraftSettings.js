@@ -1,6 +1,5 @@
 import { getRandom } from "../../utils/utils";
 function draftAutoSettings(draftCardDepth, draftRandomnessTeam, roundBPA, roundDepth, round, playersAll, teamDepth, tradeValueTeam, selectCardDepth, roundIndexBool, roundIndex) {
-  debugger
   const playerPosition = Array.from({ length: draftCardDepth }, (_, i) => i + 1)
   const playerRange = playersAll.slice(0, draftCardDepth);
   const tradeValueTeamId = tradeValueTeam.round.index;
@@ -52,7 +51,22 @@ function draftAutoSettings(draftCardDepth, draftRandomnessTeam, roundBPA, roundD
 
   // }
 }
-// function chooseRoundBPA() {
-//   return ""
-// }
-export default draftAutoSettings
+function draftDisableSettings({ teamUniqPosition, playersAll, tradeValueTeam ,roundIndex,round}) {
+  if(round >= roundIndex) {
+    let playerChoose = null
+    if (teamUniqPosition[tradeValueTeam.round.name]) {
+      playerChoose =  playersAll.find(
+        (player) =>
+          !teamUniqPosition[tradeValueTeam.round.name].includes(player.position)
+      );
+    } else {
+      playerChoose =  playersAll[0];
+    }
+    return playerChoose;
+  } else {
+    return playersAll[0]
+  }
+  // {...teamUniqPosition,[teamName]:[...teamUniqPosition[teamName].filter((item) => item !== position)]}
+}
+
+export { draftAutoSettings, draftDisableSettings };

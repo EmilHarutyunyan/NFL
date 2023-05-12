@@ -3,14 +3,15 @@ import { createSlice } from "@reduxjs/toolkit";
 // const initialState = dataResult
 
 const initialState = {
-  results: [],
-  roundTeam: 1,
-  teamsName: [],
-  teamsPlayer: {},
-  bpa_badges: 0,
-  fanatic_mode: 0,
-  fanaticChallenge:[]
-};
+    results: [],
+    roundTeam: [],
+    teamsName: [],
+    teamsPlayer: {},
+    bpa_badges: 0,
+    fanatic_mode: 0,
+    fanaticChallenge: [],
+    draftRandomnessTeam: []
+  }
 
 
 const draftResultSlice = createSlice({

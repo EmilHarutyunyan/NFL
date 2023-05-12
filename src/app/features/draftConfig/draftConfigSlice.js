@@ -38,13 +38,17 @@ const initialState = {
   iterationSection: [],
   changeTrade: false,
   fanaticMode:false,
-  fanaticModeValue:2
+  fanaticModeValue:2,
+  teamUniqPosition:{}
 };
 
 export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
+    setTeamUniqPosition: (state,action) => {
+      state.teamUniqPosition = action.payload
+    },
     setFanaticModeValue: (state, action) => {
       state.fanaticModeValue = action.payload;
     },
@@ -248,6 +252,7 @@ export const draftConfigSlice = createSlice({
 export const selectDraftConfig = (state) => state.draftConfig;
 
 export const {
+  setTeamUniqPosition,
   setFanaticModeValue,
   setFanaticMode,
   setIterationSection,
@@ -414,6 +419,27 @@ export const setDraftPlayersAction = (player) => (dispatch, getState) => {
     dispatch(setDraftPlayers(player));
   }
 };
+
+export const uniqPosition =
+  ({ name, position }) =>
+  (dispatch, getState) => {
+    const { teamUniqPosition } = selectDraftConfig(getState());
+    if (teamUniqPosition[name]) {
+      dispatch(
+        setTeamUniqPosition({
+          ...teamUniqPosition,
+          [name]: [...teamUniqPosition[name], position],
+        })
+      );
+      return;
+    }
+    dispatch(
+      setTeamUniqPosition({
+        ...teamUniqPosition,
+        [name]: [position],
+      })
+    );
+  };
 
 export const changeTradeTeam = (tradeTeam) => (dispatch,getState) =>{
 

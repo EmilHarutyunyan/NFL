@@ -4,9 +4,14 @@ import styled from "styled-components"
 export const ErrorWrapper = styled.div`
   margin-top: 60px;
   text-align: center;
-  p {
+  max-width: 900px;
+  margin: 0 auto;
+  h4 {
     font-size: 35px;
     color: #022142;
+  }
+  p {
+    font-size: 14px;
   }
   button {
     max-width: 200px;

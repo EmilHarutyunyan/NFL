@@ -52,11 +52,41 @@ export const DraftResultHead = styled.div`
   display: flex;
   align-items: center;
   gap: 32px;
-  background: #022142;
+  background: #16181a;
   border-radius: 10px 10px 0px 0px;
-  padding: 11px 16px 11px 16px;
+  padding-right: 16px;
   flex-wrap: wrap;
 `;
+export const DraftTeam = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 24px;
+`;
+export const DraftTeamName = styled.div`
+  h3 {
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 60px;
+    color: #ffffff;
+  }
+  p {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #ffffff;
+  }
+`;
+export const DraftLogoTeam = styled.div`
+  padding: 12px 60px;
+  background-color: ${(props) => props.backColor || "transparent"};
+  border-radius: 4px 0px 0px 0px;
+  img {
+    width: 100%;
+    max-width: 94px;
+    object-fit: cover;
+  }
+`;
+
 export const DraftResultRound = styled.div`
   display: flex;
   align-items: center;
@@ -193,27 +223,22 @@ export const DraftResultPick = styled.div`
 `;
 export const DraftResultPickWrap = styled.div`
   width: 100%;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+  background-image: url(${(props) => props.backImg || ""});
+  background-size: 60%;
+  background-position: center;
+  background-repeat: repeat-y;
+  background-color: #fff;
   overflow: hidden;
   & .draft-result-pick {
     &-logo {
-      background-color: #022142;
       display: flex;
       align-items: center;
       color: #fff;
       gap: 20px;
-      padding: 12px 0 12px 15px;
       & img {
         display: block;
         width: 50px;
         height: auto;
-      }
-      p {
-        font-weight: 400;
-        font-size: 22px;
-        line-height: 30px;
-        color: #ffffff;
       }
     }
     &-item {
@@ -221,12 +246,9 @@ export const DraftResultPickWrap = styled.div`
       /* justify-content: center; */
       align-items: center;
       flex-wrap: wrap;
-      background: #ffffff;
-      padding: 0px 16px;
+      /* background: #ffffff; */
+      padding: 30px 16px;
       border: 1px solid #e8ebef;
-      :nth-last-child(2) {
-        margin-bottom: 20px;
-      }
 
       &-info {
         display: flex;
@@ -253,11 +275,10 @@ export const DraftResultPickWrap = styled.div`
       width: 100%;
     }
     &-adp {
-      font-style: normal;
       font-weight: 600;
       font-size: 20px;
       line-height: 30px;
-      color: #50647b;
+      color: #004ea3;
       max-width: 60px;
       width: 100%;
     }
@@ -265,9 +286,15 @@ export const DraftResultPickWrap = styled.div`
       font-weight: 600;
       font-size: 20px;
       line-height: 30px;
-      color: #004ea3;
+      color: #0e1118;
       max-width: 200px;
       width: 100%;
+      p:nth-child(2) {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+        color: #989ea4;
+      }
     }
     &-pos {
       border-radius: 4px;
@@ -279,15 +306,17 @@ export const DraftResultPickWrap = styled.div`
         color: #0e1118;
       }
     }
-    &-college {
-      font-weight: 600;
-      font-size: 20px;
-      line-height: 30px;
-      color: #46484a;
-      max-width: 140px;
-      width: 100%;
-    }
     &-rating {
+      color: #46484a;
+      > p {
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 20px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+    }
+    &-rating-item {
       display: flex;
       align-items: center;
       font-weight: 600;
@@ -297,11 +326,64 @@ export const DraftResultPickWrap = styled.div`
       gap: 5px;
       max-width: 60px;
       width: 100%;
+      justify-content: flex-end;
       &-block {
         width: 14px;
         height: 14px;
         background: #3adf00;
       }
+      p {
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 30px;
+        color: #46484a;
+      }
+    }
+  }
+`;
+export const DraftResultPickFooter = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: space-between;
+  background-color: #fff;
+  .draft-now {
+    display: flex;
+    background: #0e1118;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    color: #ffffff;
+    flex: 50%;
+    padding: 8px 0px 8px 32px;
+    gap: 5px;
+    align-items: center;
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+  }
+  .draft-overall {
+    display: flex;
+    gap: 20px;
+    flex: 50%;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 16px;
+    > p {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 20px;
+      color: #989ea4;
+    }
+    &-grade {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 30px;
+      color: #46484a;
     }
   }
 `;
@@ -326,26 +408,27 @@ export const BadgesItems = styled.div`
   column-gap: 30px;
   flex-wrap: wrap;
   row-gap: 10px;
+  background: #16181a;
+  border-radius: 10px 10px 0px 0px;
+  margin-top: 24px;
+  padding: 8px 25px;
 `;
 export const MySelectWrap = styled.div`
-  width: 100%;
-  max-width: 432px;
+  /* width: 100%;
+  max-width: 432px; */
 `;
 
 export const TradesWrap = styled.div`
   background-color: #fff;
-  border-radius: 8px;
 `;
 export const TradesItems = styled.div`
   display: flex;
   align-items: stretch;
   justify-content: space-around;
   padding: 40px 32px;
-  margin-top: 24px;
   .line {
     width: 2px;
     background-color: #cad2da;
-    
   }
 `;
 export const TradesItem = styled.div`
@@ -390,7 +473,6 @@ export const TradesItem = styled.div`
       }
     }
     &-years {
-      
       h6 {
         font-weight: 600;
         font-size: 20px;
@@ -404,7 +486,6 @@ export const TradesItem = styled.div`
         color: #0e1118;
       }
     }
-    
   }
   & > div:not(:first-child, :nth-child(2)) {
     margin-top: 16px;
@@ -415,27 +496,7 @@ export const MockDraftWrap = styled.div`
   display: flex;
   justify-content: space-between;
   flex: 1;
-  & .draft-result-pick {
-    &-logo {
-      background-color: #022142;
-      display: flex;
-      align-items: center;
-      color: #fff;
-      gap: 20px;
-      padding: 12px 0 12px 15px;
-      & img {
-        display: block;
-        width: 50px;
-        height: auto;
-      }
-      p {
-        font-weight: 400;
-        font-size: 20px;
-        line-height: 30px;
-        color: #ffffff;
-      }
-    }
-  }
+  align-items: center;
 `;
 
 export const ActionWrap = styled.div`

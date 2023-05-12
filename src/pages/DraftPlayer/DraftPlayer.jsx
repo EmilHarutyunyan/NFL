@@ -142,7 +142,7 @@ const DraftPlayer = () => {
   // Finished Set Data
   useEffect(() => {
     const iter = iterationSection.iterationSection ?? [];
-    debugger
+    
     if (countRender === tradeValue?.results?.length && iter.length === 0) {
       const data = { items: [] };
       draftPlayers.forEach((item) => {
@@ -179,7 +179,7 @@ const DraftPlayer = () => {
     
     if (iter?.length > 0 && iter?.includes(countRender)) {
       const data = { items: [] };
-      debugger;
+    
       const startSlice =
         tradeValue.results[countRender - 1].iteration - 2 >= 0
           ? iter[tradeValue.results[countRender - 1].iteration - 2]
@@ -233,9 +233,6 @@ const DraftPlayer = () => {
         <Banner>
           <h2>You’re on the Clock!</h2>
           <div className="banner-info">
-            {/* <p>Round 1</p>
-          <p className="banner-info-border"></p>
-          <p>Pick 2</p> */}
             <p className="banner-info-border"></p>
             <RenderCircle status={status}>
               <CircleSvg />

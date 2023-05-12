@@ -7,6 +7,7 @@ const MySelectImg = ({
   name = "",
   dataValue = [],
   handleChange = (f) => f,
+  backgroundColor = "#022142",
 }) => {
   const styleForm = {
     border: "none",
@@ -14,7 +15,7 @@ const MySelectImg = ({
     fontFamily: "'Saira Semi Condensed'",
     color: "#fff",
     fontSize: 16,
-    backgroundColor: "#022142",
+    backgroundColor,
     width: "100%",
   };
   const ITEM_HEIGHT = 48;

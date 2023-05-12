@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 // Styles
@@ -11,10 +11,11 @@ import {
   setDraftPlayersAction,
   setSelectCardDepth,
   setTradeValue,
+  uniqPosition,
 } from "../../app/features/draftConfig/draftConfigSlice";
 import { delPlayersDraft } from "../../app/features/playersDraft/playersDraftSlice";
 import { POSITIONS_COLOR } from "../../utils/constants";
-import draftAutoSettings from "./DraftAutoSettings";
+import { draftAutoSettings, draftDisableSettings } from "./DraftSettings";
 
 const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
   const [isShow, setIsShow] = useState(false);
@@ -56,15 +57,16 @@ const DraftViewAsign = ({ players, thisId }) => {
     fanaticPickId,
     fanaticPlayerBefore,
     fanaticChallenge,
-    fanaticMode,
+    advancedSetting,
+    teamUniqPosition,
   } = useSelector(selectDraftConfig);
   const divRef = useRef(null);
   const roundArr = useRef([]);
+  console.log("teamPickIndex :", teamPickIndex);
 
   const teamRef = useRef(null);
 
-  useEffect(() => {
-    
+  const advancingSettings = useCallback(() => {
     if (
       tradeValue?.mouthing &&
       !players.loading &&
@@ -78,7 +80,7 @@ const DraftViewAsign = ({ players, thisId }) => {
         let newTradeValue = {};
         let tradeValueTeam = structuredClone(tradeValue.results[countRender]);
         let teamDepth = [];
-        
+
         const playersAll = players.results;
         let player = {};
         let roundIndexBool = false;
@@ -100,7 +102,7 @@ const DraftViewAsign = ({ players, thisId }) => {
           roundIndexBool = true;
           dispatch(delRoundBPA(tradeValueTeam.round_index_number));
         }
-        
+
         if (
           fanaticPickId?.includes(tradeValueTeam["pick"]) &&
           +tradeValueTeam["round_index_number"] === fanaticChallenge[0].mode
@@ -150,8 +152,65 @@ const DraftViewAsign = ({ players, thisId }) => {
         dispatch(setCountRender());
       }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tradeValue.mouthing, players.loading, pauseId]);
+  }, [tradeValue.mouthing, players.loading, pauseId, players.status]);
+
+  const advancingSettingsDefault = useCallback(() => {
+    if (
+      tradeValue?.mouthing &&
+      !players.loading &&
+      players.status &&
+      countRender < tradeValue.results.length &&
+      (countRender + 1 < teamPickIndex[0] || !teamPickIndex.length) &&
+      !pauseId.length
+    ) {
+      let newTradeValue = {};
+      let tradeValueTeam = structuredClone(tradeValue.results[countRender]);
+      console.log("tradeValueTeam :", tradeValueTeam);
+      const playersAll = players.results;
+      let player = {};
+      let roundIndex = +tradeValueTeam.round_index_number;
+      player = draftDisableSettings({
+        teamUniqPosition,
+        playersAll,
+        tradeValueTeam,
+        roundIndex,
+        round,
+      });
+      tradeValueTeam["player"] = player;
+
+      let newTradeValueResults = tradeValue.results.map((team) => {
+        return team.index === tradeValueTeam.index ? tradeValueTeam : team;
+      });
+
+      newTradeValue = {
+        ...tradeValue,
+        results: newTradeValueResults,
+      };
+
+      dispatch(
+        uniqPosition({
+          name: tradeValueTeam.round.name,
+          position: player.position,
+        })
+      );
+      dispatch(setTradeValue(newTradeValue));
+      dispatch(setDraftPlayersAction(tradeValueTeam));
+      dispatch(delPlayersDraft([player], tradeValueTeam?.iteration));
+      dispatch(setCountRender());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tradeValue.mouthing, players.loading, pauseId, players.status]);
+
+  useEffect(() => {
+    if (!advancedSetting) {
+      advancingSettings();
+      return;
+    }
+    advancingSettingsDefault();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tradeValue.mouthing, players.loading, pauseId, players.status]);
 
   function delayTime({ id, indexPosition }) {
     const isTeamPick = (currentValue) => currentValue > id;
@@ -182,8 +241,10 @@ const DraftViewAsign = ({ players, thisId }) => {
 
           const checkTeam = delayTime({ id, indexPosition });
           const time = thisId ? +(id - thisId) * (1000 / timeSpeed) : checkTeam;
-          const teamActive = fanaticIndexPosition.length  ? fanaticIndexPosition.includes(indexPosition) : teamPickIndex.includes(id)
-                  
+          const teamActive = fanaticIndexPosition.length
+            ? fanaticIndexPosition.includes(indexPosition)
+            : teamPickIndex.includes(id);
+
           // Round Text
           if (roundStart.includes(id)) {
             roundArr.current = [];
@@ -211,10 +272,6 @@ const DraftViewAsign = ({ players, thisId }) => {
                       <p>Pick</p>
                       <p>{id}</p>
                     </div>
-                    {/* <div className="pick">
-                      <p>Position</p>
-                      <p>{team?.index_position}</p>
-                    </div> */}
                   </>
                 ) : (
                   <div className="pick">
@@ -225,7 +282,7 @@ const DraftViewAsign = ({ players, thisId }) => {
 
                 <div className="player-team-info">
                   <img src={logo ? logo : ""} alt={name} />
-                  {/* <p>{value}</p> */}
+
                   {!!checkTeam && team?.player ? null : (
                     <>
                       {teamActive ? (

@@ -10,8 +10,8 @@ const ErrorFallBack = ({
   const navigate = useNavigate();
   return (
     <ErrorWrapper role="alert">
-      <p>Something went wrong:</p>
-      <pre>{error.message}</pre>
+      <h4>Something went wrong:</h4>
+      <p>{error.message}</p>
       <button onClick={() => navigate(`${link}`)}>Try again</button>
     </ErrorWrapper>
   );

@@ -5,6 +5,7 @@ export const toggleArrObj = (arr, item, getValue = (item) => item) => {
 };
 
 export const searchInfo = (arr, item, getValue = (item) => item) => {
+  debugger
   return arr.filter((i) => getValue(i) === getValue(item));
 };
 
