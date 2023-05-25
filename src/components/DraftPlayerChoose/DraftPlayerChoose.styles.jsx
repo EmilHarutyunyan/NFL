@@ -6,15 +6,34 @@ export const SelectTeam = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 30px;
   .team {
     display: flex;
     align-items: center;
     gap: 30px;
-    margin-bottom: 20px;
+    
   }
   .team img {
     width: 80px;
     height: 80px;
+  }
+  button {
+    width: 100%;
+    padding: 13px 27px;
+    background: #004ea3;
+    border-radius: 4px;
+    font-family: "Saira Semi Condensed",sans-serif;
+    font-weight: 600;
+    border: none;
+    color: white;
+    margin-top: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    svg {
+      font-size: 20px;
+    }
   }
 `;
 

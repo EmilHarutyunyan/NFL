@@ -46,8 +46,9 @@ export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
-    setTeamUniqPosition: (state,action) => {
-      state.teamUniqPosition = action.payload
+
+    setTeamUniqPosition: (state, action) => {
+      state.teamUniqPosition = action.payload;
     },
     setFanaticModeValue: (state, action) => {
       state.fanaticModeValue = action.payload;
@@ -405,8 +406,8 @@ export const saveRound = (roundNum) => (dispatch, getState) => {
   dispatch(setRound(roundNum));
 };
 export const setDraftPlayersAction = (player) => (dispatch, getState) => {
-  
-  const { draftPlayers,fanaticChallenge } = selectDraftConfig(getState());
+  debugger
+  const { draftPlayers,fanaticChallenge,fanaticMode } = selectDraftConfig(getState());
   let checkPlayer = false;
   if(!fanaticChallenge.length) {
     checkPlayer = draftPlayers.some(
@@ -415,7 +416,7 @@ export const setDraftPlayersAction = (player) => (dispatch, getState) => {
 
   }
 
-  if (!checkPlayer) {
+  if (!checkPlayer || fanaticMode) {
     dispatch(setDraftPlayers(player));
   }
 };
@@ -449,6 +450,23 @@ export const changeTradeTeam = (tradeTeam) => (dispatch,getState) =>{
  
   dispatch(changeTradeValue(tradeValueSlice));
 
+}
+export const fanaticModeBefore = ({player,action}) => (dispatch,getState) => {
+  const { fanaticPlayerBefore } = selectDraftConfig(getState());
+  let newFanaticPlayerBefore = [...fanaticPlayerBefore];
+  
+  if(action === 'inc') {  
+    newFanaticPlayerBefore.push(player);
+    dispatch(setFanaticPlayerBefore(newFanaticPlayerBefore));
+  }
+  if(action === 'dec') {
+    let newFanaticPlayerBeforePop = newFanaticPlayerBefore.filter((item) => {
+      
+      return item.player.id !== player.player.id;
+    })
+      
+    dispatch(setFanaticPlayerBefore(newFanaticPlayerBeforePop));
+  }
 }
 
 export default draftConfigSlice.reducer;

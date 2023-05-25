@@ -134,7 +134,7 @@ const TeamNeeds = () => {
                       <TeamPosition>
                         {positions.map((position, idx) => {
                           return (
-                            <>
+                            <React.Fragment key={idx}>
                               {idx < 5 ? (
                                 <TeamPositionItem primary key={position.id}>
                                   {position.name}
@@ -144,7 +144,7 @@ const TeamNeeds = () => {
                                   {position.name}
                                 </TeamPositionItem>
                               )}
-                            </>
+                            </React.Fragment>
                           );
                         })}
                       </TeamPosition>

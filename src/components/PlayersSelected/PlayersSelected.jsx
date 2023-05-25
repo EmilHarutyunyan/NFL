@@ -27,7 +27,6 @@ const PlayersSelected = ({ draftPlayers, teamSelect }) => {
   const [team, setTeam] = useState("All Team");
   const [position, setPosition] = useState("All Positions");
   const teamName = teamSelect.map((item) => item.name);
-  teamName.unshift("All Team");
   const filterDraft = useMemo(() => {
     const myDraft = draftPlayers.filter((item) =>
       teamPickIndexControl.includes(item.index)
@@ -65,8 +64,7 @@ const PlayersSelected = ({ draftPlayers, teamSelect }) => {
   const needsData = team !== 'All Team' ? [tradeValue.results.find(item => {
     return item.team_neads_info.round.name === team;
   })] : []
-
-
+  
   const handleSearch = (e) => {
     const name = e.target.value;
     setValue(name);

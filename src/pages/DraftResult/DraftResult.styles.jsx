@@ -220,6 +220,9 @@ export const GradeBox = styled.p`
 export const DraftResultPick = styled.div`
   width: 100%;
   max-width: 953px;
+  & > div {
+    margin-bottom: 30px;
+  }
 `;
 export const DraftResultPickWrap = styled.div`
   width: 100%;

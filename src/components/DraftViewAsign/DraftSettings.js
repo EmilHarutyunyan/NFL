@@ -66,7 +66,7 @@ function draftDisableSettings({ teamUniqPosition, playersAll, tradeValueTeam ,ro
   } else {
     return playersAll[0]
   }
-  // {...teamUniqPosition,[teamName]:[...teamUniqPosition[teamName].filter((item) => item !== position)]}
+
 }
 
 export { draftAutoSettings, draftDisableSettings };

@@ -6,6 +6,7 @@ import { PlayerName, PlayerPos, Wrapper } from "./DraftViewAsign.styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
   delRoundBPA,
+  fanaticModeBefore,
   selectDraftConfig,
   setCountRender,
   setDraftPlayersAction,
@@ -59,10 +60,11 @@ const DraftViewAsign = ({ players, thisId }) => {
     fanaticChallenge,
     advancedSetting,
     teamUniqPosition,
+    fanaticMode
   } = useSelector(selectDraftConfig);
   const divRef = useRef(null);
   const roundArr = useRef([]);
-  console.log("teamPickIndex :", teamPickIndex);
+ 
 
   const teamRef = useRef(null);
 
@@ -79,6 +81,7 @@ const DraftViewAsign = ({ players, thisId }) => {
       if (!pauseId.length) {
         let newTradeValue = {};
         let tradeValueTeam = structuredClone(tradeValue.results[countRender]);
+        let fanaticFlag = false;
         let teamDepth = [];
 
         const playersAll = players.results;
@@ -105,7 +108,8 @@ const DraftViewAsign = ({ players, thisId }) => {
 
         if (
           fanaticPickId?.includes(tradeValueTeam["pick"]) &&
-          +tradeValueTeam["round_index_number"] === fanaticChallenge[0].mode
+          +tradeValueTeam["round_index_number"] === fanaticChallenge[0]?.mode &&
+          !fanaticMode
         ) {
           player = fanaticPlayerBefore.filter(
             (item) => item.pick === tradeValueTeam["pick"]
@@ -125,6 +129,33 @@ const DraftViewAsign = ({ players, thisId }) => {
             roundIndex
           );
         }
+        if(fanaticMode) {
+          
+          if (
+            tradeValueTeam.iteration > 1 &&
+            fanaticPlayerBefore[0].pick === tradeValueTeam.pick
+          ) {
+            
+            player = fanaticPlayerBefore[0];
+            fanaticFlag = true
+            
+          } else {
+            player = draftAutoSettings(
+              draftCardDepth,
+              draftRandomnessTeam,
+              roundBPA,
+              roundDepth,
+              round,
+              playersAll,
+              teamDepth,
+              tradeValueTeam,
+              selectCardDepth,
+              roundIndexBool,
+              roundIndex
+            );
+          }
+        }
+        debugger
         const { player: playerItem, playerDepth } = player;
         tradeValueTeam["player"] = playerItem;
         tradeValueTeam["playerDepth"] = playerDepth;
@@ -142,14 +173,19 @@ const DraftViewAsign = ({ players, thisId }) => {
           ...tradeValue,
           results: newTradeValueResults,
         };
-
-        !selectCardDepth.includes(playerDepth) &&
-          dispatch(setSelectCardDepth(playerDepth));
+        if (!fanaticMode) {
+          !selectCardDepth.includes(playerDepth) &&
+            dispatch(setSelectCardDepth(playerDepth));
+        }
 
         dispatch(setTradeValue(newTradeValue));
         dispatch(setDraftPlayersAction(tradeValueTeam));
         dispatch(delPlayersDraft([playerItem], tradeValueTeam?.iteration));
         dispatch(setCountRender());
+        if(fanaticFlag) {
+          dispatch(fanaticModeBefore({player, action: "dec" }));
+        }
+          
       }
     }
 
@@ -167,7 +203,7 @@ const DraftViewAsign = ({ players, thisId }) => {
     ) {
       let newTradeValue = {};
       let tradeValueTeam = structuredClone(tradeValue.results[countRender]);
-      console.log("tradeValueTeam :", tradeValueTeam);
+      
       const playersAll = players.results;
       let player = {};
       let roundIndex = +tradeValueTeam.round_index_number;

@@ -47,61 +47,59 @@ export const getPlayersDraft = createAsyncThunk(
         },
       } = getState();
       const resData = { ...res.data };
-      let playerReset = [];
+      let playerReset = []
       let playerManualFlag = false;
       // Fanatic Choose
-
+      
       if (fanaticChallenge.length) {
-        
-        playerReset = iterationSection.iterationSection.includes(countRender)
-          ? []
-          : playerIterationChoose;
-        playerManualFlag = playerReset.length > 0 ? false : true;
-        let playerManualFilter = playerManualChoose;
-        
-        if (playerManualFlag) {
-          
-          console.log('playerManualFilter :', playerManualFilter);
-          playerManualFilter = playerManualChoose.filter(
-            (item) => !(item.roundTeam < fanaticChallenge[0].mode)
-          );
+          playerReset = iterationSection.iterationSection.includes(countRender)
+            ? []
+            : playerIterationChoose;
+          playerManualFlag = playerReset.length > 0 ? false : true;
+          let playerManualFilter = playerManualChoose;
 
-          dispatch(setPlayerIterationChoose([]));
-          dispatch(setPlayerManualChooseNew(playerManualFilter));
-        }
+          if (playerManualFlag) {
+            playerManualFilter = playerManualChoose.filter(
+              (item) => !(item.roundTeam < fanaticChallenge[0].mode)
+            );
+
+            dispatch(setPlayerIterationChoose([]));
+            dispatch(setPlayerManualChooseNew(playerManualFilter));
+          }
         let playerIteration = [...playerReset, ...playerManualFilter];
         const playerChooseId = playerIteration.map((el) => el.id);
         const resDataResult = resData.results.filter(
           (player) => !playerChooseId.includes(player.id)
         );
-        // if (resData.results.length === 0) {
-        //   debugger;
-        // }
+         
         resData.results = resDataResult.map((item, idx) => {
           return { ...item, bpa: idx + 1 };
         });
       }
-      if (fanaticMode) {
+      if (
+        fanaticMode 
+      ) {
         
-        playerReset = iterationSection.iterationSection.includes(countRender)
-          ? []
-          : playerIterationChoose;
-        playerManualFlag = playerReset.length > 0 ? false : true;
-        let playerManualFilter = playerManualChoose;
+       playerReset = iterationSection.iterationSection.includes(countRender)
+         ? []
+         : playerIterationChoose;
+       playerManualFlag = playerReset.length > 0 ? false : true;
+       let playerManualFilter = playerManualChoose;
 
-        if (playerManualFlag) {
-          dispatch(setPlayerIterationChoose([]));
-          dispatch(setPlayerManualChooseNew(playerManualFilter));
-        }
-        let playerIteration = [...playerReset, ...playerManualFilter];
-        const playerChooseId = playerIteration.map((el) => el.id);
-        const resDataResult = resData.results.filter(
-          (player) => !playerChooseId.includes(player.id)
-        );
+       if (playerManualFlag) {
+    
+         dispatch(setPlayerIterationChoose([]));
+         dispatch(setPlayerManualChooseNew(playerManualFilter));
+       }
+       let playerIteration = [...playerReset, ...playerManualFilter];
+       const playerChooseId = playerIteration.map((el) => el.id);
+       const resDataResult = resData.results.filter(
+         (player) => !playerChooseId.includes(player.id)
+       );
 
-        resData.results = resDataResult.map((item, idx) => {
-          return { ...item, bpa: idx + 1 };
-        });
+       resData.results = resDataResult.map((item, idx) => {
+         return { ...item, bpa: idx + 1 };
+       });
       }
       // Filter Choose Players
       if (playerChoose.length && !fanaticChallenge.length && !fanaticMode) {
@@ -109,9 +107,7 @@ export const getPlayersDraft = createAsyncThunk(
         const resDataResult = resData.results.filter(
           (player) => !playerChooseId.includes(player.id)
         );
-        // if (resData.results.length === 0) {
-        //   debugger;
-        // }
+
         resData.results = resDataResult.map((item, idx) => {
           return { ...item, bpa: idx + 1 };
         });
@@ -120,9 +116,7 @@ export const getPlayersDraft = createAsyncThunk(
           return { ...item, bpa: idx + 1 };
         });
       }
-      // if (resData.results.length === 0) {
-      //   debugger;
-      // }
+    
       dispatch(setPlayersDraft(resData));
     } catch (error) {
       if (error.response && error.response.data.message) {

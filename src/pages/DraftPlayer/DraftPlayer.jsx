@@ -80,8 +80,7 @@ const DraftPlayer = () => {
   }, [countRender, tradeValue.mouthing]);
 
   useEffect(() => {
-    // if(false){
-
+   
     if (
       (tradeValue.mouthing && countRender < teamPickIndex[0]) ||
       countRender < fanaticIndexPosition[0] ||
@@ -123,6 +122,7 @@ const DraftPlayer = () => {
 
   //  Go To Result Page
   useEffect(() => {
+    
     if (draftResults.results.length > 0) {
       navigate("/draft-result");
     }
@@ -185,7 +185,7 @@ const DraftPlayer = () => {
           ? iter[tradeValue.results[countRender - 1].iteration - 2]
           : 0;
       const iterationDraftPlayers = draftPlayers.slice(startSlice, countRender);
-      console.log("iterationDraftPlayers :", iterationDraftPlayers);
+      
       iterationDraftPlayers.forEach((item) => {
         const {
           round_index,
@@ -208,6 +208,7 @@ const DraftPlayer = () => {
       });
       dispatch(setHistoryBoard(data));
       if (countRender === iter.at(-1)) {
+        
         dispatch(
           setDraftResultAction(
             draftPlayers,

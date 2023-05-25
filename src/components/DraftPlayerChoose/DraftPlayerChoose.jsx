@@ -9,6 +9,7 @@ import {
   delFanaticPosition,
   delPauseId,
   delTeamsRound,
+  fanaticModeBefore,
   fanaticPlayer,
   selectDraftConfig,
   setCountRender,
@@ -48,7 +49,12 @@ import { percentPick, upUsersCals } from "../../utils/utils";
 import { Switch } from "@mui/material";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallBack from "../ErrorFallBack/ErrorFallBack";
-import { manualTradeAction, setAcceptTrade, setChangeTrades, setResetSelectTeam, } from "../../app/features/trades/tradesSlice";
+import {
+  manualTradeAction,
+  setAcceptTrade,
+  setChangeTrades,
+  setResetSelectTeam,
+} from "../../app/features/trades/tradesSlice";
 
 const PageSize = 10;
 const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
@@ -113,7 +119,6 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
 
   const playerConcat = (playerItem, teamId, upPlayers = {}, idx) => {
     const teamItem = structuredClone(tradeValue.results[teamId - 1]);
-    
     const pickTeam = teamItem["pick"];
     teamItem["player"] = playerItem;
     teamItem["playerDepth"] = idx + 1;
@@ -129,22 +134,34 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     });
 
     if (fanaticChallenge.length) {
-      if(fanaticChallenge[0].mode === +teamItem.round_index_number) {
+      if (fanaticChallenge[0].mode === +teamItem.round_index_number) {
         dispatch(
           fanaticPlayer({
             pick: pickTeam - 1,
             player: playerItem,
             playerDepth: idx + 1,
-            round:+teamItem.round_index_number
+            round: +teamItem.round_index_number,
           })
         );
       }
+    }
+    if (fanaticMode) {
+      dispatch(
+        fanaticModeBefore({
+          player: {
+            pick: pickTeam - 1,
+            player: playerItem,
+            playerDepth: idx + 1,
+            round: +teamItem.round_index_number,
+          },
+          action: "inc",
+        })
+      );
     }
     const playerItemPos = {
       ...playerItem,
       roundTeam: +teamItem.round_index_number,
     };
-    
 
     dispatch(delPlayersDraft([playerItemPos]));
     dispatch(setTradeValue({ ...tradeValue, results: newTradeValue }));
@@ -164,7 +181,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     const pricentValue = percentPick(realValue, item[teamName]);
     let playerItemsSlice = playersDraft.results.slice(0, 10);
     playerItemsSlice.push(playerItem);
-    
+
     // for (let i = 0; i < playersDraft.results.length; ++i) {
     //   if (playersDraft.results[i].id === playerItem.id) {
     //     playerItemsSlice.push(playersDraft.results[i]);
@@ -176,13 +193,12 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
 
     percentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
     playerItem = { ...item, [teamName]: item.value + pricentValue };
-  
+
     // }
     const playerItemPos = {
       ...playerItem,
       roundTeam: +teamItem.round_index_number,
     };
-
 
     dispatch(setCurrentPage(1));
     dispatch(setPositionPlayersDraft(["All"]));
@@ -279,13 +295,22 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                   onChange={() => setColorShow((prev) => !prev)}
                 />
               </div>
-              {fanaticChallenge.length === 0 && !fanaticMode ?  <div className="trades-btn"><button onClick={()=> {
-                dispatch(setChangeTrades(false))
-                dispatch(manualTradeAction({countRender, manualTrade:true}));
-                dispatch(setResetSelectTeam());
-                dispatch(setAcceptTrade(false));
-                }}>Trades</button></div> : null}
-             
+              {fanaticChallenge.length === 0 && !fanaticMode ? (
+                <div className="trades-btn">
+                  <button
+                    onClick={() => {
+                      dispatch(setChangeTrades(false));
+                      dispatch(
+                        manualTradeAction({ countRender, manualTrade: true })
+                      );
+                      dispatch(setResetSelectTeam());
+                      dispatch(setAcceptTrade(false));
+                    }}
+                  >
+                    Trades
+                  </button>
+                </div>
+              ) : null}
             </NumWrapper>
             <DraftPlayerWrapper>
               <DraftPlayerItems>

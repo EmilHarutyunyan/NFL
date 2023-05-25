@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useSearchParams } from "react-router-dom";
+import { IoRefreshOutline } from "react-icons/io5";
 import {
   getTeamList,
   selectTeamList,
@@ -28,6 +29,7 @@ import { selectGroup } from "../../app/features/group/groupSlice";
 
 import Pagination from "../../components/Pagination/Pagination";
 import { TeamListWrap } from "./TeamList.styles";
+import { getTradeValue } from "../../app/features/draftConfig/drafConfigAction";
 
 // Player Show Count
 const PageSize = 10;
@@ -45,6 +47,7 @@ const TeamList = () => {
 
   useEffect(() => {
     dispatch(getTeamList(listQuery));
+    dispatch(getTradeValue(7));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listQuery]);
 
@@ -102,6 +105,12 @@ const TeamList = () => {
               <img src={team.logo} alt="" width={60} />
               <h2>{team.name}</h2>
             </div>
+            <div>
+              <button>
+                <IoRefreshOutline />
+                Refresh 
+              </button>
+            </div>
           </SelectTeam>
           <Search
             value={searchValue}
@@ -153,10 +162,7 @@ const TeamList = () => {
                             <p>ADP</p>
                             <span>{item?.adp}</span>
                           </div>
-                          {/* <div className="player-td player-adp">
-                            <p>{item[`${team.name}`].toFixed(2)}</p>
-                          </div> */}
-
+                          
                           <h4 className="player-td player-name">
                             {item.player}
                           </h4>

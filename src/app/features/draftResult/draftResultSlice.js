@@ -41,7 +41,7 @@ export const { setDraftResult, setRoundTeam, setTeamsName, setTeamsPlayer, resDr
 export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexControl, draftRandomnessTeam) => (dispatch, getState) => {
 
   const {draftConfig: {fanaticChallenge,fanaticMode}} = getState()
-  
+  debugger
   const setRound = []
   const teamsSelectName = teamSelect.map(item => item.name)
   const teamsPlayer = {}
@@ -53,8 +53,8 @@ export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexCont
   }
   if (fanatic) {
     for (let index of teamPickIndexControl) {
-      const team = teams[index - 1];
-      if (index === team.index_position) {
+      const team = teams.filter((item) => item.index_position === index)[0];
+      // if (index === team.index_position) {
         const teamNameItem = team.round.name;
         if (teamsPlayer[teamNameItem]) {
           teamsPlayer[teamNameItem].push(team);
@@ -64,7 +64,7 @@ export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexCont
         if (team?.player?.bpa === 1) {
           bpa_badges++;
         }
-      }
+      // }
     }
   } else {
     for (let index of teamPickIndexControl) {
