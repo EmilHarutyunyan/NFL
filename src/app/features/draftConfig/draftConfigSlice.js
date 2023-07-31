@@ -39,14 +39,21 @@ const initialState = {
   changeTrade: false,
   fanaticMode:false,
   fanaticModeValue:2,
-  teamUniqPosition:{}
+  teamUniqPosition:{},
+  tradingSimulatorAction:false,
+  tradingSimulator: 1
 };
 
 export const draftConfigSlice = createSlice({
   name: "draftConfig",
   initialState,
   reducers: {
-
+    setTradingSimulatorAction: (state, action) => {
+      state.tradingSimulatorAction = action.payload;
+    },
+    setTradingSimulator: (state, action) => {
+      state.tradingSimulator = action.payload;
+    },
     setTeamUniqPosition: (state, action) => {
       state.teamUniqPosition = action.payload;
     },
@@ -123,6 +130,9 @@ export const draftConfigSlice = createSlice({
     },
     setDraftPlayers: (state, action) => {
       state.draftPlayers.push(action.payload);
+    },
+    setNewDraftPlayers:(state, action) => {
+      state.draftPlayers = action.payload
     },
     changeTradeValue: (state, action) => {
       state.tradeValue.results = action.payload;
@@ -224,6 +234,9 @@ export const draftConfigSlice = createSlice({
       state.iterationSection = initialState.iterationSection;
       state.fanaticMode = initialState.fanaticMode;
       state.fanaticModeValue = initialState.fanaticModeValue;
+      state.teamUniqPosition = initialState.teamUniqPosition;
+      state.tradingSimulator = initialState.tradingSimulator;
+      state.tradingSimulatorAction = initialState.tradingSimulatorAction;
     },
   },
   extraReducers: {
@@ -253,6 +266,8 @@ export const draftConfigSlice = createSlice({
 export const selectDraftConfig = (state) => state.draftConfig;
 
 export const {
+  setTradingSimulator,
+  setTradingSimulatorAction,
   setTeamUniqPosition,
   setFanaticModeValue,
   setFanaticMode,
@@ -292,6 +307,7 @@ export const {
   delFanaticPosition,
   delFanaticPlayerBefore,
   delFanaticPickTeam,
+  setNewDraftPlayers,
 } = draftConfigSlice.actions;
 
 const teamRound = (round, teamSelectId) => {
@@ -406,7 +422,7 @@ export const saveRound = (roundNum) => (dispatch, getState) => {
   dispatch(setRound(roundNum));
 };
 export const setDraftPlayersAction = (player) => (dispatch, getState) => {
-  debugger
+  
   const { draftPlayers,fanaticChallenge,fanaticMode } = selectDraftConfig(getState());
   let checkPlayer = false;
   if(!fanaticChallenge.length) {
@@ -441,6 +457,12 @@ export const uniqPosition =
       })
     );
   };
+
+export const simSimDraftPlayer = (teamPlayers) => (dispatch, getState) => {
+  const { draftPlayers } = selectDraftConfig(getState());
+
+  dispatch(setNewDraftPlayers(teamPlayers));
+};
 
 export const changeTradeTeam = (tradeTeam) => (dispatch,getState) =>{
 

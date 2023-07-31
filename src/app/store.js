@@ -9,6 +9,7 @@ import teamListReducer from "./features/teamList/teamListSlice";
 import draftResultReducer from './features/draftResult/draftResultSlice';
 import draftValueReducer from "./features/draftValue/draftValueSlice"
 import tradesReducer from "./features/trades/tradesSlice"
+import simulatorToSimulatorReducer from "./features/simulatorToSimulator/simulatorToSimulatorSlice";
 export const store = configureStore({
   reducer: {
     user: userReducer,
@@ -21,5 +22,6 @@ export const store = configureStore({
     draftResult: draftResultReducer,
     draftValue: draftValueReducer,
     trades: tradesReducer,
+    simulatorToSimulator: simulatorToSimulatorReducer,
   },
 });

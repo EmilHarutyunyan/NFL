@@ -531,3 +531,31 @@ export const ActionWrap = styled.div`
     cursor: pointer;
   }
 `;
+
+
+export const TeamChange = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: 350px;
+`;
+export const ImgWrap = styled.div`
+  width: 100%;
+  max-width: 60px;
+  & img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+`;
+export const PlayerInfo = styled.div`
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #195fac;
+  & p:first-child {
+    margin-bottom: 5px;
+  }
+`;

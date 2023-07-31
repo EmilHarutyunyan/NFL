@@ -42,8 +42,11 @@ import {
   DraftTeam,
   DraftTeamName,
   GradeBox,
+  ImgWrap,
   MockDraftWrap,
   MySelectWrap,
+  PlayerInfo,
+  TeamChange,
   TradesItem,
   TradesItems,
   TradesWrap,
@@ -58,6 +61,9 @@ import ErrorFallBack from "../../components/ErrorFallBack/ErrorFallBack";
 import { selectTrades } from "../../app/features/trades/tradesSlice";
 import { POSITIONS_COLOR, TEAM_NEEDS } from "../../utils/constants";
 import Confetti from "react-confetti";
+import { selectSimulatorToSimulator } from "../../app/features/simulatorToSimulator/simulatorToSimulatorSlice";
+import { RefreshIcon } from "../../components/Icons/Icons";
+
 
 const DraftResult = () => {
   const [countGrade, setCountGrade] = useState(0)
@@ -73,6 +79,11 @@ const DraftResult = () => {
     bpa_badges,
     fanatic_mode,
   } = useSelector(selectDraftResult);
+  const { teamAllRound: simSimTeam } = useSelector(
+    selectSimulatorToSimulator
+    );
+    console.log('simSimTeam :', simSimTeam);
+
 
   const { historyTrades } = useSelector(selectTrades);
 
@@ -267,7 +278,7 @@ const DraftResult = () => {
                   teamSelect?.map((team, idx) => {
                     const round = +team?.round_index?.split(" ")[1];
                     const grading = gradingCalc(team?.player?.bpa);
-                    
+
                     return (
                       <React.Fragment key={idx}>
                         <div className="draft-result-pick-item">
@@ -327,10 +338,30 @@ const DraftResult = () => {
                   <p>OVERALL DRAFT GRADE</p>
                   <div className="draft-overall-grade">
                     {gradingMiddle(countGrade)}
-                
                   </div>
                 </div>
               </DraftResultPickFooter>
+            </div>
+            <div>
+              {simSimTeam.length
+                ? simSimTeam.map((item) => {
+
+               return (
+                    <div>
+                      <TeamChange key={item.id}>
+                        <PlayerInfo>
+                          <p>{item?.player?.player}</p>
+                          <p>{item?.player?.position}</p>
+                        </PlayerInfo>
+                        <RefreshIcon width={30} height={"auto"} />
+                        <ImgWrap>
+                          <img src={item?.logo} alt={item.tm} />
+                        </ImgWrap>
+                      </TeamChange>
+                    </div>
+               )
+                   })
+                : null}
             </div>
             <div>
               <BadgesItems>
@@ -497,8 +528,8 @@ const DraftResult = () => {
         {showConfetti && (
           <Confetti
             numberOfPieces={800}
-            width={window.innerWidth - 200}
-            height={window.innerHeight}
+            width={"100%"}
+            height={"100%"}
             recycle={false}
           />
         )}
