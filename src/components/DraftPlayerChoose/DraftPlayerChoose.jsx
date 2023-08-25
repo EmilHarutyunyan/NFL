@@ -170,7 +170,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
       roundTeam: +teamItem.round_index_number,
     };
   
-    console.log('playerItemPos :', playerItemPos);
+
     dispatch(delPlayersDraft([playerItemPos]));
     dispatch(setTradeValue({ ...tradeValue, results: newTradeValue }));
     dispatch(setDraftPlayersAction({ ...teamItem, upPlayers }));

@@ -1,53 +1,66 @@
 import axios from "axios";
-import TokenService from "./token.service";
-import jwt_decode from "jwt-decode";
-import dayjs from "dayjs";
 import { API_ENDPOINT } from "../config/config";
+import TokenService from "./token.service";
 
-let authTokens = TokenService.getUser() || "";
 const axiosInstance = axios.create({
-  API_ENDPOINT,
-  headers: { Authorization: `Bearer ${authTokens?.tokens?.access}` },
+  baseURL: API_ENDPOINT,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-axiosInstance.interceptors.request.use(async (req) => {
-  if (!authTokens) {
-    authTokens = TokenService.getUser() || "";
-    req.headers.Authorization = `Bearer ${authTokens.tokens.access}`;
+axiosInstance.interceptors.request.use(
+  (config) => {
+    let authTokens = TokenService.getUser() || "";
+    if (authTokens) {
+      config.headers["Authorization"] = `Bearer ${authTokens?.tokens?.access}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
+);
 
-  const user = jwt_decode(authTokens?.tokens?.access);
-  
-  const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
-  
-  if (!isExpired) return req;
+axiosInstance.interceptors.response.use(
+  (res) => {
+    return res;
+  },
+  async (err) => {
+    const originalConfig = err.config;
 
-  try {
-    
-    let headersList = {
-      "Accept": "*/*",
-      "Content-Type": "application/json",
-    };
+    if (
+      originalConfig.url !== `${API_ENDPOINT}Account/Authorize` &&
+      err.response
+    ) {
+      // Access Token was expired
+      if (
+        (err.response.status === 401 || err.response.status === 403) &&
+        !originalConfig._retry
+      ) {
+        debugger
+        originalConfig._retry = true;
+        let authTokens = TokenService.getUser() || "";
 
-    let bodyContent = JSON.stringify({
-      refresh: authTokens.tokens.refresh,
-    });
+        try {
+          const response = await axiosInstance.post(
+            `${API_ENDPOINT}token/refresh/`,
+            {
+              refresh: authTokens.tokens.refresh,
+            }
+          );
 
-    let reqOptions = {
-      url: `https://api.nfldraftfanatics.com/api/v1/token/refresh/`,
-      method: "POST",
-      headers: headersList,
-      data: bodyContent,
-    };
+          TokenService.updateLocalAccessToken(response.data?.access);
 
-    const response = await axios.request(reqOptions);
-    TokenService.updateLocalAccessToken(response.data?.access);
-    req.headers.Authorization = `Bearer ${response.data.access}`;
-    return req;
-  } catch (error) {
-  
-    // window.location.href = window.location.origin;
+          return axiosInstance(originalConfig);
+        } catch (_error) {
+          return Promise.reject(_error);
+        }
+      }
+    }
+
+    return Promise.reject(err);
   }
-});
+);
 
 export default axiosInstance;

@@ -3,11 +3,12 @@ import { InputWrap, ProfileTitle } from "../Profile.styles";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Error } from "../../../pages/auth/Auth.styles";
 import { useDispatch, useSelector } from "react-redux";
-import { userUpdate } from "../../../app/features/user/userActions";
 import { CircularProgress } from "@mui/material";
+import { userUpdate } from "../../../app/features/user/userActions";
+import { Error } from "../../auth/Auth.styles";
 import { selectUser } from "../../../app/features/user/userSlice";
+import twitterBlue from "../../../assets/img/twitter-blue.png"
 
 const schema = yup.object().shape({
   first_name: yup
@@ -32,6 +33,11 @@ const PersonalInfo = () => {
     formState: { errors },
   } = useForm({
     mode: "onBlur",
+    defaultValues: {
+      first_name: userInfo?.first_name,
+      last_name: userInfo?.last_name,
+      twitter_link: userInfo?.twitter_link,
+    },
     //  onSubmit
     resolver: yupResolver(schema),
   });
@@ -39,7 +45,6 @@ const PersonalInfo = () => {
   const onSubmit = (data) => {
     dispatch(userUpdate(data));
     reset()
-    
   };
 
   return (
@@ -66,7 +71,8 @@ const PersonalInfo = () => {
             {errors.surname?.message ? errors.surname?.message : <br />}
           </Error>
         </InputWrap>
-        <InputWrap>
+        <InputWrap className="twitter-wrap">
+          <img src={twitterBlue} alt="twitter"/>
           <input
             {...register("twitter_link")}
             placeholder={`I am ${userInfo?.twitter_link}`}

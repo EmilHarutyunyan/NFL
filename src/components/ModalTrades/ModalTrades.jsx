@@ -65,7 +65,6 @@ const ModalTrades = ({ tradesTeams, teamSelect }) => {
     randomFlag,
   } = useSelector(selectTrades);
 
-  console.log("myTeam 1:", myTeam);
   const { tradeValue: tradeValueResults } = useSelector(selectDraftConfig);
 
   const [open, setOpen] = useState(!changeTrades);

@@ -2,18 +2,24 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserMe } from "../../../app/features/user/userActions";
 import { selectUser } from "../../../app/features/user/userSlice";
-import BadgesIcon from "../../BadgesIcon/BadgesIcon";
+import BadgesIcon from "../../../components/BadgesIcon/BadgesIcon";
 import { ProfileDesc, ProfileTitle } from "../Profile.styles";
 import { BadgesCont, BadgesItems, BadgesWrap } from "./Badges.styles";
 
 const Badges = () => {
   const {
-    userInfo: { bpa_badges=0, fanatic_mode=2, fanatic_badges=0,trade_up=0,trade_down=0 },
+    userInfo: {
+      bpa_badges = 0,
+      fanatic_mode = 2,
+      fanatic_badges = 0,
+      trade_up = 0,
+      trade_down = 0,
+    },
   } = useSelector(selectUser);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getUserMe());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <>

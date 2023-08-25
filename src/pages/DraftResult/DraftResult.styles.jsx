@@ -538,7 +538,10 @@ export const TeamChange = styled.div`
   display: flex;
   align-items: center;
   gap: 20px;
-  max-width: 350px;
+  justify-content: space-between;
+  margin-bottom: 50px;
+  
+  
 `;
 export const ImgWrap = styled.div`
   width: 100%;
@@ -557,5 +560,25 @@ export const PlayerInfo = styled.div`
   color: #195fac;
   & p:first-child {
     margin-bottom: 5px;
+  }
+`;
+
+export const SimSimResult = styled.div`
+  display: flex;
+  gap: 38px;
+  .arrow-wrap {
+    display: flex;
+    flex-direction: column;
+  }
+  .sim-pick {
+    display: flex;
+    gap: 14px;
+    p {
+      display: flex;
+      gap: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #195fac;
+    }
   }
 `;

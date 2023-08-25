@@ -304,3 +304,12 @@ export const loadImage = (src) => {
     img.src = src;
   });
 };
+
+
+export const generateID  = function (count=8) {
+console.log('count :', count);
+
+  return (Date.now().toString(36) + Math.random().toString(36).substr(2))
+    .toUpperCase()
+    .slice(count);
+};

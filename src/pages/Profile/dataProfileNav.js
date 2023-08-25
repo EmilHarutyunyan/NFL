@@ -1,4 +1,4 @@
-import { ProfileBadgesIcon, ProfileEventsIcon, ProfileInfoIcon, ProfileLogoutIcon, ProfilePassIcon, ProfilePaymentIcon, ProfilePodcastsIcon } from "../Icons/Icons";
+import { ProfileBadgesIcon, ProfileEventsIcon, ProfileInfoIcon, ProfileLogoutIcon, ProfilePassIcon, ProfilePaymentIcon, ProfilePodcastsIcon } from "../../components/Icons/Icons";
 
 
 export const links = [

@@ -459,7 +459,7 @@ export const uniqPosition =
   };
 
 export const simSimDraftPlayer = (teamPlayers) => (dispatch, getState) => {
-  const { draftPlayers } = selectDraftConfig(getState());
+
 
   dispatch(setNewDraftPlayers(teamPlayers));
 };

@@ -75,6 +75,19 @@ export const InputWrap = styled.div`
   line-height: 27px;
   width: 100%;
   max-width: 467px;
+  &.twitter-wrap {
+    position: relative;
+    input {
+      padding-left: 50px;
+    }
+    img {
+      width: 30px;
+      height: 30px;
+      position: absolute;
+      top: 14%;
+      left: 2%;
+    }
+  }
 
   button[type="submit"] {
     display: flex;

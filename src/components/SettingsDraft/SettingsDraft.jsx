@@ -33,7 +33,7 @@ import arrowLeft from "../../assets/img/arrow-left.png";
 import Button from "../Buttons/Button";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { selectUser } from "../../app/features/user/userSlice";
+
 import { setChangeTrades } from "../../app/features/trades/tradesSlice";
 
 const Settings = ({ teamSelect }) => {

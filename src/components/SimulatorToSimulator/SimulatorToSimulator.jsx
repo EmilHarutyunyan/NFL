@@ -1,7 +1,5 @@
 import React, {
-  useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -22,13 +20,11 @@ import {
   BtnWrap,
   ImgWrap,
   ModalBody,
-  ModalBodyItem,
   ModalBodyItems,
   ModalHeader,
   ModalWrap,
   PlayerInfo,
   TeamChange,
-  Wrapper,
 } from "./SimulatorToSimulator.styles";
 import { CloseIcon, RefreshIcon } from "../Icons/Icons";
 import { getSimTradeValue, setSimSimTeam } from "../../app/features/simulatorToSimulator/simulatorToSimulatorSlice";
@@ -39,7 +35,7 @@ const SimulatorToSimulator = () => {
     useSelector(selectDraftConfig);
   const { results: players } = useSelector(selectPlayersDraft);
   const [draftPlayerChoose, setDraftPlayerChoose] = useState([...draftPlayers]);
-  const [playersSim, setPlayersSim] = useState(players.slice(0, 50));
+  const [playersSim] = useState(players.slice(0, 50));
   const [infoChange, setInfoChange] = useState([]);
   const [open, setOpen] = useState(false);
   const handleClose = () => {

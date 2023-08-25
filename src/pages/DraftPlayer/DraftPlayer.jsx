@@ -44,6 +44,7 @@ import {
   
 } from "../../app/features/trades/tradesSlice";
 import PlayersSelected from "../../components/PlayersSelected/PlayersSelected";
+import { resetSimSim } from "../../app/features/simulatorToSimulator/simulatorToSimulatorSlice";
 
 const DraftPlayer = () => {
   const {
@@ -137,6 +138,7 @@ const DraftPlayer = () => {
     return () => {
       dispatch(resPlayersDraft());
       dispatch(setResetRound());
+      dispatch(resetSimSim());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -15,5 +15,4 @@ export const BadgesCont = styled.div`
   &:last-child {
     margin-top: 44px;
   }
-  
 `;

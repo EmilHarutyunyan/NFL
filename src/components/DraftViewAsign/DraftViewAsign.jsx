@@ -17,7 +17,6 @@ import {
 import { delPlayersDraft } from "../../app/features/playersDraft/playersDraftSlice";
 import { POSITIONS_COLOR } from "../../utils/constants";
 import { draftAutoSettings, draftDisableSettings } from "./DraftSettings";
-import { searchInfo } from "../../utils/utils";
 
 const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
   const [isShow, setIsShow] = useState(false);
@@ -288,14 +287,8 @@ const DraftViewAsign = ({ players, thisId }) => {
             index_position: indexPosition,
             round: { logo, name },
             iteration,
-            team_neads_info: teamNeedsInfo,
           } = team;
          
-          
-
-          const positions = teamNeedsInfo?.team_neads_info
-            .map((item) => item.positions)
-            .flat();
 
           const checkTeam = delayTime({ id, indexPosition });
           const time = thisId ? +(id - thisId) * (1000 / timeSpeed) : checkTeam;
@@ -383,13 +376,7 @@ const DraftViewAsign = ({ players, thisId }) => {
                       )}
                     </Delayed>
                   )}
-                  {positions.map((position, idx) => {
-                    return (
-                      <React.Fragment key={idx}>
-                        {position.name}{" "}
-                      </React.Fragment>
-                    );
-                  })}
+                 
                 </div>
               </li>
             </React.Fragment>

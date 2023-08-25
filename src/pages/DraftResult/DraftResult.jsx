@@ -46,6 +46,7 @@ import {
   MockDraftWrap,
   MySelectWrap,
   PlayerInfo,
+  SimSimResult,
   TeamChange,
   TradesItem,
   TradesItems,
@@ -82,7 +83,7 @@ const DraftResult = () => {
   const { teamAllRound: simSimTeam } = useSelector(
     selectSimulatorToSimulator
     );
-    console.log('simSimTeam :', simSimTeam);
+
 
 
   const { historyTrades } = useSelector(selectTrades);
@@ -342,27 +343,65 @@ const DraftResult = () => {
                 </div>
               </DraftResultPickFooter>
             </div>
-            <div>
+            <DraftResultPickWrap
+              backImg={markaImg}
+              style={{ borderRadius: "8px", padding: "30px 16px" }}
+            >
               {simSimTeam.length
                 ? simSimTeam.map((item) => {
-
-               return (
-                    <div>
-                      <TeamChange key={item.id}>
-                        <PlayerInfo>
-                          <p>{item?.player?.player}</p>
-                          <p>{item?.player?.position}</p>
-                        </PlayerInfo>
-                        <RefreshIcon width={30} height={"auto"} />
-                        <ImgWrap>
-                          <img src={item?.logo} alt={item.tm} />
-                        </ImgWrap>
-                      </TeamChange>
-                    </div>
-               )
-                   })
+                    const { pickInfo } = item;
+                    return (
+                      <div>
+                        <TeamChange key={item.id}>
+                          <ImgWrap>
+                            <img
+                              src={teamSelect[0]?.round?.logo}
+                              alt={teamSelect[0]?.round?.name}
+                            />
+                          </ImgWrap>
+                          <SimSimResult>
+                            <div className="arrow-wrap">
+                              <RefreshIcon width={30} height={"auto"} />
+                              <RefreshIcon
+                                width={30}
+                                height={"auto"}
+                                style={{ transform: "rotate(180deg)" }}
+                              />
+                            </div>
+                            <div>
+                              <PlayerInfo>
+                                <p>{item?.player?.player}</p>
+                                <p>{item?.player?.position}</p>
+                              </PlayerInfo>
+                              <div class="sim-pick">
+                                {Object.keys(pickInfo).map((item, idx) => {
+                                  return (
+                                    <>
+                                      <p>{item}</p>
+                                      <p>{pickInfo[item].join(" ")}</p>
+                                    </>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                            <div className="arrow-wrap">
+                              <RefreshIcon width={30} height={"auto"} />
+                              <RefreshIcon
+                                width={30}
+                                height={"auto"}
+                                style={{ transform: "rotate(180deg)" }}
+                              />
+                            </div>
+                          </SimSimResult>
+                          <ImgWrap>
+                            <img src={item?.logo} alt={item.tm} />
+                          </ImgWrap>
+                        </TeamChange>
+                      </div>
+                    );
+                  })
                 : null}
-            </div>
+            </DraftResultPickWrap>
             <div>
               <BadgesItems>
                 {bpa_badges ? (
@@ -525,11 +564,12 @@ const DraftResult = () => {
             <DraftResultFooter>www.DraftSimulator.co</DraftResultFooter>
           </DraftResultWrap>
         </DraftResultFull>
+
         {showConfetti && (
           <Confetti
             numberOfPieces={800}
-            width={"100%"}
-            height={"100%"}
+            width={window.innerWidth}
+            height={window.innerHeight}
             recycle={false}
           />
         )}
