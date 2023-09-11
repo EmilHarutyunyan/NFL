@@ -1,14 +1,20 @@
-import React, { useState } from 'react'
+import React from 'react'
 // Styles
 import {Wrapper} from "./SettingSound.styles"
 import { Switch } from '@mui/material';
+import useAudio from '../../hooks/useAudio';
 const SettingSound = () => {
-  const [isSound,setIsSound] = useState(false)
+  const {isPlaying,setIsPlaying, play, stop} = useAudio()
   return (
     <Wrapper>
       <p>Sound</p>
-      <Switch onChange={() => setIsSound(!isSound)} />
-      <p>{isSound ? 'ON' : 'OFF'}</p>
+      <Switch
+        onChange={() => {
+          !isPlaying ? play() : stop();
+          setIsPlaying(!   isPlaying);
+        }}
+      />
+      <p>{isPlaying ? "ON" : "OFF"}</p>
     </Wrapper>
   );
 }
