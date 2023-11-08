@@ -35,11 +35,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 import { setChangeTrades } from "../../app/features/trades/tradesSlice";
+import { selectUser } from "../../app/features/user/userSlice";
 
 const Settings = ({ teamSelect }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const { userInfo } = useSelector(selectUser);
+  const { userInfo } = useSelector(selectUser);
   const {
     round,
     timeSpeed,
@@ -54,8 +55,10 @@ const Settings = ({ teamSelect }) => {
     tradingSimulatorAction,
     tradingSimulator,
     changeTrades,
+    allowSimulator,
   } = useSelector(selectDraftConfig);
 
+  
   const roundsArray = Array.from(Array(7).keys());
   const [maxSimSim,setMaxSimSim] = useState(8);
 
@@ -310,17 +313,28 @@ const Settings = ({ teamSelect }) => {
               </div>
             )}
             {/* ------ */}
-            <div className="setting-fan-item">
-              <p>Allow trading simulator to simulator</p>
-              <Switch
-                checked={tradingSimulatorAction}
-                onChange={(e) => {
-                  dispatch(setTradingSimulatorAction(!tradingSimulatorAction));
-                  dispatch(resetTeam());
-                  dispatch(setChangeTrades(!changeTrades));
-                }}
-              />
-            </div>
+            {allowSimulator || userInfo?.allow_simulator ? (
+              <div className="setting-fan-item">
+                <p>
+                  Allow trading simulator to simulator <br />
+                  <span style={{ fontSize: "13px" }}>
+                    Please choose the team after selecting an option
+                  </span>
+                </p>
+                <Switch
+                  checked={tradingSimulatorAction}
+                
+                  onChange={(e) => {
+                    dispatch(
+                      setTradingSimulatorAction(!tradingSimulatorAction)
+                    );
+                    dispatch(resetTeam());
+                    dispatch(setChangeTrades(!changeTrades));
+                  }}
+                />
+              </div>
+            ) : null}
+
             {tradingSimulatorAction && (
               <div className="setting-fan-item">
                 <Box sx={{ width: "100%" }}>

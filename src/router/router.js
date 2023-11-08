@@ -32,13 +32,49 @@ import Logout from "../pages/Profile/Logout/Logout";
 import { selectUser } from "../app/features/user/userSlice";
 import PrivateRouter from "./PrivateRouter";
 // Path
-import { DRAFT_CONFIG, DRAFT_PLAYER, DRAFT_RESULT, DRAFT_VALUE_CHART, FORGOT_PASS, HOME, LIVE_DRAFT, MULTI_PLAYER_FIND, MULTI_PLAYER_JOIN_TEAM, NOT_FOUND, PLAYERS, PROFILE, PROFILE_BADGES, PROFILE_DRAFT_EVENTS, PROFILE_LOGOUT, PROFILE_PASSWORD, PROFILE_PAYMENT, PROFILE_PODCASTS, RESET_PASS, SELECT_DRAFT, SIGH_UP, SIGN_IN, TEAM_LIST, TEAM_NEEDS } from "./route-path";
+import {
+  DRAFT_CONFIG,
+  DRAFT_PLAYER,
+  DRAFT_RESULT,
+  DRAFT_VALUE_CHART,
+  FORGOT_PASS,
+  HOME,
+  LIVE_DRAFT,
+  MULTI_PLAYER_FIND,
+  MULTI_PLAYER_JOIN_TEAM,
+  NOT_FOUND,
+  PLAYERS,
+  PROFILE_BADGES,
+  PROFILE_DRAFT_EVENTS,
+  PROFILE_LOGOUT,
+  PROFILE_PASSWORD,
+  PROFILE_PAYMENT,
+  PROFILE_SUBSCRIPTION,
+  PROFILE_PODCASTS,
+  RESET_PASS,
+  SELECT_DRAFT,
+  SIGH_UP,
+  SIGN_IN,
+  TEAM_LIST,
+  TEAM_NEEDS,
+  PROFILE_SUBSCRIPTION_RETURN,
+  PROFILE_DRAFT_EVENTS_MY,
+  PROFILE_DRAFT_EVENTS_CREATE,
+  PROFILE_DRAFT_EVENTS_MY_EDIT,
+  PROFILE_DRAFT_EVENTS_MY_VIEW,
+  MULTI_PLAYER_JOIN_TEAM_ID,
+} from "./route-path";
 import MultiPlayerFind from "../pages/MultiPlayerFind/MultiPlayerFind";
 import MultiPlayerTeam from "../pages/MultiPlayerTeam/MultiPlayerTeam";
 import LiveDraft from "../pages/LiveDraft";
-
-
-
+import Subscription from "../pages/Profile/Subscription";
+import EventList from "../pages/Profile/DraftEvents/EventList";
+import CreateEvents from "../pages/Profile/DraftEvents/CreateEvents";
+import MyEvents from "../pages/Profile/DraftEvents/MyEvents";
+import EditEvent from "../pages/Profile/DraftEvents/EditEvent";
+import PayPalRedirect from "../pages/Profile/PayPalRedirect/PayPalRedirect";
+// import TokenService from "../service/token.service";
+import ViewEvent from "../pages/Profile/DraftEvents/ViewEvent";
 
 // Pages Lazy
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -52,8 +88,11 @@ const DraftValueChart = lazy(() =>
 const Router = () => {
   const { teamSelect } = useSelector(selectDraftConfig);
   const { results } = useSelector(selectDraftResult);
-  const {success} = useSelector(selectUser)
- 
+  const { success } = useSelector(selectUser);
+
+
+
+
   return (
     <>
       <Routes>
@@ -112,34 +151,52 @@ const Router = () => {
           <Route path={TEAM_NEEDS} element={<TeamNeeds />} />
           <Route path={TEAM_LIST} element={<TeamList />} />
           <Route path={MULTI_PLAYER_FIND} element={<MultiPlayerFind />} />
-          <Route path={MULTI_PLAYER_JOIN_TEAM} element={<MultiPlayerTeam />} />
+          <Route
+            path={MULTI_PLAYER_JOIN_TEAM_ID}
+            element={<MultiPlayerTeam />}
+          />
           <Route path={LIVE_DRAFT} element={<LiveDraft />} />
           <Route
-            path={PROFILE}
+            path={"/profile"}
             element={
               <ProtectRouter access={success} redirect={"/"}>
                 <ProfileLayout />
               </ProtectRouter>
             }
           >
-            <Route index element={<PersonalInfo />} />
+            <Route index path={"/profile/info"} element={<PersonalInfo />} />
             <Route path={PROFILE_BADGES} element={<Badges />} />
 
-            <Route path={PROFILE_DRAFT_EVENTS} element={<DraftEvents />}>
-              {/* <Route
-                
+            <Route
+              path={`${PROFILE_DRAFT_EVENTS}`}
+              element={true ? <DraftEvents /> : <PayPalRedirect />}
+            >
+              <Route
                 index
+                path={`${PROFILE_DRAFT_EVENTS_CREATE}`}
                 element={<CreateEvents />}
               />
-              <Route
-                path={PROFILE_DRAFT_EVENTS_MY}
-                
-                element={<EventList />}
-              /> */}
+              <Route path={PROFILE_DRAFT_EVENTS_MY} element={<MyEvents />}>
+                <Route index element={<EventList />} />
+                <Route
+                  path={`${PROFILE_DRAFT_EVENTS_MY_EDIT}/:id`}
+                  element={<EditEvent />}
+                />
+                <Route
+                  path={`${PROFILE_DRAFT_EVENTS_MY_VIEW}/:id`}
+                  element={<ViewEvent />}
+                />
+              </Route>
             </Route>
 
             <Route path={PROFILE_PODCASTS} element={<Podcasts />} />
             <Route path={PROFILE_PAYMENT} element={<Payment />} />
+            <Route path={PROFILE_SUBSCRIPTION} element={<Subscription />} />
+            <Route
+              path={PROFILE_SUBSCRIPTION_RETURN}
+              element={<PayPalRedirect />}
+            />
+
             <Route path={PROFILE_PASSWORD} element={<Password />} />
             <Route path={PROFILE_LOGOUT} element={<Logout />} />
           </Route>

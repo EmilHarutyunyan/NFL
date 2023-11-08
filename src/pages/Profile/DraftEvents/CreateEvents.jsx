@@ -17,15 +17,22 @@ import { selectDraftEvents } from "../../../app/features/draftEvents/draftEvents
 import { generateID } from "../../../utils/utils";
 import excelIcon from "../../../assets/img/excelIcon.png";
 import { selectUser } from "../../../app/features/user/userSlice";
+import { useDispatch } from "react-redux";
+import { PROFILE_DRAFT_EVENTS_MY } from "../../../router/route-path";
+import { useNavigate } from "react-router-dom";
+import { draftEventsPost } from "../../../app/features/draftEvents/draftEventsActions";
 
 const CreateEvents = () => {
   const { loading, error } = useSelector(selectDraftEvents);
-  const { userInfo: {twitter_link} } = useSelector(selectUser);
-  
+  const {
+    userInfo: { twitter_link },
+  } = useSelector(selectUser);
+
   const [eventId, setEventId] = useState("");
   const [eventName, setEventName] = useState("");
   const [eventFile, setEventFile] = useState(null);
-  console.log("eventFile :", eventFile);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -40,11 +47,9 @@ const CreateEvents = () => {
       stripUnknown: true,
       abortEarly: false,
     }),
-    
   });
 
   const handleInputChange = useCallback((name, val) => {
-    
     setValue(name, val, { shouldDirty: true });
     clearErrors(name);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,15 +62,32 @@ const CreateEvents = () => {
   const generateEventName = () => {
     const id = generateID(10);
     let nameEvent = `${twitter_link}-${id}`;
-    handleInputChange("name_event", nameEvent);
+    handleInputChange("name", nameEvent);
     setEventName(nameEvent);
   };
-   const submitForm = async (data) => {
-    //  dispatch();
-    setEventId("")
-    setEventFile(null)
+  function objectToFormData(obj) {
+    const formData = new FormData();
+
+    Object.entries(obj).forEach(([key, value]) => {
+      
+      formData.append(key, value);
+    });
+
+    return formData;
+  }
+  const submitForm = async (data) => {
+    data.place_count = 32;
+    const formData = objectToFormData(data);
+   
+    for (const value of formData.values()) {
+      console.log(value);
+    }
+    dispatch(draftEventsPost(formData));
+    setEventId("");
+    setEventFile(null);
     reset();
-   };
+    navigate(`${PROFILE_DRAFT_EVENTS_MY}`);
+  };
   return (
     <div>
       <FormWrap onSubmit={handleSubmit(submitForm)}>
@@ -139,16 +161,16 @@ const CreateEvents = () => {
           </InputContainer>
           <InputContainer>
             <label>Name Event</label>
-            {errors?.name_event?.message && (
-              <ErrorMessage visible={errors?.name_event?.message}>
-                {errors?.name_event?.message}
+            {errors?.name?.message && (
+              <ErrorMessage visible={errors?.name?.message}>
+                {errors?.name?.message}
               </ErrorMessage>
             )}
             <GenerateEventBlock>
               <InputWrap
-                error={errors?.name_event?.message}
+                error={errors?.name?.message}
                 placeholder="Name Event"
-                {...register("name_event")}
+                {...register("name")}
               />
               {!eventName ? (
                 <span className="generate" onClick={generateEventName}>
@@ -209,11 +231,12 @@ const CreateEvents = () => {
             placeholder="Choose a Draft start date"
             style={{ display: "none" }}
             autoComplete="off"
-            {...register("file")}
+            // {...register("file")}
             onChange={(e) => {
+              
               const file = Array.from(e.target.files);
-              debugger;
-              handleInputChange("file", ...file);
+
+              handleInputChange("file", e.target.files[0]);
               setEventFile(...file);
             }}
           />

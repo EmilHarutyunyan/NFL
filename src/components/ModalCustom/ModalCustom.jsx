@@ -13,7 +13,7 @@ const ModalCustom = ({ children, closeModal, isOpen=false }) => {
     }
   },[isOpen])
   return (
-    <Wrapper isOpen={show}>
+    <Wrapper isOpen={show} >
       <Container className="modalContainer">
         <ContainerChildren isOpen={show}>
           {children}

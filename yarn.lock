@@ -1698,6 +1698,13 @@
     "@nodelib/fs.scandir" "2.1.5"
     "fastq" "^1.6.0"
 
+"@paypal/paypal-js@^7.0.3":
+  "integrity" "sha512-Mpq0TGKzypi02Iw4p11eq5+dxVKcuJ+98UDrxLRbqZcr8pBRFPX+jqPFkVq6hzs3sHxwIuMPFCxnrckxxLSznw=="
+  "resolved" "https://registry.npmjs.org/@paypal/paypal-js/-/paypal-js-7.0.3.tgz"
+  "version" "7.0.3"
+  dependencies:
+    "promise-polyfill" "^8.3.0"
+
 "@pmmmwh/react-refresh-webpack-plugin@^0.5.3":
   "integrity" "sha512-bcKCAzF0DV2IIROp9ZHkRJa6O4jy7NlnHdWL3GmcUxYWNjLXkK5kfELELwEfSP5hXPfVL/qOGMAROuMQb9GG8Q=="
   "resolved" "https://registry.npmjs.org/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.5.7.tgz"
@@ -7988,6 +7995,11 @@
   "integrity" "sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA=="
   "resolved" "https://registry.npmjs.org/progress/-/progress-2.0.3.tgz"
   "version" "2.0.3"
+
+"promise-polyfill@^8.3.0":
+  "integrity" "sha512-H5oELycFml5yto/atYqmjyigJoAo3+OXwolYiH7OfQuYlAqhxNvTfiNMbV9hsC6Yp83yE5r2KTVmtrG6R9i6Pg=="
+  "resolved" "https://registry.npmjs.org/promise-polyfill/-/promise-polyfill-8.3.0.tgz"
+  "version" "8.3.0"
 
 "promise@^8.1.0":
   "integrity" "sha512-W04AqnILOL/sPRXziNicCjSNRruLAuIHEOVBazepu0545DDNGYHz7ar9ZgZ1fMU8/MA4mVxp5rkBWRi6OXIy3Q=="

@@ -77,6 +77,14 @@ export const ViewWrap = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
+    a {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+      color: #107c41;
+      font-family: "Saira Semi Condensed", sans-serif;
+      cursor: pointer;
+    }
   }
 `;
 
@@ -172,7 +180,7 @@ export const InputContainer = styled.div`
     align-items: center;
     gap: 20px;
 
-    span {
+    a,span {
       font-size: 14px;
       font-weight: 400;
       line-height: 20px;
@@ -292,5 +300,33 @@ export const ViewItem = styled.div`
     display: flex;
     align-items: center;
 
+  }
+`;
+
+export const ChooseSubs = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  h2 {
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 41.6px;
+    margin-bottom: 12px;
+  }
+  button {
+    padding: 12px 32px;
+    background: #004ea3;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 30px;
+    color: #ffffff;
+    display: block;
+    margin: 0 auto;
+    margin-top: 24px;
+    cursor: pointer;
   }
 `;

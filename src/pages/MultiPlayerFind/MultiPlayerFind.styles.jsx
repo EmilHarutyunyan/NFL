@@ -35,7 +35,13 @@ export const EventItem = styled.div`
     align-items: center;
     gap: 5px;
   }
-  button {
+  & div {
+    width: calc(100% / 5);
+  }
+  & div:has(button) {
+    text-align: right;
+  }
+   button {
     border-radius: 4px;
     background: #004ea3;
     display: flex;

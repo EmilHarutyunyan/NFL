@@ -1,19 +1,48 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import excelIcon from "../../../assets/img/excelIcon.png";
 import { HiOutlineArrowLeft } from "react-icons/hi";
 import { BackArrow, ViewItem, ViewWrap } from './DraftEvents.styles';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { selectDraftEvents } from '../../../app/features/draftEvents/draftEventsSlice';
+import { draftEventsGetId } from '../../../app/features/draftEvents/draftEventsActions';
+import Spinner from '../../../components/Spinner/Spinner';
+import { formatDate } from '../../../utils/utils';
 
 const ViewEvent = ({handlePage}) => {
+  const {id} = useParams()
+  const navigate = useNavigate();
+  const {myDraftSingleEvent} = useSelector(selectDraftEvents)
+  console.log('myDraftSingleEvent :', myDraftSingleEvent);
+  
 
+  const dispatch = useDispatch()
+  useEffect(()=> {
+    dispatch(draftEventsGetId(id));
+  },[id])
+
+  const lastName = (name,separator) => {
+    
+    if(name) {
+      const lastNameIndex = name.lastIndexOf(separator) + 1;
+      const sliceName = name.slice(lastNameIndex);
+      return sliceName
+    }
+    return 'No file import'
+  }
+  if(myDraftSingleEvent === null) {
+    return <Spinner/>
+  }
   return (
     <ViewWrap>
-      <BackArrow onClick={() => handlePage({ page: "list", id: 0 })}>
+      <BackArrow onClick={() => navigate(-1)}>
         <HiOutlineArrowLeft />
       </BackArrow>
       <ViewItem>
         <h3>EVENT ID</h3>
         <p>
-          <span>1234565456</span>
+          <span>{myDraftSingleEvent.event_id}</span>
           <svg
             onClick={() => navigator.clipboard.writeText(`1234565456`)}
             xmlns="http://www.w3.org/2000/svg"
@@ -31,33 +60,35 @@ const ViewEvent = ({handlePage}) => {
       </ViewItem>
       <ViewItem>
         <h3>Event Name</h3>
-        <p>Event Name</p>
+        <p>{myDraftSingleEvent.name}</p>
       </ViewItem>
       <ViewItem>
         <h3>Event Date</h3>
-        <p>12 Aug 2023</p>
+        <p>{formatDate(myDraftSingleEvent.created_at)}</p>
       </ViewItem>
       <div className="list">
         <h3>List of players</h3>
-        <div className='list-name'>
+        <div className="list-name">
           <img src={excelIcon} alt="icon" />
-          <p>List name</p>
+          <div className="event-file">
+            <a href={myDraftSingleEvent?.file} download>
+              {lastName(myDraftSingleEvent?.file, "/")}
+            </a>
+          </div>
         </div>
       </div>
-      <div className="list">
-        <h3>Guests List</h3>
-        <div>
-          <p>1. namesurname@yahoo.com</p>
-          <p>1. namesurname@yahoo.com</p>
-          <p>1. namesurname@yahoo.com</p>
-          <p>1. namesurname@yahoo.com</p>
-          <p>1. namesurname@yahoo.com</p>
-          <p>1. namesurname@yahoo.com</p>
-          <p>1. namesurname@yahoo.com</p>
-          <p>1. namesurname@yahoo.com</p>
-          
+
+      {myDraftSingleEvent?.players.length ? (
+        <div className="list">
+          <h3>Guests List</h3>
+          <div>
+            {myDraftSingleEvent?.players.map(({user}) => {
+              
+              return <p key={user.id}>{user.username}</p>
+            })}
+          </div>
         </div>
-      </div>
+      ): null}
     </ViewWrap>
   );
 }

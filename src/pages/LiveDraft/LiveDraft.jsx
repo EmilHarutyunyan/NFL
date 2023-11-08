@@ -3,17 +3,16 @@ import React, { useCallback, useState } from "react";
 import { Wrapper, Overflow } from "./LiveDraft.styles";
 import LiveSettingChat from "../../components/LiveSettingChat/LiveSettingChat";
 import LiveFooter from "../../components/LiveFooter/LiveFooter";
+import LiveBody from "../../components/LiveBody/LiveBody";
 const LiveDraft = () => {
   const [isOverflow, setIsOverflow] = useState(false);
-  console.log("isOverflow :", isOverflow);
   const handleOverflow = useCallback((isOverflow) => {
     setIsOverflow(isOverflow);
   }, []);
   return (
     <Wrapper>
-      <div>
-        <LiveSettingChat />
-      </div>
+      <LiveSettingChat />
+      <LiveBody />
       <LiveFooter handleOverflow={handleOverflow} />
       {isOverflow ? <Overflow /> : null}
     </Wrapper>

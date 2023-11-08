@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toggleArrObj } from "../../../utils/utils";
-import { getTeams, getTradeValue } from "./drafConfigAction";
+import { getSetting, getTeams, getTradeValue } from "./drafConfigAction";
 
 const initialState = {
   advancedSetting: false,
@@ -41,6 +41,7 @@ const initialState = {
   fanaticModeValue:2,
   teamUniqPosition:{},
   tradingSimulatorAction:false,
+  allowSimulator: false,
   tradingSimulator: 1
 };
 
@@ -131,8 +132,8 @@ export const draftConfigSlice = createSlice({
     setDraftPlayers: (state, action) => {
       state.draftPlayers.push(action.payload);
     },
-    setNewDraftPlayers:(state, action) => {
-      state.draftPlayers = action.payload
+    setNewDraftPlayers: (state, action) => {
+      state.draftPlayers = action.payload;
     },
     changeTradeValue: (state, action) => {
       state.tradeValue.results = action.payload;
@@ -198,46 +199,7 @@ export const draftConfigSlice = createSlice({
       state.teamSelect = initialState.teamSelect;
     },
 
-    setResetRound: (state, _) => {
-      state.draftCardDepth = initialState.draftCardDepth;
-      state.draftRandomness = initialState.draftRandomness;
-      state.draftRandomnessTeam = initialState.draftRandomnessTeam;
-      state.teamSelectId = initialState.teamSelectId;
-      state.teamSelectIdRound = initialState.teamSelectIdRound;
-      state.teamRemoveId = initialState.teamRemoveId;
-      state.teamSelect = initialState.teamSelect;
-      state.teamPickIndex = initialState.teamPickIndex;
-      state.teamPickIndexControl = initialState.teamPickIndexControl;
-      state.round = initialState.round;
-      state.countRender = initialState.countRender;
-      state.positionPlayer = initialState.positionPlayer;
-      state.pauseId = initialState.pauseId;
-      state.timeSpeed = initialState.timeSpeed;
-      state.positionPlayer = initialState.positionPlayer;
-      state.positionalNeed = initialState.positionalNeed;
-      state.teams = initialState.teams;
-      state.loading = initialState.loading;
-      state.draftPlayers = initialState.draftPlayers;
-      state.status = initialState.status;
-      state.tradeValue = initialState.tradeValue;
-      state.advancedSetting = initialState.advancedSetting;
-      state.changeTrade = initialState.changeTrade;
-      state.fanaticChallenge = initialState.fanaticChallenge;
-      state.fanaticPickId = initialState.fanaticPickId;
-      state.roundStart = initialState.roundStart;
-      state.fanaticIndexPosition = initialState.fanaticIndexPosition;
-      state.fanaticPlayerBefore = initialState.fanaticPlayerBefore;
-      state.bpaCalculated = initialState.bpaCalculated;
-      state.selectCardDepth = initialState.selectCardDepth;
-      state.roundDepth = initialState.roundDepth;
-      state.roundBPA = initialState.roundBPA;
-      state.iterationSection = initialState.iterationSection;
-      state.fanaticMode = initialState.fanaticMode;
-      state.fanaticModeValue = initialState.fanaticModeValue;
-      state.teamUniqPosition = initialState.teamUniqPosition;
-      state.tradingSimulator = initialState.tradingSimulator;
-      state.tradingSimulatorAction = initialState.tradingSimulatorAction;
-    },
+    setResetRound: () => initialState,
   },
   extraReducers: {
     [getTeams.fulfilled]: (state, action) => {
@@ -248,6 +210,16 @@ export const draftConfigSlice = createSlice({
       state.loading = true;
     },
     [getTeams.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [getSetting.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.allowSimulator = action.payload.allow_simulator;
+    },
+    [getSetting.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getSetting.rejected]: (state, action) => {
       state.loading = false;
     },
     [getTradeValue.fulfilled]: (state, action) => {

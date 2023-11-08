@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { schema_event } from "./schema";
@@ -15,15 +15,24 @@ import {
 } from "./DraftEvents.styles";
 import { useSelector } from "react-redux";
 import { selectDraftEvents } from "../../../app/features/draftEvents/draftEventsSlice";
-import { generateID } from "../../../utils/utils";
+import { formatDate, generateID } from "../../../utils/utils";
 import excelIcon from "../../../assets/img/excelIcon.png";
 import { HiOutlineArrowLeft } from "react-icons/hi";
+import { useNavigate, useParams } from "react-router-dom";
+import { draftEventsGetId, draftEventsPut } from "../../../app/features/draftEvents/draftEventsActions";
+import { PROFILE_DRAFT_EVENTS_MY } from "../../../router/route-path";
+import { useDispatch } from "react-redux";
 
-const EditEvent = ({handlePage}) => {
+const EditEvent = ({ handlePage }) => {
+  const { id } = useParams();
   const { loading, error } = useSelector(selectDraftEvents);
-  const [eventId, setEventId] = useState("ASDSAD5345345");
-  const [eventFile, setEventFile] = useState({name:"Template.xsc"});
-
+  const [eventId, setEventId] = useState();
+  const [eventFile, setEventFile] = useState();
+  console.log('eventFile :', eventFile);
+  const { myDraftSingleEvent } = useSelector(selectDraftEvents);
+  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  
   const {
     register,
     handleSubmit,
@@ -38,13 +47,7 @@ const EditEvent = ({handlePage}) => {
       stripUnknown: true,
       abortEarly: false,
     }),
-    defaultValues: {
-      event_id: "ASDSAD5345345",
-      name_event: "LONG",
-      date: "2023-08-16T10:08",
-    },
   });
-
   const handleInputChange = useCallback((name, val) => {
     setValue(name, val, { shouldDirty: true });
     clearErrors(name);
@@ -56,17 +59,56 @@ const EditEvent = ({handlePage}) => {
     setEventId(id);
   };
   const submitForm = async (data) => {
-    console.log("data :", data);
-    //  dispatch();
-    setEventId("");
-    setEventFile(null);
-    reset();
+     data.place_count = 32;
+     const formData = objectToFormData(data);
+
+     for (const value of formData.values()) {
+       console.log(value);
+     }
+     dispatch(draftEventsPut({data:formData,id}));
+     setEventId("");
+     setEventFile(null);
+     reset();
+     navigate(`${PROFILE_DRAFT_EVENTS_MY}`);
   };
+  function objectToFormData(obj) {
+    const formData = new FormData();
+
+    Object.entries(obj).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    return formData;
+  }
+
+
+  useEffect(() => {
+    dispatch(draftEventsGetId(id));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+  useEffect(() => {
+    if (myDraftSingleEvent) {
+      const date = formatDate(myDraftSingleEvent.date);
+      if (myDraftSingleEvent.file) {
+        const lastNameIndex = myDraftSingleEvent.file.lastIndexOf("/") + 1;
+        const name = myDraftSingleEvent.file.slice(lastNameIndex);
+        setEventFile({
+          name,
+          url: myDraftSingleEvent.file,
+        });
+      }
+      setValue("date", date);
+      setValue("event_id", myDraftSingleEvent.event_id);
+      setValue("name", myDraftSingleEvent.name);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myDraftSingleEvent]);
   return (
     <div>
-      <BackArrow onClick={() => handlePage({ page: "list", id: 0 })}>
+      <BackArrow onClick={() => navigate(-1)}>
         <HiOutlineArrowLeft />
       </BackArrow>
+
       <FormWrap onSubmit={handleSubmit(submitForm)}>
         {error && (
           <ErrorWrap>
@@ -138,16 +180,16 @@ const EditEvent = ({handlePage}) => {
           <InputContainer>
             <label>Name Event</label>
 
-            {errors?.name_event?.message && (
-              <ErrorMessage visible={errors?.name_event?.message}>
-                {errors?.name_event?.message}
+            {errors?.name?.message && (
+              <ErrorMessage visible={errors?.name?.message}>
+                {errors?.name?.message}
               </ErrorMessage>
             )}
 
             <InputWrap
-              error={errors?.name_event?.message}
+              error={errors?.name?.message}
               placeholder="Name Event"
-              {...register("name_event")}
+              {...register("name")}
             />
           </InputContainer>
         </InputBlock>
@@ -190,7 +232,7 @@ const EditEvent = ({handlePage}) => {
             onChange={(e) => {
               const file = Array.from(e.target.files);
 
-              handleInputChange("file", ...file);
+              handleInputChange("file", e.target.files[0]);
               setEventFile(...file);
             }}
           />
@@ -198,7 +240,7 @@ const EditEvent = ({handlePage}) => {
           <div className="event-file">
             <img src={excelIcon} alt="icon" />
             {eventFile?.name ? (
-              <span>{eventFile.name}</span>
+              <a href={eventFile.url} download>{eventFile.name}</a>
             ) : (
               <label htmlFor="filePlayer">
                 <span>Import list</span>

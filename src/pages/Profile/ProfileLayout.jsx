@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, Outlet, useLocation,} from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation,} from 'react-router-dom'
 import { links } from './dataProfileNav'
 import { ProfileList, ProfileLists, ProfileNav, ProfileWrapper } from './Profile.styles';
 
@@ -14,15 +14,15 @@ const ProfileLayout = () => {
             return (
               <ProfileList
                 key={item.id}
-                className={pathname === item.url ? "active" : ""}
+                // className={pathname === item.url ? "active" : ""}
               >
-                <Link
+                <NavLink
                   to={item.url}
-                  className={pathname === item.url ? "active" : ""}
+                  // className={pathname === item.url ? "active" : ""}
                 >
                   <>{item.icon}</>
                   <span>{item.text}</span>
-                </Link>
+                </NavLink>
               </ProfileList>
             );
           })}

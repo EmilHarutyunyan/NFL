@@ -10,7 +10,7 @@ const initialState = {
 export const getSimTradeValue = createAsyncThunk(
   "simulatorToSimulator/getSimTradeValue",
   async (_, { dispatch, rejectWithValue, getState }) => {
-    debugger
+    
     try {
       const {
         simulatorToSimulator: { simSimTeam },
@@ -20,7 +20,7 @@ export const getSimTradeValue = createAsyncThunk(
       );
       const simSimAllInfo = simSimTeam.map((team, idx) => {
         const pickInfo = [];
-        debugger
+        
         res.data.results.forEach((item) => {
           if (item.round.index === team.roundIndex) {
             if (pickInfo[`R${item.round_index_number}`]) {

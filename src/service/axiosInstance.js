@@ -34,15 +34,16 @@ axiosInstance.interceptors.response.use(
       err.response
     ) {
       // Access Token was expired
-      if (
-        (err.response.status === 401 || err.response.status === 403) &&
+      if 
+        (err.response.status === 403 &&
         !originalConfig._retry
       ) {
-        debugger
+        
         originalConfig._retry = true;
         let authTokens = TokenService.getUser() || "";
 
-        try {
+        
+          
           const response = await axiosInstance.post(
             `${API_ENDPOINT}token/refresh/`,
             {
@@ -53,12 +54,22 @@ axiosInstance.interceptors.response.use(
           TokenService.updateLocalAccessToken(response.data?.access);
 
           return axiosInstance(originalConfig);
-        } catch (_error) {
-          return Promise.reject(_error);
+        
+         
+        }
+        if (err.response.status === 401) {
+    
+           TokenService.removeUser();
+           window.location("/");
+           window.location.reload();
+           return Promise.reject(err.response.data);
+         
         }
       }
-    }
-
+    
+    // TokenService.removeUser();
+    // window.location.reload();
+    // window.location("/");
     return Promise.reject(err);
   }
 );

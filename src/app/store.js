@@ -12,6 +12,7 @@ import tradesReducer from "./features/trades/tradesSlice"
 import simulatorToSimulatorReducer from "./features/simulatorToSimulator/simulatorToSimulatorSlice";
 import draftEventsReducer from "./features/draftEvents/draftEventsSlice";
 import liveDraftReducer from "./features/liveDraft/liveDraftSlice";
+import planReducer from "./features/plan/planSlice";
 export const store = configureStore({
   reducer: {
     user: userReducer,
@@ -27,5 +28,6 @@ export const store = configureStore({
     simulatorToSimulator: simulatorToSimulatorReducer,
     draftEvents: draftEventsReducer,
     liveDraft: liveDraftReducer,
+    plan:planReducer,
   },
 });

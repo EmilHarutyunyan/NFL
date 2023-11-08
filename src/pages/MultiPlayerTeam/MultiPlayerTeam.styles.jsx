@@ -80,7 +80,7 @@ export const BtnWrap = styled.div`
   justify-content: center;
   margin-bottom: 32px;
 
-  a {
+  a,button {
     padding: 5.5px 24px;
     background-color: #004ea3;
     font-family: "Saira Semi Condensed", sans-serif;
@@ -98,4 +98,37 @@ export const BtnWrap = styled.div`
       opacity: 1;
     }
   }
+`;
+
+export const TeamModal = styled.div`
+    max-width: 700px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 8px;
+    transform: translateY(-70%);
+    padding-bottom: 50px;
+    text-align: center;
+    h2 {
+      font-size: 20px;
+      margin-bottom: 90px;
+    }
+    button {
+      padding: 5.5px 24px;
+    background-color: #004ea3;
+    font-family: "Saira Semi Condensed", sans-serif;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 31px;
+    border-radius: 4px;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    :hover {
+      opacity: 1;
+    }
+    }
+
 `;

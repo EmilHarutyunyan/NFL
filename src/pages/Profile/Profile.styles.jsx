@@ -34,7 +34,7 @@ export const ProfileList = styled.li`
     color: #0e1118;
     font-family: "Saira Semi Condensed", sans-serif;
     transition: all 0.3s linear;
-    svg path{
+    svg path {
       transition: all 0.3s linear;
     }
     :hover {
@@ -51,7 +51,6 @@ export const ProfileList = styled.li`
     }
   }
 `;
-
 
 export const ProfileTitle = styled.h2`
   font-weight: 400;
@@ -77,7 +76,7 @@ export const InputWrap = styled.div`
   max-width: 467px;
   &.twitter-wrap {
     position: relative;
-    input {
+    input:not([type="checkbox"]) {
       padding-left: 50px;
     }
     img {
@@ -88,7 +87,12 @@ export const InputWrap = styled.div`
       left: 2%;
     }
   }
-
+  label {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 10px;
+  }
   button[type="submit"] {
     display: flex;
     align-items: center;
@@ -105,7 +109,8 @@ export const InputWrap = styled.div`
     max-width: 202px;
     width: 100%;
   }
-  input {
+
+  input:not([type="checkbox"]) {
     width: 100%;
     padding: 11px 20px;
     background-color: transparent;

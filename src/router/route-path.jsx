@@ -14,14 +14,17 @@ export const RESET_PASS = "/reset-password";
 
 export const NOT_FOUND = "*"
 // Profile
-export const PROFILE = "/profile";
+export const PROFILE = "/profile/info";
 export const PROFILE_BADGES = "/profile/badges";
 export const PROFILE_DRAFT_EVENTS = "/profile/draft-events";
 export const PROFILE_DRAFT_EVENTS_CREATE = "/profile/draft-events/create";
-export const PROFILE_DRAFT_EVENTS_MY = "/profile/draft-events/my-events";
-export const PROFILE_DRAFT_EVENTS_VIEW = "/profile/draft-events?view=";
+export const PROFILE_DRAFT_EVENTS_MY = "/profile/draft-events/my-draft";
+export const PROFILE_DRAFT_EVENTS_MY_EDIT = "/profile/draft-events/my-draft/edit";
+export const PROFILE_DRAFT_EVENTS_MY_VIEW = "/profile/draft-events/my-draft/view";
 export const PROFILE_PODCASTS = "/profile/podcasts";
 export const PROFILE_PAYMENT = "/profile/payment";
+export const PROFILE_SUBSCRIPTION = "/profile/subscription";
+export const PROFILE_SUBSCRIPTION_RETURN = "/profile/subscription/execute";
 export const PROFILE_PASSWORD = "/profile/password";
 export const PROFILE_LOGOUT = "/profile/logout";
 
@@ -30,6 +33,7 @@ export const PROFILE_LOGOUT = "/profile/logout";
 
 export const MULTI_PLAYER_FIND = "/multi-player-find"
 export const MULTI_PLAYER_TEAM = "/multi-player-team"
+export const MULTI_PLAYER_JOIN_TEAM_ID = "/multi-player-team/:id";
 export const MULTI_PLAYER_JOIN_TEAM = "/multi-player-team";
 export const LIVE_DRAFT = "/live-draft"
 

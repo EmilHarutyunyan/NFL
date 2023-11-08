@@ -2,7 +2,7 @@ import styled from "styled-components";
 export const Wrapper = styled.div`
   position: fixed;
   z-index: 99;
-  padding-top: 100px;
+  
   left: 0;
   top: 0;
   width: 100%;
@@ -18,6 +18,7 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
+  padding-top: 100px;
 
 `;
 

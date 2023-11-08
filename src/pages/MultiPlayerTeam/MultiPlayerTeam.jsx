@@ -1,61 +1,99 @@
 import React, { useEffect, useState } from 'react'
 // Styles
-import {BtnWrap, MultiTeamItem, MultiTeamWrap, Wrapper} from "./MultiPlayerTeam.styles"
+import {BtnWrap, MultiTeamItem, MultiTeamWrap, TeamModal, Wrapper} from "./MultiPlayerTeam.styles"
 import multiTeamImg from "../../assets/img/multiTeam.png"
 import { useDispatch, useSelector } from 'react-redux'
 import { resetLiveDraft, selectLiveDraft, setMyLiveTeam } from '../../app/features/liveDraft/liveDraftSlice'
-import { getLiveTeams } from '../../app/features/liveDraft/liveDraftActions'
+import { getLiveTeams, joinEvent } from '../../app/features/liveDraft/liveDraftActions'
 import Spinner from "../../components/Spinner/Spinner"
 import { LIVE_DRAFT } from '../../router/route-path'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import { API_ENDPOINT } from '../../config/config'
+import useModal from '../../hooks/useModal'
+import ModalCustom from '../../components/ModalCustom/ModalCustom'
 const MultiPlayerTeam = () => {
-  const { liveTeams, otherLiveTeam, loading, myLiveTeam } =
+  const {id} = useParams()
+  const { liveTeams, loading, myLiveTeam, joinTeam, error } =
     useSelector(selectLiveDraft);
-  const [disableTeam, setDisableTeam] = useState([])
-  
+
+   const {
+     isOpen,
+     openModal,
+     closeModal,
+   } = useModal();
   const dispatch = useDispatch()
   useEffect(()=> {
-    dispatch(getLiveTeams())
-    return () => resetLiveDraft()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
-  useEffect(() => {
-    if(otherLiveTeam.length) {
-      setDisableTeam(otherLiveTeam.map(item => item.id))
+    if(id) {
+      dispatch(getLiveTeams(id))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otherLiveTeam]);
+    return () => dispatch(resetLiveDraft())
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[id])
+  useEffect(() => {
+    if(joinTeam) {
+      openModal()
+    }
+  },[joinTeam])
+  const chooseTeam = async (teamId) => {
+    dispatch(joinEvent({event_id:id,round:`${teamId}`}))
+    dispatch(getLiveTeams(id));
+    
+  }
+ 
+
   if (loading) {
     return <Spinner /> 
+  }
+  if (error) {
+    return <>{error}</>;
   }
   return (
     <Wrapper>
       <h2>Choose a team</h2>
       <MultiTeamWrap>
         {liveTeams.map((team) => {
-          let isDisableTeam = disableTeam.includes(team.id)
-          let isActive = myLiveTeam?.id === team.id
-          
+          let isActive = myLiveTeam?.id === team.id;
+
           return (
             <MultiTeamItem
               key={team.id}
-              className={isActive ? 'active' : null}
-              disabled={isDisableTeam}
+              className={isActive && team.free ? "active" : null}
+              disabled={!team?.free}
               onClick={() => {
-                if (!isDisableTeam) dispatch(setMyLiveTeam(team));
+                if (team.free) dispatch(setMyLiveTeam(team));
               }}
             >
               <div>
-                <img src={team.round.logo} alt="team" loading='lazy' />
+                <img
+                  src={`https://api.nfldraftfanatics.com${team.logo}`}
+                  alt="team"
+                  loading="lazy"
+                />
               </div>
-              <p>{team.round.name}</p>
+              <p>{team.name}</p>
             </MultiTeamItem>
           );
         })}
       </MultiTeamWrap>
       <BtnWrap>
-        <Link to={LIVE_DRAFT} >Next</Link>
+        <button
+          disabled={!(myLiveTeam !== null)}
+          onClick={() => chooseTeam(myLiveTeam.id)}
+        >
+          Choose a Team
+        </button>
       </BtnWrap>
+
+      {isOpen && (
+        <ModalCustom isOpen={isOpen}>
+          <TeamModal>
+            <h2>
+              Thank you for choosing a team, you will receive an email shortly
+            </h2>
+            <button onClick={closeModal}>Close</button>
+          </TeamModal>
+        </ModalCustom>
+      )}
     </Wrapper>
   );
 }
