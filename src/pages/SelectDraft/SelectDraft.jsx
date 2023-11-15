@@ -13,7 +13,7 @@ import {
 // images
 import infoImg from "../../assets/img/info2.png" 
 import { useState } from "react";
-import { MULTI_PLAYER_FIND, MULTI_PLAYER_JOIN_TEAM, PROFILE_DRAFT_EVENTS, PROFILE_DRAFT_EVENTS_CREATE } from "../../router/route-path";
+import { LIVE_DRAFT, MULTI_PLAYER_FIND, MULTI_PLAYER_JOIN_TEAM, PROFILE_DRAFT_EVENTS, PROFILE_DRAFT_EVENTS_CREATE } from "../../router/route-path";
 function SelectDraft() {
   const [infoHover,setInfoHover] = useState(false)
   const onMouseEnter = () => {
@@ -36,7 +36,7 @@ function SelectDraft() {
           <h2>Multi-Player Draft</h2>
           <MultiColumn>
             <MultiRow>
-              <Link to={MULTI_PLAYER_JOIN_TEAM}>Join Multi-User draft</Link>
+              <Link to={`${LIVE_DRAFT}/8`}>Join Multi-User draft</Link>
               <form action="">
                 <input type="number" placeholder="Enter Session Id To Join" />
                 <button type="submit">Join</button>

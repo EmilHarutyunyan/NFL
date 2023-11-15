@@ -116,6 +116,7 @@ const DraftViewAsign = ({ players, thisId }) => {
             (item) => item.pick === tradeValueTeam["pick"]
           )[0];
         } else {
+            
           player = draftAutoSettings({
             draftCardDepth,
             draftRandomnessTeam,
@@ -135,13 +136,14 @@ const DraftViewAsign = ({ players, thisId }) => {
           
           if (
             tradeValueTeam.iteration > 1 &&
-            fanaticPlayerBefore[0].pick === tradeValueTeam.pick
+            fanaticPlayerBefore[0]?.pick === tradeValueTeam?.pick
           ) {
             
             player = fanaticPlayerBefore[0];
             fanaticFlag = true
             
           } else {
+            console.log(tradeValueTeam.iteration);
             player = draftAutoSettings({
               draftCardDepth,
               draftRandomnessTeam,
@@ -160,7 +162,7 @@ const DraftViewAsign = ({ players, thisId }) => {
         }
         
         const { player: playerItem, playerDepth } = player;
-        
+ 
           dispatch(
             uniqPosition({
               name: tradeValueTeam.round.name,

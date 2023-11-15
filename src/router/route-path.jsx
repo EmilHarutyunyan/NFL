@@ -36,5 +36,6 @@ export const MULTI_PLAYER_TEAM = "/multi-player-team"
 export const MULTI_PLAYER_JOIN_TEAM_ID = "/multi-player-team/:id";
 export const MULTI_PLAYER_JOIN_TEAM = "/multi-player-team";
 export const LIVE_DRAFT = "/live-draft"
+export const LIVE_DRAFT_ID = "/live-draft/:id"
 
 

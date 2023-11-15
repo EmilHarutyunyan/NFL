@@ -121,6 +121,7 @@ export const PlayerTable = styled.div`
   }
   tr td {
     padding: 15px 0;
+    width: calc(100% / 5);
   }
   .player-choose {
     width: 32px;

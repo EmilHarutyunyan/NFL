@@ -131,11 +131,11 @@ export const LastPick = styled.div`
 export const InfoTrade = styled.div`
   position: absolute;
   width: 100%;
-  transform: translateY(100%);
-  top: 0;
+  /* transform: translateY(100%); */
+  top: 100%;
   left: 0;
   transition: all 1s ease-in-out;
   &.active {
-    transform: translateY(-100%);
+    top: ${(props) => props.top};
   }
 `;

@@ -36,11 +36,11 @@ import { useEffect } from "react";
 
 import { setChangeTrades } from "../../app/features/trades/tradesSlice";
 import { selectUser } from "../../app/features/user/userSlice";
-
 const Settings = ({ teamSelect }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userInfo } = useSelector(selectUser);
+
   const {
     round,
     timeSpeed,
@@ -323,7 +323,6 @@ const Settings = ({ teamSelect }) => {
                 </p>
                 <Switch
                   checked={tradingSimulatorAction}
-                
                   onChange={(e) => {
                     dispatch(
                       setTradingSimulatorAction(!tradingSimulatorAction)
@@ -368,6 +367,7 @@ const Settings = ({ teamSelect }) => {
         btnDisable={!teamSelect.length}
         onBtnClick={() => navigate("/draft-player")}
       />
+
     </>
   );
 };

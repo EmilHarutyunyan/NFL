@@ -63,6 +63,7 @@ import {
   PROFILE_DRAFT_EVENTS_MY_EDIT,
   PROFILE_DRAFT_EVENTS_MY_VIEW,
   MULTI_PLAYER_JOIN_TEAM_ID,
+  LIVE_DRAFT_ID,
 } from "./route-path";
 import MultiPlayerFind from "../pages/MultiPlayerFind/MultiPlayerFind";
 import MultiPlayerTeam from "../pages/MultiPlayerTeam/MultiPlayerTeam";
@@ -155,7 +156,7 @@ const Router = () => {
             path={MULTI_PLAYER_JOIN_TEAM_ID}
             element={<MultiPlayerTeam />}
           />
-          <Route path={LIVE_DRAFT} element={<LiveDraft />} />
+          <Route path={LIVE_DRAFT_ID} element={<LiveDraft />} />
           <Route
             path={"/profile"}
             element={

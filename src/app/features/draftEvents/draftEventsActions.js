@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axiosInstance from '../../../service/axiosInstance'
-import { API_ENDPOINT } from '../../../config/config'
+import { API_ENDPOINT, PLAYER_MAX } from '../../../config/config'
 import TokenService from '../../../service/token.service';
 
 export const draftEventsPost = createAsyncThunk(
@@ -138,7 +138,7 @@ export const draftEventsGet = createAsyncThunk(
 
 
 export const draftEventsGetId = createAsyncThunk(
-  "draftEventsGetId/draftEventsGetId",
+  "draftEvents/draftEventsGetId",
 
   async (id, { rejectWithValue }) => {
     try {
@@ -150,6 +150,33 @@ export const draftEventsGetId = createAsyncThunk(
 
       const res = await axiosInstance.get(`${API_ENDPOINT}event/${id}`, config);
       return res.data;
+    } catch (error) {
+      // return custom error message from API if any
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+export const draftEventPlayersId = createAsyncThunk(
+  "draftEvents/draftEventPlayersId",
+
+  async (id, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const res = await axiosInstance.get(
+        `${API_ENDPOINT}event-player/?event_id=${id}&limit=${PLAYER_MAX}`,
+        config
+      );
+      return res.data?.results || [];
     } catch (error) {
       // return custom error message from API if any
       if (error.response && error.response.data.message) {

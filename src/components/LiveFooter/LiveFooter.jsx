@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {  useRef, useState } from "react";
 // Styles
 import {
   LastPick,
@@ -14,12 +14,18 @@ import {
 } from "./LiveFooter.styles";
 import QueueDnD from "../QueueDnD/QueueDnD";
 import { CircleX } from "../Icons/Icons";
-import {  } from "../QueueDnD/QueueDnD.styles";
-import teamImg from "../../assets/img/team.png"
+import teamImg from "../../assets/img/team.png";
 import OfferTrade from "../OfferTrade/OfferTrade";
+import { useSelector } from "react-redux";
+import { selectDraftEvents } from "../../app/features/draftEvents/draftEventsSlice";
 const LiveFooter = ({handleOverflow}) => {
   const [isQueue, setIsQueue] = useState(false);
   const [isTrade, setIsTrade] = useState(false);
+  const { queuePlayers } = useSelector(selectDraftEvents);
+  const queueHeight = useRef(null);
+  const offerTradeHeight = useRef(null);
+
+
   return (
     <Wrapper>
       <LiveFooterHead>
@@ -28,18 +34,24 @@ const LiveFooter = ({handleOverflow}) => {
           <SelectBox>
             <div className="info">
               <span>Queue</span>
-              <span>32</span>
+              <span>{queuePlayers.length}</span>
             </div>
-            <button onClick={() => {
-              setIsQueue(!isQueue)
-              setIsTrade(false);
-              handleOverflow(!isQueue);
-              }}>
+            <button
+              onClick={() => {
+                setIsQueue(!isQueue);
+                setIsTrade(false);
+                handleOverflow(!isQueue);
+              }}
+            >
               <CircleX />
             </button>
           </SelectBox>
-          <InfoTrade className={isQueue ? "active" : null}>
-            <QueueDnD />
+          <InfoTrade
+            ref={queueHeight}
+            top={isQueue ? `-${queueHeight?.current?.offsetHeight}px` : "100%"}
+            className={isQueue ? "active" : null}
+          >
+            <QueueDnD queuePlayers={queuePlayers} />
           </InfoTrade>
         </LiveSelect>
         <LiveSelect className="">
@@ -57,14 +69,24 @@ const LiveFooter = ({handleOverflow}) => {
                 <span>1</span>
               </div>
             </SelectBoxItem>
-            <button onClick={() => {
-              setIsTrade(!isTrade)
-               setIsQueue(false);
-               handleOverflow(!isTrade);
-              }}>
+            <button
+              onClick={() => {
+                setIsTrade(!isTrade);
+                setIsQueue(false);
+                handleOverflow(!isTrade);
+              }}
+            >
               <CircleX />
             </button>
-            <InfoTrade className={isTrade ? "active" : null}>
+            <InfoTrade
+              ref={offerTradeHeight}
+              top={
+                isTrade
+                  ? `-${offerTradeHeight?.current?.offsetHeight}px`
+                  : "100%"
+              }
+              className={isTrade ? "active" : null}
+            >
               <OfferTrade />
             </InfoTrade>
           </SelectBox>

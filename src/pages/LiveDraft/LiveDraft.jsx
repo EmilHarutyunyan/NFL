@@ -4,8 +4,10 @@ import { Wrapper, Overflow } from "./LiveDraft.styles";
 import LiveSettingChat from "../../components/LiveSettingChat/LiveSettingChat";
 import LiveFooter from "../../components/LiveFooter/LiveFooter";
 import LiveBody from "../../components/LiveBody/LiveBody";
+
 const LiveDraft = () => {
   const [isOverflow, setIsOverflow] = useState(false);
+  
   const handleOverflow = useCallback((isOverflow) => {
     setIsOverflow(isOverflow);
   }, []);

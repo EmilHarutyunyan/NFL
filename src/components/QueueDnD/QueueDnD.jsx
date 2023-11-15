@@ -8,19 +8,19 @@ import { DragIcon } from "../Icons/Icons";
 const INITIAL_LIST = [
   {
     id: uuidv4(),
-    name: "Derrick Henry",
+    name: "Derrick Henry1",
   },
   {
     id: uuidv4(),
-    name: "Derrick Henry",
+    name: "Derrick Henry2",
   },
   {
     id: uuidv4(),
-    name: "Derrick Henry",
+    name: "Derrick Henry3",
   },
   {
     id: uuidv4(),
-    name: "Derrick Henry",
+    name: "Derrick Henry4",
   },
   {
     id: uuidv4(),
@@ -107,7 +107,7 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-const QueueDnD = () => {
+const QueueDnD = ({ queuePlayers }) => {
   const [list, setList] = React.useState(INITIAL_LIST);
   const handleDragEnd = ({ destination, source }) => {
     if (!destination) return;
@@ -120,7 +120,7 @@ const QueueDnD = () => {
         <h2>Player queue</h2>
       </div>
       <List
-        list={list}
+        list={queuePlayers}
         onDragEnd={handleDragEnd}
         dragItemStyle={{
           background: "#004fa39d",

@@ -568,11 +568,12 @@ const DraftResult = () => {
         {showConfetti && (
           <Confetti
             numberOfPieces={800}
-            width={window.innerWidth}
+            width={window.innerWidth-20}
             height={window.innerHeight}
             recycle={false}
           />
         )}
+        
       </Wrapper>
     </ErrorBoundary>
   );

@@ -58,14 +58,14 @@ const PlayerCards = ({ draft }) => {
   return (
     <PlayerItems>
       <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>
-        {draft.map((item) => {
+        {draft.map((item,index) => {
           const {
             round: { logo },
             player,
           } = item;
           
             return (
-              <PlayerItemWrap>
+              <PlayerItemWrap key={index}>
                 <PlayerItemInfo>
                   <div className="img-wrap">
                     <img src={logo} alt="team" />

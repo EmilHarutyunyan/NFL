@@ -266,7 +266,7 @@ const DraftPlayer = () => {
     <ErrorBoundary FallbackComponent={ErrorFallBack}>
       <Wrapper className="main-container">
         <Banner>
-          <h2>You’re on the Clock!</h2>
+          <h2>You're on the Clock!</h2>
           <div className="banner-info">
             <p className="banner-info-border"></p>
             <RenderCircle status={status}>

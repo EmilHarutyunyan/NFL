@@ -106,8 +106,14 @@ function draftAutoSettings(
       (player) =>
         !teamUniqPosition[tradeValueTeam.round.name].includes(player.position)
     );
+    if (!playerChoose["player"]) {
+      debugger;
+    }
      playerChoose["player"] = playersAll[playerAllIndexChoose];
      playerChoose["playerDepth"] = playerAllIndexChoose;
+  }
+  if (!playerChoose["player"]) {
+    debugger
   }
   return playerChoose;
   // // RoundBPA
@@ -125,7 +131,11 @@ function draftDisableSettings({ teamUniqPosition, playersAll, tradeValueTeam ,ro
         (player) =>
           !teamUniqPosition[tradeValueTeam.round.name].includes(player.position)
       );
-      playerChoose = playersAll[playerChooseIndex];
+
+      playerChoose =
+        playerChooseIndex !== -1
+          ? playersAll[playerChooseIndex]
+          : playersAll[0];
     } else {
       playerChoose =  playersAll[0];
     }
