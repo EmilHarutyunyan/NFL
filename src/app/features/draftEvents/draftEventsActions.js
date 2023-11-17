@@ -108,6 +108,7 @@ export const draftEventsList = createAsyncThunk(
     }
   }
 );
+
 export const draftEventsGet = createAsyncThunk(
   "draftEvents/draftEventsGet",
 
@@ -135,7 +136,6 @@ export const draftEventsGet = createAsyncThunk(
     }
   }
 );
-
 
 export const draftEventsGetId = createAsyncThunk(
   "draftEvents/draftEventsGetId",
@@ -177,6 +177,40 @@ export const draftEventPlayersId = createAsyncThunk(
         config
       );
       return res.data?.results || [];
+    } catch (error) {
+      // return custom error message from API if any
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+export const draftEventRecentPicks = createAsyncThunk(
+  "draftEvents/draftEventRecentPicks",
+  async (id, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+       const recentPicks = await axios.get(
+         `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=${7}&tm=`,
+         config
+       );
+       const picksTeams = await axios.get(`${API_ENDPOINT}team-neads/`, config);
+       const picksTeamsResult =  picksTeams.data?.results.map((item) => item.round);
+       picksTeamsResult.unshift({ name: "All" })
+    
+  
+      return {
+        recentPicks: recentPicks.data?.results,
+        picksTeams: picksTeamsResult,
+      };
     } catch (error) {
       // return custom error message from API if any
       if (error.response && error.response.data.message) {

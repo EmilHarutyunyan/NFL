@@ -66,6 +66,8 @@ export const PlayerPick = styled.div`
   thead {
     background: #f3f5f7;
     border-radius: 10px 10px 0px 0px;
+    position: sticky;
+    top: 0;
   }
   thead th {
     padding: 12px 16px;
@@ -105,6 +107,10 @@ export const PlayerPick = styled.div`
 
   tr td {
     font-weight: 400;
+  }
+  tr td img {
+    width: 100%;
+    max-width: 41px;
   }
 
   tr:nth-child(even) {

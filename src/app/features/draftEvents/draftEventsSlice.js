@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   draftEventPlayersId,
+  draftEventRecentPicks,
   draftEventsGet,
   draftEventsGetId,
   draftEventsList,
@@ -13,14 +14,19 @@ const initialState = {
   error: null,
   message: "",
   myDraftEvent: [],
-  myDraftSingleEvent:null,
+  myDraftSingleEvent: null,
   eventList: [],
   eventPlayers: [],
-  queuePlayers:[],
-  queuePlayersId:[],
-  playerPollSettings:{
-    position:['All']
-  }
+  queuePlayers: [],
+  queuePlayersId: [],
+  recentPicks: [],
+  picksTeams: [],
+  start: false,
+  millisecond: 6000,
+  eventTime: 20000,
+  playerPollSettings: {
+    position: ["All"],
+  },
 };
 
 const draftEventsSlice = createSlice({
@@ -31,8 +37,14 @@ const draftEventsSlice = createSlice({
       state.queuePlayers = payload.players;
       state.queuePlayersId = payload.playersId;
     },
-    setPositionPlayersPool:(state,{payload}) => {
-      state.playerPollSettings.position = payload
+    setPositionPlayersPool: (state, { payload }) => {
+      state.playerPollSettings.position = payload;
+    },
+    setEventTime: (state, { payload }) => {
+      state.eventTime = payload;
+    },
+    setEventStart:(state,{payload}) => {
+      state.start = payload
     }
   },
   extraReducers: {
@@ -119,10 +131,24 @@ const draftEventsSlice = createSlice({
       state.loading = false;
       state.error = true;
     },
+    [draftEventRecentPicks.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [draftEventRecentPicks.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.error = false;
+      state.recentPicks = payload.recentPicks;
+      state.picksTeams = payload.picksTeams;
+    },
+    [draftEventRecentPicks.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = true;
+    },
   },
 });
 
-export const { showPage, setQueuePlayer, setPositionPlayersPool } =
+export const { showPage, setQueuePlayer, setPositionPlayersPool,setEventStart, setEventTime } =
   draftEventsSlice.actions;
 
 
@@ -131,13 +157,13 @@ export const selectDraftEvents = (state) => state.draftEvents;
 
 export const addQueuePlayerAction = (player) => (dispatch, getState) => {
  const { queuePlayers } = selectDraftEvents(getState());
- 
  let playersId;
  const players = toggleArrObj(queuePlayers, player, (item) => item.index);
- playersId = players?.filter((player) => player.index);
+ playersId = players?.map((player) => player.index);
  const playersStringId = players.map(item => {
   return { ...item, id: `${item.id}` };
 })
+
  dispatch(setQueuePlayer({ players: playersStringId, playersId }));
 
 };
@@ -176,3 +202,5 @@ export const playerPoolPositionMulti = (pos) => (dispatch, getState) => {
 // };
 
 export default draftEventsSlice.reducer;
+
+

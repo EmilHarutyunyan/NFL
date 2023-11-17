@@ -68,9 +68,13 @@ const MySelectTeam = ({
           
           const { name:nameTeam, logo } = item;
           return (
-            <MenuItem key={idx}  value={item.name} disabled={disabled.includes(nameTeam)}>
+            <MenuItem
+              key={idx}
+              value={item.name}
+              disabled={disabled.includes(nameTeam)}
+            >
               <MySelectPhotoWrap>
-                <img src={logo} alt={nameTeam} />
+                {logo && <img src={logo} alt={nameTeam} />}
                 <span>{nameTeam}</span>
               </MySelectPhotoWrap>
             </MenuItem>

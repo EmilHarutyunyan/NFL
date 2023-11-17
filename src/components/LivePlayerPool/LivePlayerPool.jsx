@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 // Styles
 import {
   PositionItem,
@@ -24,7 +24,8 @@ import {
 } from "../../app/features/draftEvents/draftEventsSlice";
 import Spinner from "../Spinner/Spinner";
 
-const PlayerItem = ({ players, handleQueuePlayer }) => {
+const PlayerItem = ({ players, handleQueuePlayer,queuePlayersId }) => {
+
   return players.map((player) => {
     return (
       <tr key={player.id}>
@@ -32,6 +33,7 @@ const PlayerItem = ({ players, handleQueuePlayer }) => {
           <div className="player-choose">
             <input
               type="checkbox"
+              checked={queuePlayersId.includes(player.index)}
               name=""
               id=""
               onChange={() => handleQueuePlayer(player)}
@@ -68,9 +70,11 @@ const LivePlayerPool = () => {
   const {
     eventPlayers,
     playerPollSettings: { position },
+    queuePlayersId,
   } = useSelector(selectDraftEvents);
-  // const [players, setPlayers] = useState(eventPlayers);
-  // const [playerPosition,setPlayerPosition] = useState([0])
+
+  const [isPending,startTransition] = useTransition();
+  const [players, setPlayers] = useState(eventPlayers);
   const [searchValue, setSearchValue] = useState("");
   const groups = useSelector(selectGroup);
 
@@ -86,26 +90,33 @@ const LivePlayerPool = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const players = useMemo(() => {
-    let playersData = eventPlayers;
-    if (eventPlayers.length) {
-      if (searchValue) {
-        playersData = eventPlayers.filter((player) => {
-          const name = player.name.toLowerCase();
-          return name.includes(searchValue.toLowerCase());
-        });
+  const handleFilterPlayer = useCallback(() => {
+    startTransition(()=> {
+      let playersData = eventPlayers;
+      if (eventPlayers.length) {
+        if (searchValue) {
+          playersData = eventPlayers.filter((player) => {
+            const name = player.name.toLowerCase();
+            return name.includes(searchValue.toLowerCase());
+          });
+        }
+        if (position.length && position[0] !== "All") {
+          playersData = playersData.filter((player) => {
+            return position.includes(player.position);
+          });
+        }
       }
-      if (position.length && position[0] !== "All") {
-        playersData = playersData.filter((player) => {
-          return position.includes(player.position);
-       });
-      }
-      return playersData;
-    }
-    if (searchValue === "" && position[0] === "All") return playersData;
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventPlayers, position, searchValue]);
+      setPlayers(playersData);
+    })
+  }, [
+    eventPlayers,
+    position,
+    searchValue,
+  ]);
+  useEffect(() => {
+    if(eventPlayers.length) handleFilterPlayer()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventPlayers,position,searchValue]);
 
   return (
     <Wrapper>
@@ -159,12 +170,13 @@ const LivePlayerPool = () => {
           </PlayerFilter>
         </PlayerSettings>
         <PlayerTable>
-          {players.length ? (
+          {players.length && !isPending ? (
             <table>
               <tbody>
                 <PlayerItem
                   players={players}
                   handleQueuePlayer={handleQueuePlayer}
+                  queuePlayersId={queuePlayersId}
                 />
               </tbody>
             </table>

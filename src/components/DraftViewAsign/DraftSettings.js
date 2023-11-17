@@ -96,7 +96,7 @@ function draftAutoSettings(
       selectCardDepth.length > draftCardDepth &&
       !selectCardDepth.includes(draftCardDepth)
     ) {
-      playerChoose["player"] = playerRange[draftCardDepth];
+      playerChoose["player"] = playerRange[draftCardDepth-1];
       playerChoose["playerDepth"] = draftCardDepth;
     }
   }
@@ -106,15 +106,11 @@ function draftAutoSettings(
       (player) =>
         !teamUniqPosition[tradeValueTeam.round.name].includes(player.position)
     );
-    if (!playerChoose["player"]) {
-      debugger;
-    }
+
      playerChoose["player"] = playersAll[playerAllIndexChoose];
      playerChoose["playerDepth"] = playerAllIndexChoose;
   }
-  if (!playerChoose["player"]) {
-    debugger
-  }
+
   return playerChoose;
   // // RoundBPA
   // if(roundBPA.includes(round)) {
@@ -131,7 +127,7 @@ function draftDisableSettings({ teamUniqPosition, playersAll, tradeValueTeam ,ro
         (player) =>
           !teamUniqPosition[tradeValueTeam.round.name].includes(player.position)
       );
-
+    
       playerChoose =
         playerChooseIndex !== -1
           ? playersAll[playerChooseIndex]
