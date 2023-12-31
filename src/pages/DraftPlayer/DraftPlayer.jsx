@@ -148,6 +148,7 @@ const DraftPlayer = () => {
     const iter = iterationSection.iterationSection ?? [];
     
     if (countRender === tradeValue?.results?.length && iter.length === 0) {
+      
       const data = { items: [] };
       draftPlayers.forEach((item) => {
         const {
@@ -179,6 +180,7 @@ const DraftPlayer = () => {
         )
       );
       dispatch(setHistoryBoard(data));
+      console.log('data :', data);
     }
     
     if (iter?.length > 0 && iter?.includes(countRender)) {

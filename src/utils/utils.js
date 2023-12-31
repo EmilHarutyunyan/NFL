@@ -49,10 +49,12 @@ export const upUsersCals = (players, pricentValuePlayer, key) => {
     }
     return {
       ...player,
-      value:  +(player[key] - pricentValue) <= 0 ? 0 : - pricentValue,
-      pricentValue: +(player[key] - pricentValue) <= 0 ? 0 : - pricentValue,
+      value: +(player[key] - pricentValue) <= 0 ? 0.00001 : -pricentValue,
+      pricentValue:
+        +(player[key] - pricentValue) <= 0 ? 0.00001 : -pricentValue,
     };
   });
+  
 };
 
 // Round Calc Create New Data
@@ -105,6 +107,7 @@ export const objectSet = (arr, key) => {
 
 // Get Random Team
 export const getRandom = (arr, n) => {
+  
   var result = new Array(n),
     len = arr.length,
     taken = new Array(len);
@@ -307,7 +310,7 @@ export const loadImage = (src) => {
 
 
 export const generateID  = function (count=8) {
-console.log('count :', count);
+
 
   return (Date.now().toString(36) + Math.random().toString(36).substr(2))
     .toUpperCase()
@@ -324,3 +327,111 @@ export const formatDate = (value) => {
     const minutes = String(date.getUTCMinutes()).padStart(2, "0");
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
+
+  export const getCurrentDate = () => {
+    let myDate = new Date();
+
+    // Create an array of month names
+    let monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    // Get the components
+    let newDayOfWeek = myDate.toLocaleString("en-US", { weekday: "short" });
+    let newMonth = monthNames[myDate.getMonth()];
+    let newDay = myDate.getDate();
+    let newYear = myDate.getFullYear();
+    let newHours = ("0" + myDate.getHours()).slice(-2);
+    let newMinutes = ("0" + myDate.getMinutes()).slice(-2);
+    return (
+      newDayOfWeek +
+      " " +
+      newMonth +
+      " " +
+      newDay +
+      " " +
+      newYear +
+      " " +
+      newHours +
+      ":" +
+      newMinutes
+    );
+  }
+
+  export const dateFormat = (date) => {
+    const originalDateString = date;
+    const originalDate = new Date(originalDateString);
+
+    // Format the date as YYYY-MM-DD HH:mm:ss
+    const formattedDate = originalDate
+      .toISOString()
+      .replace(/T/, " ")
+      .replace(/\..+/, "");
+
+    return formattedDate;
+  }
+  export const dateFormatNew = (date) => {
+    
+
+    // Format the date as YYYY-MM-DD HH:mm:ss
+    const formattedDate = date
+      .toISOString()
+      .replace(/T/, " ")
+      .replace(/\..+/, "");
+
+    return formattedDate;
+  };
+  export const  getCurrentNewDate = () => {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    return formattedDate;
+  }
+  export const timeDiffCalc = (dateNow, newDate) => {
+    let date1 = new Date(dateNow);
+    let date2 = new Date(newDate);
+
+    let diffInMilliseconds = date2 - date1;
+    let diffMinute = diffInMilliseconds / (1000 * 60 )
+    if(diffMinute >= 0 && diffMinute <= 10) {
+      return {diffMinute,message:'access' }
+    }
+    if (diffMinute < 10) {
+      return {
+        diffMinute: null,
+        message: `You logged earlier, please come back at ${dateNow}`,
+      };
+    }
+    if(diffMinute > 0 ) {
+      return {diffMinute:null, message:`Your event time is over, event started ${dateNow}`}
+    }
+    
+  };
+
+  // export const  timeDiffCalc = (dateNow, newDate) => {
+  //   let date1 = new Date(dateNow);
+  //   let date2 = new Date(newDate);
+
+  //   let dif = date2 - date1;
+  //   dif = Math.round(dif / 1000 / 60);
+  //   return dif
+  // }
+  // timeDiffCalc("2023-12-11 12:15:00", "2023-12-11 12:30:00");

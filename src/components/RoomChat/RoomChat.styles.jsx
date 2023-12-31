@@ -4,6 +4,7 @@ export const Wrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   padding: 20px 40px;
+  min-height: 483px;
 `;
 
 export const RoomBlock = styled.div`
@@ -12,8 +13,33 @@ export const RoomBlock = styled.div`
   flex-direction: column;
   gap: 30px;
   overflow-y: auto;
-  min-height: 483px;
+  height: 100%;
+  max-height: 483px;
+  padding-bottom: 20px;
+   ::-webkit-scrollbar {
+      width: 8px;
+    }
 
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1; 
+      border-radius: 8px;
+    }
+ 
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      border-radius: 8px;
+      background:  #00438B;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+     
+    }
+
+    img {
+      object-fit: contain;
+    }
   .room-left {
     display: flex;
     max-width: 830px;

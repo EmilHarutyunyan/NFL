@@ -220,6 +220,7 @@ const ModalTrades = ({ tradesTeams, teamSelect }) => {
           "pick",
         ],
       });
+      
       let myTeamMainFind = tradeValue.find(
         (item) => item.round.name === myTeam.name
       );
@@ -233,9 +234,12 @@ const ModalTrades = ({ tradesTeams, teamSelect }) => {
           "pick",
         ],
       });
-      
-      const tradeOldValue = [...tradeValueResults.results].splice(0,countRender+1);
-      const tradeValueData = [...tradeOldValue, ...tradeValue];
+      // let tempTeam = [...tradeValueResults.results].splice(0,countRender+1)
+      // if(tempTeam.round.id ===)
+      const tradeOldValue = countRender !== 0 ? [...tradeValueResults.results].splice(0,countRender+1) : null;
+      const tradeValueData = tradeOldValue
+        ? [...tradeOldValue, ...tradeValue]
+        : tradeValue;
       
       const newTradesValue = changeTeamPick({
         teamPick: mainTeam.pick.map((item) => item.index),

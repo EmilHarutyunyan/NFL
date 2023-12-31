@@ -11,7 +11,7 @@ const SettingSound = () => {
       <Switch
         onChange={() => {
           !isPlaying ? play() : stop();
-          setIsPlaying(!   isPlaying);
+          setIsPlaying(!isPlaying);
         }}
       />
       <p>{isPlaying ? "ON" : "OFF"}</p>

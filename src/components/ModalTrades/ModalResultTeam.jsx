@@ -26,7 +26,7 @@ const ModalResultTeam = ({title='',historyTrades=[],mainTeam={},myTeam={},name='
           })}
         </TradeTeam>
         <PickItem>
-          <div className="year">2023</div>
+          <div className="year">2024</div>
           {historyTrades.map((item, idx) => {
             if (
               item.myTeam.name === myTeam.name &&

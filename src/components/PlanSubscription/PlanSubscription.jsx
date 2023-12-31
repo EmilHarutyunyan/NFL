@@ -32,7 +32,7 @@ const PlanSubscription = ({
   const [loading, setLoading] = useState(false);
   const user = TokenService.getUser();
   const userSubscription = user?.user_subscription;
-  console.log('user :', user);
+
 
   useEffect(() => {
     if(createPayments !== null)  {

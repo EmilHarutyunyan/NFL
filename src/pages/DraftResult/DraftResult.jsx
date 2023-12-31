@@ -8,7 +8,7 @@ import React, {
 import { useDispatch, useSelector } from "react-redux";
 import { selectDraftResult } from "../../app/features/draftResult/draftResultSlice";
 import * as htmlToImage from "html-to-image";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // components
 import Title from "../../components/Title/Title";
 import Button from "../../components/Buttons/Button";
@@ -331,9 +331,13 @@ const DraftResult = () => {
               <DraftResultPickFooter>
                 <div className="draft-now">
                   Draft now at{" "}
-                  <Link to={"nfl.com/mock"} target="_blank">
-                    nfl.com/mock
-                  </Link>
+                  <a
+                    href={"https://nfldraftfanatics.com/"}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    nfldraftfanatics.com
+                  </a>
                 </div>
                 <div className="draft-overall">
                   <p>OVERALL DRAFT GRADE</p>
@@ -483,9 +487,13 @@ const DraftResult = () => {
               <DraftResultPickFooter>
                 <div className="draft-now">
                   Draft now at{" "}
-                  <Link to={"nfl.com/mock"} target="_blank">
-                    nfl.com/mock
-                  </Link>
+                  <a
+                    href={"https://nfldraftfanatics.com/"}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    nfldraftfanatics.com
+                  </a>
                 </div>
                 <div className="draft-overall"></div>
               </DraftResultPickFooter>
@@ -568,12 +576,11 @@ const DraftResult = () => {
         {showConfetti && (
           <Confetti
             numberOfPieces={800}
-            width={window.innerWidth-20}
+            width={window.innerWidth - 20}
             height={window.innerHeight}
             recycle={false}
           />
         )}
-        
       </Wrapper>
     </ErrorBoundary>
   );

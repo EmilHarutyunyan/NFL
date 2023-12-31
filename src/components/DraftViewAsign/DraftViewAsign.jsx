@@ -24,7 +24,11 @@ const Delayed = ({ children, waitBefore = 500, scroll = null }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsShow(true);
-      scroll.teamRef?.current?.scrollTo(0, (countRender - 1) * 75);
+      
+      scroll.teamRef?.current?.scrollTo(
+        0,
+        (countRender - 1) * scroll.teamRef?.current?.lastChild.clientHeight
+      );
     }, waitBefore);
     return () => clearTimeout(timer);
 
@@ -68,7 +72,9 @@ const DraftViewAsign = ({ players, thisId }) => {
 
   const teamRef = useRef(null);
 
+
   const advancingSettings = useCallback(() => {
+    
     if (
       tradeValue?.mouthing &&
       !players.loading &&
@@ -277,7 +283,12 @@ const DraftViewAsign = ({ players, thisId }) => {
             index_position: indexPosition,
             round: { logo, name },
             iteration,
+            team_neads_info
           } = team;
+          
+          let position = team_neads_info.team_neads_info
+            .map((item) => item.positions)
+            .flat();
 
           const checkTeam = delayTime({ id, indexPosition });
           const time = thisId ? +(id - thisId) * (1000 / timeSpeed) : checkTeam;
@@ -306,6 +317,8 @@ const DraftViewAsign = ({ players, thisId }) => {
                   teamActive ? "player-team active" : "player-team"
                 }`}
               >
+                <div className="heto-poxel">
+
                 {team?.index_position ? (
                   <>
                     <div className="pick">
@@ -319,7 +332,6 @@ const DraftViewAsign = ({ players, thisId }) => {
                     <p>{id}</p>
                   </div>
                 )}
-
                 <div className="player-team-info">
                   <img src={logo ? logo : ""} alt={name} />
 
@@ -366,6 +378,11 @@ const DraftViewAsign = ({ players, thisId }) => {
                     </Delayed>
                   )}
                 </div>
+                </div>
+
+              <div className="needs">
+                {position.map((need,idx) => <p key={idx}>{need.name}</p>) }
+              </div>
               </li>
             </React.Fragment>
           );

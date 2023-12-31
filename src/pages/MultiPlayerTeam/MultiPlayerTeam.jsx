@@ -7,12 +7,13 @@ import { resetLiveDraft, selectLiveDraft, setMyLiveTeam } from '../../app/featur
 import { getLiveTeams, joinEvent } from '../../app/features/liveDraft/liveDraftActions'
 import Spinner from "../../components/Spinner/Spinner"
 import { LIVE_DRAFT } from '../../router/route-path'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { API_ENDPOINT } from '../../config/config'
 import useModal from '../../hooks/useModal'
 import ModalCustom from '../../components/ModalCustom/ModalCustom'
 const MultiPlayerTeam = () => {
-  const {id} = useParams()
+  const {id} = useParams();
+  const navigate = useNavigate()
   const { liveTeams, loading, myLiveTeam, joinTeam, error } =
     useSelector(selectLiveDraft);
 
@@ -90,7 +91,10 @@ const MultiPlayerTeam = () => {
             <h2>
               Thank you for choosing a team, you will receive an email shortly
             </h2>
-            <button onClick={closeModal}>Close</button>
+            <button onClick={()=> {
+              closeModal()
+              navigate(-1)
+            }}>Close</button>
           </TeamModal>
         </ModalCustom>
       )}

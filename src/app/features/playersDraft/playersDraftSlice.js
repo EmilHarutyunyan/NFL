@@ -28,10 +28,11 @@ export const getPlayersDraft = createAsyncThunk(
   "playersDraft/getPlayersDraft",
   async (config, { dispatch, getState, rejectWithValue }) => {
     try {
+      let teamName = config.teamName === '49ers' ? 'ers' : config.teamName
       const res = await axios.get(
         `${API_ENDPOINT}players/?limit=${
           config.playerCountGet
-        }&offset=${0}&search=&position=&school&ordering=-${config.teamName}`
+        }&offset=${0}&search=&position=&school&ordering=-${teamName}`
       );
 
       const {
@@ -61,6 +62,7 @@ export const getPlayersDraft = createAsyncThunk(
         playerManualFlag = playerReset.length > 0 ? false : true;
         let playerManualFilter = playerManualChoose;
         
+        
         if (playerManualFlag) {
           
           
@@ -89,7 +91,7 @@ export const getPlayersDraft = createAsyncThunk(
           : playerIterationChoose;
         playerManualFlag = playerReset.length > 0 ? false : true;
         let playerManualFilter = playerManualChoose;
-
+        
         if (playerManualFlag) {
           dispatch(setPlayerIterationChoose([]));
           dispatch(setPlayerManualChooseNew(playerManualFilter));
@@ -105,8 +107,10 @@ export const getPlayersDraft = createAsyncThunk(
           return { ...item, bpa: idx + 1 };
         });
       }
+      
       // Filter Choose Players
       if (playerChoose.length && !fanaticChallenge.length && !fanaticMode) {
+        
         const playerChooseId = playerChoose.map((el) => el.id);
         const resDataResult = resData.results.filter(
           (player) => !playerChooseId.includes(player.id)

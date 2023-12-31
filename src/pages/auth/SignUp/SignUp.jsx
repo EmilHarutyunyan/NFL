@@ -58,6 +58,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { success, error, loading } = useSelector(selectUser);
+  console.log('error :', error);
    
   const dispatch = useDispatch()
   const navigate = useNavigate()

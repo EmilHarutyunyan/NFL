@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axiosInstance from '../../../service/axiosInstance';
+import { API_PLAN } from '../../../config/config';
 
 export const planPost = createAsyncThunk(
   "plans/get",
@@ -8,7 +9,7 @@ export const planPost = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(
-        `https://api.nfldraftfanatics.com/plans/`
+        `${API_PLAN}plans/`
       );
       
 
@@ -31,7 +32,7 @@ export const createPayment = createAsyncThunk(
   async (paymentDetails, { rejectWithValue }) => {
     try {
       const { data } = await axiosInstance.post(
-        `https://api.nfldraftfanatics.com/plans/create-payment/`,
+        `${API_PLAN}plans/create-payment/`,
         paymentDetails
       );
 
@@ -52,7 +53,7 @@ export const executePayment = createAsyncThunk(
     try {
   
       const response = await axiosInstance.post(
-        `https://api.nfldraftfanatics.com/plans/confirm-payment-intent/`,
+        `${API_PLAN}plans/confirm-payment-intent/`,
         paymentId
       );
 

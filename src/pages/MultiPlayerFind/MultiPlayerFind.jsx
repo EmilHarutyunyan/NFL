@@ -10,19 +10,29 @@ import {
 import { Pagination } from "@mui/material";
 import Search from "../../components/Search/Search";
 import { useDispatch } from "react-redux";
-import { draftEventsList } from "../../app/features/draftEvents/draftEventsActions";
+
 import { useSelector } from "react-redux";
 import { selectDraftEvents } from "../../app/features/draftEvents/draftEventsSlice";
 import { useNavigate } from "react-router-dom";
 import { MULTI_PLAYER_JOIN_TEAM } from "../../router/route-path";
 import Spinner from "../../components/Spinner/Spinner";
+import { liveEventsList } from "../../app/features/liveDraft/liveDraftActions";
+import { selectLiveDraft } from "../../app/features/liveDraft/liveDraftSlice";
+import TokenService from "../../service/token.service";
 
-const MultiPlayerItem = ({ event }) => {
-  
-  const { name, event_id, created_at:date, id, players } = event;
-  const navigate = useNavigate()
+const MultiPlayerItem = ({ event,user }) => {
+  const { name, event_id, created_at: date, id, players } = event;
+
+  const playersEventId = event?.players.reduce((acc, player) => {
+    if (player?.user?.id) {
+      acc.push(player?.user?.id);
+      return acc;
+    }
+  }, []);
+  console.log("playersEventId :", playersEventId);
+
+  const navigate = useNavigate();
   const formattedDate = (date) => {
-
     const newDate = new Date(date);
 
     const options = {
@@ -37,8 +47,8 @@ const MultiPlayerItem = ({ event }) => {
       newDate
     );
     return formattedDate;
-  }
- 
+  };
+console.log(playersEventId.includes(user.id));
   //  [yyyy, mm, dd, hh, mi] = date.split(/[/:\-T]/);
   return (
     <EventWrap>
@@ -58,7 +68,9 @@ const MultiPlayerItem = ({ event }) => {
           <p>{players?.length}</p>
         </div>
         <div>
-          <button onClick={() => navigate(`${MULTI_PLAYER_JOIN_TEAM}/${id}`)}>Choose Team</button>
+          <button disabled={playersEventId.includes(user.id)} onClick={() => navigate(`${MULTI_PLAYER_JOIN_TEAM}/${id}`)}>
+            Choose Team
+          </button>
         </div>
       </EventItem>
     </EventWrap>
@@ -67,15 +79,16 @@ const MultiPlayerItem = ({ event }) => {
 
 const MultiPlayerFind = () => {
   const [searchValue, setSearchValue] = useState("");
-  const { eventList,loading } = useSelector(selectDraftEvents);
-  console.log('eventList :', eventList);
+  const { eventList, loading } = useSelector(selectLiveDraft);
   const dispatch = useDispatch();
+  const user = TokenService.getUser();
+  console.log("user :", user);
   useEffect(() => {
-    dispatch(draftEventsList());
+    dispatch(liveEventsList());
   }, []);
- if (loading) {
-   return <Spinner />;
- }
+  if (loading) {
+    return <Spinner />;
+  }
   return (
     <Wrapper>
       <h2>Find an Event</h2>
@@ -93,7 +106,7 @@ const MultiPlayerFind = () => {
       <div className="event-content">
         {eventList.length > 0 ? (
           eventList.map((event, idx) => {
-            return <MultiPlayerItem event={event} key={idx} />;
+            return <MultiPlayerItem event={event} key={idx} user={user} />;
           })
         ) : (
           <p>Not Event</p>

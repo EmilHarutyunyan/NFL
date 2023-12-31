@@ -8,3 +8,4 @@ export const Wrapper = styled.div`
   box-shadow: 0px 10px 20px #00000094;
   border: 3px solid #004ea3;
 `;
+

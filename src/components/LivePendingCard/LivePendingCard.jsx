@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 // Styles
 import {
   Wrapper,
@@ -6,55 +6,67 @@ import {
   TradeTeamItem,
   TradeAction,
 } from "./LivePendingCard.styles";
-import teamImg from "../../assets/img/team.png"
-const LivePendingCard = () => {
+const LivePendingCard = ({ myTrades, isMyTrades, handleAccept }) => {
+  const myName = myTrades.myTeamPick[0].round.name;
+  const otherName = myTrades.otherTeamPick[0].round.name;
   return (
     <Wrapper>
       <TradeTeam>
         <TradeTeamItem>
           <div className="team-head">
-            <img src={teamImg} alt="" />
-            <p>Lorem</p>
+            <img src={myTrades.myTeamPick[0].round.logo} alt="" />
+            <p>{myName}</p>
           </div>
           <h3>Receives</h3>
           <div className="team-pick">
-            <p>1:77</p>
-            <p>1:77</p>
-            <p>1:77</p>
+            {myTrades.myTeamPick.map((team, idx) => {
+              return (
+                <p key={idx}>
+                  {team.round_index_number}: {team.pick}
+                </p>
+              );
+            })}
           </div>
           <hr className="line" />
           <div className="team-status">
             <div>
-              <p>Pending</p>
+              <p>{myTrades.status[myName]}</p>
             </div>
           </div>
         </TradeTeamItem>
         <hr className="line" />
         <TradeTeamItem>
           <div className="team-head">
-            <img src={teamImg} alt="" />
-            <p>Lorem</p>
+            <img src={myTrades.otherTeamPick[0].round.logo} alt="" />
+            <p>{otherName}</p>
           </div>
           <h3>Receives</h3>
           <div className="team-pick">
-            <p>1:77</p>
-            <p>1:77</p>
-            <p>1:77</p>
+            {myTrades.otherTeamPick.map((team, idx) => {
+              return (
+                <p key={idx}>
+                  {team.round_index_number}: {team.pick}
+                </p>
+              );
+            })}
           </div>
           <hr className="line" />
           <div className="team-status">
             <div>
-              <p>Pending</p>
+              <p>{myTrades.status[otherName]}</p>
             </div>
           </div>
         </TradeTeamItem>
       </TradeTeam>
-      <TradeAction>
-        <button>Accept</button>
-        <button>Reject</button>
-      </TradeAction>
+      {isMyTrades ? null : (
+        
+        <TradeAction>
+          <button onClick={handleAccept}>Accept</button>
+          <button>Reject</button>
+        </TradeAction>
+      )}
     </Wrapper>
   );
-}
+};
 
-export default LivePendingCard
+export default LivePendingCard;

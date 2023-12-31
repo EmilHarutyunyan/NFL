@@ -64,6 +64,7 @@ import {
   PROFILE_DRAFT_EVENTS_MY_VIEW,
   MULTI_PLAYER_JOIN_TEAM_ID,
   LIVE_DRAFT_ID,
+  LIVE_RESULT,
 } from "./route-path";
 import MultiPlayerFind from "../pages/MultiPlayerFind/MultiPlayerFind";
 import MultiPlayerTeam from "../pages/MultiPlayerTeam/MultiPlayerTeam";
@@ -76,6 +77,8 @@ import EditEvent from "../pages/Profile/DraftEvents/EditEvent";
 import PayPalRedirect from "../pages/Profile/PayPalRedirect/PayPalRedirect";
 // import TokenService from "../service/token.service";
 import ViewEvent from "../pages/Profile/DraftEvents/ViewEvent";
+import LiveResult from "../pages/LiveResult";
+import { SocketProvider } from "../hook/SocketContext";
 
 // Pages Lazy
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -90,9 +93,6 @@ const Router = () => {
   const { teamSelect } = useSelector(selectDraftConfig);
   const { results } = useSelector(selectDraftResult);
   const { success } = useSelector(selectUser);
-
-
-
 
   return (
     <>
@@ -156,7 +156,15 @@ const Router = () => {
             path={MULTI_PLAYER_JOIN_TEAM_ID}
             element={<MultiPlayerTeam />}
           />
-          <Route path={LIVE_DRAFT_ID} element={<LiveDraft />} />
+          <Route
+            path={LIVE_DRAFT_ID}
+            element={
+              <SocketProvider>
+                <LiveDraft />
+              </SocketProvider>
+            }
+          />
+          <Route path={LIVE_RESULT} element={<LiveResult />} />
           <Route
             path={"/profile"}
             element={

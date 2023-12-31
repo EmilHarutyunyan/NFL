@@ -63,6 +63,7 @@ export const registerUser = createAsyncThunk(
       TokenService.setUser(res.data);
       return res.data;
     } catch (error) {
+      
       if (error.response && error.response.data) {
         return rejectWithValue(error.response.data);
       } else {

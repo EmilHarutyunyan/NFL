@@ -5,33 +5,26 @@ import eyeIcon from "../../../assets/img/eyeIcon.png";
 import penIcon from "../../../assets/img/penIcon.png";
 import delIcon from "../../../assets/img/delete.png";
 import { useDispatch } from "react-redux";
-import { PROFILE_DRAFT_EVENTS_MY, PROFILE_DRAFT_EVENTS_MY_EDIT, PROFILE_DRAFT_EVENTS_MY_VIEW } from "../../../router/route-path";
+import {  PROFILE_DRAFT_EVENTS_MY_EDIT, PROFILE_DRAFT_EVENTS_MY_VIEW } from "../../../router/route-path";
 import { useNavigate } from "react-router-dom";
 import {
   draftEventsDelete,
   draftEventsGet,
 } from "../../../app/features/draftEvents/draftEventsActions";
 import { useSelector } from "react-redux";
-import { selectDraftEvents } from "../../../app/features/draftEvents/draftEventsSlice";
+import { selectDraftEvents, setResetMyDraftEvent } from "../../../app/features/draftEvents/draftEventsSlice";
 import { formatDate } from "../../../utils/utils";
 import Spinner from "../../../components/Spinner/Spinner";
+import PaginationTable from "../../../components/PaginationTable/PaginationTable";
 
 const EventList = ({ handlePage }) => {
   const navigate = useNavigate();
-  const [data, setData] = useState([
-    {
-      event_id: "DSADA48797",
-      name_event: "Tgsfsg",
-      date: "12 May 2023",
-      id: "123123123123213",
-    },
-  ]);
   const dispatch = useDispatch();
-  const { myDraftEvent } = useSelector(selectDraftEvents);
- 
+  const { myDraftEvent,loading } = useSelector(selectDraftEvents);
 
   useEffect(() => {
     dispatch(draftEventsGet());
+    return ()=> dispatch(setResetMyDraftEvent());
   }, []);
   const handleDelete = async (id) => {
     await dispatch(draftEventsDelete({ id }));
@@ -48,9 +41,13 @@ const EventList = ({ handlePage }) => {
         accessor: "name",
       },
       {
+        Header: "Session ID",
+        accessor: "session_id",
+      },
+      {
         Header: "Date",
         accessor: "date",
-        Cell: ({value}) => {
+        Cell: ({ value }) => {
           return <>{formatDate(value)}</>;
         },
       },
@@ -114,7 +111,9 @@ const EventList = ({ handlePage }) => {
     },
     usePagination
   );
-  if (myDraftEvent === null) { 
+  if (myDraftEvent.length === 0) { 
+  
+  
     return <Spinner />
 
   }
@@ -132,7 +131,7 @@ const EventList = ({ handlePage }) => {
               </tr>
             ))}
           </thead>
-          {data.length ? (
+          {myDraftEvent.length ? (
             <>
               <tbody {...getTableBodyProps()}>
                 {page.map((row, i) => {
@@ -154,13 +153,18 @@ const EventList = ({ handlePage }) => {
           ) : (
             <tbody>
               <tr>
-                <td colspan="6" style={{ textAlign: "center" }}>
+                <td colSpan="6" style={{ textAlign: "center" }}>
                   No data found
                 </td>
               </tr>
             </tbody>
           )}
         </table>
+        <PaginationTable
+          currentPage={pageIndex + 1}
+          totalPages={pageOptions.length}
+          onPageChange={gotoPage}
+        />
       </MyEventWrap>
     );
 };

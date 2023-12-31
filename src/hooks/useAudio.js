@@ -5,21 +5,24 @@ const useAudio = () => {
   const [audio] = useState(new Audio(nflSound));
   const [isPlaying, setIsPlaying] = useState(false);
 
+
   const play = useCallback(() => {
-    audio.play();
-    audio.volume = 1;
-    
-    setIsPlaying(true);
+    if (isPlaying) {
+      audio.play();
+      audio.volume = 1;
+    }
+
+    // setIsPlaying(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isPlaying]);
   const rePlay = useCallback(() => {
-    setIsPlaying(false);
+    // setIsPlaying(false);
     audio.pause();
     audio.currentTime = 0;
     audio.play();
-    setIsPlaying(true);
+    // setIsPlaying(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+  }, []);
 
   const pause = useCallback(() => {
     audio.pause();
@@ -28,22 +31,14 @@ const useAudio = () => {
   }, []);
 
   const stop = useCallback(() => {
-    audio.pause();
-    audio.currentTime = 0;
-    setIsPlaying(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!isPlaying) {
+      audio.pause();
+      audio.currentTime = 0;
 
-  useEffect(() => {
-    audio.addEventListener("ended", () => {
-      setIsPlaying(false);
-    });
-    return () => {
-      audio.removeEventListener("ended", () => {
-        setIsPlaying(false);
-      });
-    };
-  }, [audio]);
+      // setIsPlaying(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying]);
 
   return {
     play,

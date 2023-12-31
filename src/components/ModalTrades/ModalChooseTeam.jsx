@@ -27,7 +27,7 @@ const ModalChooseTeam = ({title='',team={},tradesTeams=[],teamSelect=[],path=''}
       />
       <PickItems>
         <PickItem>
-          <div className="year">2023</div>
+          <div className="year">2024</div>
           <div className="pick-index-wrap">
             {team?.picks?.map((item, idx) => {
               const mainAllIndex = team?.pick.map((item) => item.index);

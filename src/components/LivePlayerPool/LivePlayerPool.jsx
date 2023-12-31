@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState, useTransition } from "react";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
 // Styles
 import {
   PositionItem,
@@ -14,31 +14,48 @@ import { useSelector } from "react-redux";
 import { selectGroup } from "../../app/features/group/groupSlice";
 import { POSITIONS_COLOR } from "../../utils/constants";
 import Search from "../Search/Search";
-import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { draftEventPlayersId } from "../../app/features/draftEvents/draftEventsActions";
-import {
-  addQueuePlayerAction,
-  playerPoolPositionMulti,
-  selectDraftEvents,
-} from "../../app/features/draftEvents/draftEventsSlice";
-import Spinner from "../Spinner/Spinner";
 
-const PlayerItem = ({ players, handleQueuePlayer,queuePlayersId }) => {
+
+import Spinner from "../Spinner/Spinner";
+import { addQueuePlayerAction, livePicksChoose, playerPoolPositionMulti, selectLiveDraft, setEventTime } from "../../app/features/liveDraft/liveDraftSlice";
+import useAudio from "../../hooks/useAudio";
+import { useSocket } from "../../hook/SocketContext";
+
+
+const PlayerItem = ({
+  players,
+  handleQueuePlayer,
+  queuePlayersId,
+  handlePlayerChoose,
+  start,
+  nextMyEvent,
+}) => {
 
   return players.map((player) => {
     return (
       <tr key={player.id}>
         <td>
-          <div className="player-choose">
-            <input
-              type="checkbox"
-              checked={queuePlayersId.includes(player.index)}
-              name=""
-              id=""
-              onChange={() => handleQueuePlayer(player)}
-            />
-          </div>
+          {!start ? (
+            <div className="player-choose">
+              <input
+                type="checkbox"
+                checked={queuePlayersId.includes(player.index)}
+                name=""
+                id=""
+                onChange={() => handleQueuePlayer(player)}
+              />
+            </div>
+          ) : (
+            <div className="player-draft">
+              <button
+                disabled={!nextMyEvent}
+                onClick={() => handlePlayerChoose(player)}
+              >
+                Draft
+              </button>
+            </div>
+          )}
         </td>
         <td>
           <div className="player-rank">
@@ -66,30 +83,43 @@ const PlayerItem = ({ players, handleQueuePlayer,queuePlayersId }) => {
 };
 
 const LivePlayerPool = () => {
-  const { id } = useParams();
+  const socket = useSocket()
   const {
     eventPlayers,
     playerPollSettings: { position },
     queuePlayersId,
-  } = useSelector(selectDraftEvents);
+    firstStart,
+    start,
+    nextMyEvent,
+    eventId,
+    isFinishLiveDraft,
+  } = useSelector(selectLiveDraft);
+
 
   const [isPending,startTransition] = useTransition();
   const [players, setPlayers] = useState(eventPlayers);
   const [searchValue, setSearchValue] = useState("");
   const groups = useSelector(selectGroup);
-
+  const {isPlaying, play,stop} = useAudio()
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (id) dispatch(draftEventPlayersId(id));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
 
   const handleQueuePlayer = useCallback((player) => {
     dispatch(addQueuePlayerAction(player));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handlePlayerChoose = useCallback(
+    async (player) => {
+      if ((!isFinishLiveDraft && socket)) {
+        console.log("asdasdad");
+        console.log({ ...player, eventId });
+        await socket.emit("player", JSON.stringify({ ...player, eventId }));
+        
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [isFinishLiveDraft, socket]
+  );
   const handleFilterPlayer = useCallback(() => {
     startTransition(()=> {
       let playersData = eventPlayers;
@@ -118,6 +148,23 @@ const LivePlayerPool = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventPlayers,position,searchValue]);
 
+  useEffect(() => {
+      if (socket) {
+        socket.on("player", async (data) => {
+          
+          await dispatch(setEventTime({time:0, manualChoose:true}));
+          const player = data;
+          console.log('player socket :', player);
+          setTimeout(()=> {
+            
+            dispatch(livePicksChoose(player));
+              !isPlaying ? play() : stop();
+
+          },[1000])
+          
+        });
+      }
+  },[socket])
   return (
     <Wrapper>
       <LivePickHead>
@@ -177,6 +224,9 @@ const LivePlayerPool = () => {
                   players={players}
                   handleQueuePlayer={handleQueuePlayer}
                   queuePlayersId={queuePlayersId}
+                  handlePlayerChoose={handlePlayerChoose}
+                  start={start}
+                  nextMyEvent={nextMyEvent}
                 />
               </tbody>
             </table>

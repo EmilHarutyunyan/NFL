@@ -1,6 +1,5 @@
 import React, {
   useCallback,
-  useEffect,
   useMemo,
   useState,
   useTransition,
@@ -15,10 +14,8 @@ import {
 } from "./LiveOverallPicks.styles";
 import MySelectTeam from "../MySelect/MySelectTeam";
 import { useSelector } from "react-redux";
-import { selectDraftEvents } from "../../app/features/draftEvents/draftEventsSlice";
-import { useDispatch } from "react-redux";
-import { draftEventRecentPicks } from "../../app/features/draftEvents/draftEventsActions";
 import Spinner from "../Spinner/Spinner";
+import { selectLiveDraft } from "../../app/features/liveDraft/liveDraftSlice";
 
 const ALL = "All";
 const RecentPickTeams = ({
@@ -28,13 +25,14 @@ const RecentPickTeams = ({
   teamFilter,
   isPending
 }) => {
+  const dataValue = [{ name: "All" },...picksTeams]
   return (
     <>
       <FilterByTeam>
         <p>Filter by Team</p>
         <MySelectTeam
           name={teamFilter.value}
-          dataValue={picksTeams}
+          dataValue={dataValue}
           disabled={teamFilter.value}
           handleChange={(item) => {
             handleChangeTeam(item);
@@ -79,9 +77,11 @@ const PlayerPickItem = ({ recentPicks }) => {
             <td>
               <img src={team.round.logo} alt={team.round.name} />
             </td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{team?.player?.name && <span>{team.player.name}</span>}</td>
+            <td>
+              {team?.player?.position && <span>{team.player.position}</span>}
+            </td>
+            <td>{team?.player?.school && <span>{team.player.school}</span>}</td>
           </tr>
         );
       })}
@@ -90,15 +90,11 @@ const PlayerPickItem = ({ recentPicks }) => {
 };
 
 const LiveOverallPicks = () => {
-  const dispatch = useDispatch();
+ 
   const [isPending, startTransition] = useTransition();
-  const { recentPicks, picksTeams } = useSelector(selectDraftEvents);
+  const { recentPicks, picksTeams } = useSelector(selectLiveDraft);
   const [teamFilter, setTeamFilter] = useState({ value: ALL });
 
-  useEffect(() => {
-    dispatch(draftEventRecentPicks());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const recentPicksFilterMemo = useMemo(
     () => {
@@ -119,7 +115,7 @@ const LiveOverallPicks = () => {
       setTeamFilter(team);
     });
   }, []);
-  console.log(isPending);
+
   return (
     <Wrapper>
       <LivePickHead>

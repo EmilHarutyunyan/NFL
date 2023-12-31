@@ -60,11 +60,13 @@ export const Wrapper = styled.div`
   }
   .player-team {
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     gap: 25px;
     border-bottom: 1px solid #afb4b9;
     background-color: #fff;
     padding: 12px 21px 12px 13px;
+    flex-direction: column;
+    height: auto;
     &.active {
       border-left: 9px solid #2d7341;
     }
@@ -79,6 +81,18 @@ export const Wrapper = styled.div`
     width: 40px;
     height: 40px;
     object-fit: cover;
+  }
+  .needs {
+    display: flex;
+    gap: 5px;
+    p {
+      font-size: 12px;
+    }
+  }
+  .heto-poxel {
+    display: flex;
+    /* flex: 1; */
+    gap: 25px;
   }
 `;
 export const PlayerPos = styled.div`

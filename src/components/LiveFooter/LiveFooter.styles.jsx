@@ -1,14 +1,13 @@
 import styled from "styled-components";
 export const Wrapper = styled.div`
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-    z-index: 2;
-`
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  z-index: 2;
+`;
 
 export const LiveFooterHead = styled.div`
   display: flex;
-
 `;
 
 export const LiveFooterBody = styled.div`
@@ -16,21 +15,35 @@ export const LiveFooterBody = styled.div`
   display: flex;
   align-items: center;
   gap: 25px;
-  background-color: #0E1118;
+  background-color: #0e1118;
   padding: 16px 20px;
   z-index: 1;
-  
-
+  min-height: 72px;
+  overflow: hidden;
+  overflow-x: auto;
+  transition: .5s;
+  ::-webkit-scrollbar {
+    width: 2px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: #ffffff;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000000;
+    border-radius: 2px;
+  }
 `;
 export const LiveSelect = styled.div`
   max-width: 640px;
   width: 100%;
-  background:  #AFB4B9;
+  background: #afb4b9;
 
   position: relative;
 
   :last-child {
-    background:  #989EA4;
+    background: #989ea4;
   }
 `;
 
@@ -80,31 +93,33 @@ export const SelectBox = styled.div`
 export const SelectBoxItem = styled.div`
   display: flex;
   align-items: center;
-  
 `;
 
 export const ResultPick = styled.div`
   display: flex;
   align-items: stretch;
   gap: 18px;
+  animation: animateOpacityImage 1s;
+
   .line {
     width: 1px;
     background-color: #fff;
   }
-
 `;
 
 export const ResultTeam = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 105px;
   p {
     color: #fff;
-    font-family: 'Saira Semi Condensed';
+    font-family: "Saira Semi Condensed";
     font-size: 20px;
     font-style: normal;
     font-weight: 400;
     line-height: 30px;
+    text-wrap: nowrap;
   }
   img {
     display: block;
@@ -121,7 +136,7 @@ export const LastPick = styled.div`
   max-width: 640px;
   padding: 5px 0 6px 40px;
   color: #fff;
-  font-family: 'Saira Semi Condensed';
+  font-family: "Saira Semi Condensed";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;

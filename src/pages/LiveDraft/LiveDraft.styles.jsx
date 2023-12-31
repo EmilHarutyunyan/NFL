@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.section``;
+export const Wrapper = styled.section`
+  animation: animateOpacityImage 1s;
+`;
 
 export const Overflow = styled.div`
   position: fixed;

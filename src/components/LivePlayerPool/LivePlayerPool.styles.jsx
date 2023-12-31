@@ -16,7 +16,7 @@ export const LivePickHead = styled.div`
   padding: 24px 0 24px 24px;
   h2 {
     color: #fff;
-    font-size: 32px;
+    font-size: 28px;
     font-style: normal;
     font-weight: 500;
     line-height: 41.6px;
@@ -28,6 +28,9 @@ export const PositionWrap = styled.div`
   gap: 12px;
   align-items: center;
   flex-wrap: wrap;
+  & div {
+    margin: inherit;
+  }
   .trades-btn button {
     background: #004ea3;
     border-radius: 4px;
@@ -48,7 +51,7 @@ export const PositionWrap = styled.div`
 
 export const PositionItem = styled.div`
   width: 53.12px;
-  height: 32px;
+  /* height: 32px; */
   border: 1px solid #989ea4;
   border-radius: 4px;
   display: flex;
@@ -56,6 +59,8 @@ export const PositionItem = styled.div`
   justify-content: center;
   cursor: pointer;
   padding: 5px 14px;
+  margin: 0 auto;
+
   ${(props) =>
     props.backColor &&
     css`
@@ -68,7 +73,7 @@ export const PositionItem = styled.div`
   }
   span {
     color: #0e1118;
-    font-size: 18px;
+    font-size: 16px;
     font-family: "Saira Semi Condensed", sans-serif;
     font-weight: 400;
   }
@@ -99,6 +104,8 @@ export const PlayerFilter = styled.form`
 export const PlayerTable = styled.div`
   overflow-x: auto;
   height: 485px;
+  padding-top: 10px;
+  animation: animateOpacityImage 1s;
   ::-webkit-scrollbar {
     width: 5px;
   }
@@ -120,22 +127,41 @@ export const PlayerTable = styled.div`
     border-spacing: 0 20px;
   }
   tr td {
-    padding: 15px 0;
+    padding: 5px 0;
     width: calc(100% / 5);
   }
   .player-choose {
-    width: 32px;
-    height: 32px;
+    width: 25px;
+    height: 25px;
     input {
       width: 100%;
       height: 100%;
       filter: hue-rotate(240deg);
     }
   }
+  .player-draft {
+    cursor: pointer;
+    button {
+      padding: 0px 10px;
+      border-radius: 4px;
+      background-color: #004ea3;
+      color: #fff;
+      height: 32px;
+      font-weight: 400;
+      font-size: 12px;
+      cursor: pointer;
+      :disabled {
+        background-color: #5891ca;
+      }
+    }
+  }
   .player-rank {
+    display: flex;
+    gap: 10px;
+    align-items: center;
     h4 {
       color: #50647b;
-      font-size: 20px;
+      font-size: 16px;
       font-style: normal;
       font-weight: 400;
       line-height: normal;
@@ -143,7 +169,7 @@ export const PlayerTable = styled.div`
     p {
       color: #0e1118;
 
-      font-size: 20px;
+      font-size: 16px;
       font-style: normal;
       font-weight: 600;
       line-height: 30px;
@@ -151,22 +177,22 @@ export const PlayerTable = styled.div`
   }
   .player-adp {
     color: #50647b;
-    font-size: 20px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
   }
   .player-name {
     color: #004ea3;
-    font-size: 20px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 600;
-    line-height: 30px;
+    line-height: 20px;
     text-align: center;
   }
   .player-state {
     color: #46484a;
-    font-size: 20px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;

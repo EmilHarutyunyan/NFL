@@ -28,7 +28,7 @@ const EditEvent = ({ handlePage }) => {
   const { loading, error } = useSelector(selectDraftEvents);
   const [eventId, setEventId] = useState();
   const [eventFile, setEventFile] = useState();
-  console.log('eventFile :', eventFile);
+
   const { myDraftSingleEvent } = useSelector(selectDraftEvents);
   const dispatch = useDispatch()
   const navigate = useNavigate();
@@ -62,9 +62,7 @@ const EditEvent = ({ handlePage }) => {
      data.place_count = 32;
      const formData = objectToFormData(data);
 
-     for (const value of formData.values()) {
-       console.log(value);
-     }
+   
      dispatch(draftEventsPut({data:formData,id}));
      setEventId("");
      setEventFile(null);

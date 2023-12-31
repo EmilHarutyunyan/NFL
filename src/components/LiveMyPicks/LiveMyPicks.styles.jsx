@@ -13,20 +13,20 @@ export const Content = styled.div`
 export const LivePickHead = styled.div`
   border-radius: 10px 10px 0px 0px;
   background: #022142;
-  padding: 24px 0 24px 24px;
+  padding: 15px 0 15px 24px;
+  height: ${(props) => (props.static ? "119px" : " auto")};
   & > div {
     display: flex;
     align-items: center;
-    gap:12px;
-
+    gap: 12px;
   }
   img {
-    max-width: 71px;
+    max-width: 60px;
     width: 100%;
   }
   h2 {
     color: #fff;
-    font-size: 32px;
+    font-size: 28px;
     font-style: normal;
     font-weight: 500;
     line-height: 41.6px;

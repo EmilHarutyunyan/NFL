@@ -156,3 +156,57 @@ export const OfferPending = styled.div`
     }
   }
 `;
+
+export const ModalBody = styled.div`
+  max-width: 466px;
+  width: 100%;
+  border-radius: 10px;
+  background: #fff;
+  padding: 32px 0;
+  text-align: center;
+  h2 {
+    color: #0e1118;
+    text-align: center;
+    font-family: "Saira Semi Condensed";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 41.6px; /* 130% */
+    margin-bottom: 12px;
+  }
+  p {
+    color: #0e1118;
+    text-align: center;
+    font-family: "Saira Semi Condensed";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    margin-bottom: 24px;
+  }
+`;
+
+export const BtnWrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  button {
+    padding: 5.5px 24px;
+    background-color: #004ea3;
+    font-family: "Saira Semi Condensed", sans-serif;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 31px;
+    border-radius: 4px;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    :hover {
+      opacity: 1;
+    }
+  }
+`;

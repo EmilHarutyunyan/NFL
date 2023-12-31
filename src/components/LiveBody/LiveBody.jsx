@@ -4,14 +4,19 @@ import {Wrapper} from "./LiveBody.styles"
 import LivePlayerPool from '../LivePlayerPool/LivePlayerPool'
 import LiveMyPicks from '../LiveMyPicks/LiveMyPicks'
 import LiveOverallPicks from '../LiveOverallPicks/LiveOverallPicks'
+import { useSelector } from 'react-redux'
+import { selectLiveDraft } from '../../app/features/liveDraft/liveDraftSlice'
 const LiveBody = () => {
+  const { myEventTeam } = useSelector(selectLiveDraft);
+ 
   return (
-    <Wrapper>
+    <Wrapper myEventTeam={myEventTeam}>
       <LivePlayerPool />
-      <LiveMyPicks />
+      {myEventTeam.round && <LiveMyPicks />}
+
       <LiveOverallPicks />
     </Wrapper>
-  )
+  );
 }
 
 export default LiveBody

@@ -80,28 +80,35 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
   const draftBtnDisable = draftStatus === "red" ? true : false;
   const [searchValue, setSearchValue] = useState("");
 
+  const searchPosition = useCallback((positions=[],playersData=[])=> {
+    
+    if(positions.includes('All')) {
+      return playersData;
+    }
+    if(positions.length) {
+      return playersData.filter((player) => {
+        const position = player.position;
+        return positions.includes(position);
+       
+      });
+    }
+  },[])
   const currentTableData = useMemo(() => {
+    
     const firstPageIndex = (playersDraft.currentPage - 1) * PageSize;
     const lastPageIndex = firstPageIndex + PageSize;
 
-    // if (draftPlayers.length > 0) {
     let playersData = playersDraft.results;
-    if (playersDraft.search) {
-      playersData = playersDraft.results.filter((player) => {
+    const playerSearchPosition = searchPosition(
+      playersDraft.position,
+      playersData
+    );
+    playersData = playerSearchPosition.filter((player) => {
         const name = player.player.toLowerCase();
         return name.includes(playersDraft.search.toLowerCase());
-      });
-    }
-    if (
-      playersDraft.position.length &&
-      !playersDraft.position.includes("All")
-    ) {
-      playersData = playersDraft.results.filter((player) => {
-        const position = player.position;
-        return playersDraft.position.includes(position);
-        // return position.toLowerCase() === playersDraft.position.toLowerCase();
-      });
-    }
+    });
+    
+   
 
     const playersDataSlice = playersData.slice(firstPageIndex, lastPageIndex);
     return { playersData, playersDataSlice };
@@ -177,18 +184,24 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
   };
 
   const playerChoose = (item, bpa) => {
+    debugger
     let team = teamPickIndex[0] ?? fanaticIndexPosition[0];
     const teamItem = structuredClone(tradeValue.results[team - 1]);
     let playerItem = { ...item };
     let percentPlayers = [];
-    const teamName = tradeValue.results[team - 1].round.name;
+    let teamName = tradeValue.results[team - 1].round.name;
+    // Backend Field 'ers';
+    teamName = teamName === "49ers" ? 'ers' : teamName;
     const teamValue = +tradeValue.results[team - 1].value;
     const realValue = teamValue >= item[teamName] ? teamValue : item[teamName];
     const pricentValue = percentPick(realValue, item[teamName]);
     let playerItemsSlice = playersDraft.results.slice(0, 10);
     playerItemsSlice.push(playerItem);
     percentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
+    debugger
+    // teamName = teamName === "ers" ? "49ers" : teamName;
     playerItem = { ...item, [teamName]: item.value + pricentValue };
+    console.log('playerItem :', playerItem);
 
     // }
     const playerItemPos = {
@@ -350,6 +363,9 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                             <h4 className="player-td player-name">
                               {item.player}
                             </h4>
+                            <h4 className="player-td player-name">
+                              {item.value}
+                            </h4>
                             <h4 className="player-td player-position">
                               {item.position}
                             </h4>
@@ -359,9 +375,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                             <img src={infoImg} alt="info" />
                             <button
                               className="player-td player-draft-btn"
-                              disabled={
-                                draftBtnDisable
-                              }
+                              disabled={draftBtnDisable}
                               onClick={() => playerChoose(item, item?.bpa)}
                             >
                               Draft

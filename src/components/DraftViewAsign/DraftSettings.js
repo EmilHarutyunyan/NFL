@@ -19,11 +19,13 @@ function draftAutoSettings(
     { length: draftCardDepth },
     (_, i) => i + 1
   );
+
+   
   const playerRange = playersAll.slice(0, draftCardDepth);
   const tradeValueTeamId = tradeValueTeam.round.index;
   const positionPlayers = [];
   const playerChoose = {};
-  
+
   // Round BPA Set
   if (roundBPA.length && !roundIndexBool) {
     const { player, playerChooseIndex } = draftDisableSettings({
@@ -44,8 +46,10 @@ function draftAutoSettings(
     playerChoose["player"] = playerRange[0];
     playerChoose["playerDepth"] = 1;
   }
+ 
   // Except Top-1 Player Round 1
   else if (draftRandomnessTeam.includes(tradeValueTeamId)) {
+    
     let randomFlag = true;
     let  randomPosition = null;
     while (randomFlag) { 
@@ -118,8 +122,9 @@ function draftAutoSettings(
   // }
 }
 function draftDisableSettings({ teamUniqPosition, playersAll, tradeValueTeam ,roundIndex,round}) {
+  
   let playerChoose = null;
-  let playerChooseIndex = 1;
+  let playerChooseIndex = 0;
   if(4 >= roundIndex) {
     
     if (teamUniqPosition[tradeValueTeam.round.name]) {

@@ -17,7 +17,7 @@ export const LivePickHead = styled.div`
   padding: 24px 0 24px 24px;
   h2 {
     color: #fff;
-    font-size: 32px;
+    font-size: 28px;
     font-style: normal;
     font-weight: 500;
     line-height: 41.6px;
@@ -107,6 +107,11 @@ export const PlayerPick = styled.div`
 
   tr td {
     font-weight: 400;
+    animation: animateOpacityImage 1s;
+  }
+  tr td span{
+    
+    animation: animateOpacityImage 1s;
   }
   tr td img {
     width: 100%;

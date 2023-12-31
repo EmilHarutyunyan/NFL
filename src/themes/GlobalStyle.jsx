@@ -57,5 +57,12 @@ export const GlobalStyle = createGlobalStyle`
     background-color: transparent;
     border:none;
   }
-
+  @keyframes animateOpacityImage {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 `;

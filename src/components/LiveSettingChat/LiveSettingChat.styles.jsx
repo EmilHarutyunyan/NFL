@@ -10,7 +10,7 @@ export const SettingBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
+
   button.settings {
     padding: 4px 24px;
     border-radius: 4px;
@@ -26,6 +26,27 @@ export const SettingBox = styled.div`
     font-weight: 600;
     line-height: 24px;
     cursor: pointer;
+  }
+  .time {
+    display: flex;
+    gap: 5px;
+    cursor: pointer;
+    span {
+      padding: 4px 24px;
+      border-radius: 4px;
+      background-color: #004ea3;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: "Saira Semi Condensed";
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 24px;
+      cursor: pointer;
+    }
   }
   button.chat {
     padding: 4px 24px;

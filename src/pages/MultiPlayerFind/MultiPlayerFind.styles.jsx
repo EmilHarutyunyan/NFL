@@ -41,6 +41,11 @@ export const EventItem = styled.div`
   & div:has(button) {
     text-align: right;
   }
+  button:disabled,
+button[disabled]{
+  background-color: #cccccc;
+
+}
    button {
     border-radius: 4px;
     background: #004ea3;

@@ -55,7 +55,8 @@ export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexCont
     for (let index of teamPickIndexControl) {
       const team = teams.filter((item) => item.index_position === index)[0];
       // if (index === team.index_position) {
-        const teamNameItem = team.round.name;
+        let teamNameItem = team.round.name;
+         
         if (teamsPlayer[teamNameItem]) {
           teamsPlayer[teamNameItem].push(team);
         } else {
@@ -70,7 +71,8 @@ export const setDraftResultAction = (teams, teamSelect, round, teamPickIndexCont
     for (let index of teamPickIndexControl) {
       for (let team of teams) {
         if (index === team.index) {
-          const teamNameItem = team.round.name;
+          let teamNameItem = team.round.name;
+          
           if (teamsPlayer[teamNameItem]) {
             teamsPlayer[teamNameItem].push(team);
           } else {

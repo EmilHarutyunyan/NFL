@@ -15,7 +15,7 @@ import { resetPlanCreatePayments, selectPlan } from "../../../app/features/plan/
 const Subscription = () => {
   const dispatch = useDispatch();
   const { plans, createPayments } = useSelector(selectPlan);
-  console.log('createPayments :', createPayments);
+
 
   useEffect(() => {
     // loadPayPal();

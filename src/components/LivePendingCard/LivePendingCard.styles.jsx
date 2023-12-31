@@ -7,6 +7,7 @@ export const Wrapper = styled.div`
   max-width: 592px;
   margin: 12px auto;
   padding: 12px 24px 6px 24px;
+  animation: "animateOpacityImage 1s"
 
 `;
 
@@ -67,6 +68,9 @@ export const TradeTeamItem = styled.div`
     font-style: normal;
     font-weight: 400;
     line-height: 20px;
+    p {
+      text-transform: capitalize;
+    }
   }
 `;
 

@@ -31,20 +31,20 @@ const DraftEvents = () => {
     <>
       {userInfo?.user_subscription ? (
         <Wrapper>
-          <ProfileTitle>Badges</ProfileTitle>
+          <ProfileTitle>Draft Event</ProfileTitle>
           <SelectEvent>
             <button
               className={pathname.includes("create") ? "active" : null}
               onClick={() => handleNavigation("create")}
             >
-              Create draft
+              Create event
             </button>
 
             <button
               className={pathname.includes("my-draft") ? "active" : null}
               onClick={() => handleNavigation("my-draft")}
             >
-              My draft
+              My event
             </button>
           </SelectEvent>
           <Container>

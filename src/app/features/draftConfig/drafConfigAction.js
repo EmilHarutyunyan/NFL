@@ -54,11 +54,16 @@ export const getTeams = createAsyncThunk(
       const res = await axios.get(
         `${API_ENDPOINT}trade-value-history/?limit=1000&offset=0&round=&round_index_number=7&tm=`
       );
+      debugger
       const teams = res.data.results;
+      console.log('teams :', teams);
 
       const teamSet = [];
       for (let team of teams) {
+      
         const teamRound = team.round;
+        console.log("teamRound-name :", teamRound.name);
+        console.count()
         const checkTeam = teamSet?.some((team) => team.name === teamRound.name);
         if (!checkTeam) {
           teamSet.push({ ...teamRound, selection: team.index });

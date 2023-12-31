@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 // Styles
 import {
   Wrapper,
@@ -9,75 +9,103 @@ import {
   PositionItem,
   PlayerPick,
 } from "./LiveMyPicks.styles";
-import texansImg from "../../assets/img/texans.png";
+
 import { useSelector } from "react-redux";
-import { selectGroup } from "../../app/features/group/groupSlice";
 import { POSITIONS_COLOR } from "../../utils/constants";
+
+import Spinner from "../Spinner/Spinner";
+
+import { selectLiveDraft } from "../../app/features/liveDraft/liveDraftSlice";
 const LiveMyPicks = () => {
-  const groups = useSelector(selectGroup);
+  const { myEventTeam,myPlayerTeam } = useSelector(selectLiveDraft);
+
+  const positionNeeds = useMemo(()=> {
+    if (myEventTeam && myEventTeam.team_neads_info) {
+      return myEventTeam.team_neads_info.map((item) => item.positions).flat();
+    }
+  },[myEventTeam])
+  
+  // if(myEventTeam === null ) {
+  //   return <Spinner />
+  // }
   return (
     <Wrapper>
-      <LivePickHead>
-        <div>
-          <img src={texansImg} alt={"texans"} />
-          <h2>Picks</h2>
-        </div>
-      </LivePickHead>
+      {myEventTeam && myEventTeam.round ? (
+        <LivePickHead>
+          <div>
+            <img src={myEventTeam?.round.logo} alt={"texans"} />
+            <h2>{myEventTeam?.round.name}</h2>
+          </div>
+        </LivePickHead>
+      ) : (
+        <LivePickHead static />
+      )}
+
       <Content>
-        <DraftNeeds>
-          <p>Draft Needs:</p>
-          <PositionWrap>
-            {groups?.positions &&
-              groups.positions.slice(1, 7).map((item, idx) => {
-                const id = idx + 1;
-                return (
-                  <PositionItem
-                    key={id}
-                    backColor={POSITIONS_COLOR[item.split(" ")[0]]}
-                    onClick={() => {}}
-                  >
-                    <span>{item.split(" ")[0]}</span>
-                  </PositionItem>
-                );
-              })}
-          </PositionWrap>
-        </DraftNeeds>
-        <PlayerPick>
-          <table>
-            <thead>
-              <tr>
-                <th>Pick</th>
-                <th>Player</th>
-                <th>AXN</th>
-                <th>Pes</th>
-                <th>College</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1:1</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>1:1</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>1:1</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-        </PlayerPick>
+        {myEventTeam && positionNeeds ? (
+          <>
+            <DraftNeeds>
+              <p>Draft Needs:</p>
+              <PositionWrap>
+                {positionNeeds.map((needs,idx) => {
+                  return (
+                    <React.Fragment key={idx}>
+                      {idx < 5 ? (
+                        <PositionItem
+                         
+                          backColor={POSITIONS_COLOR[needs.name]}
+                          onClick={() => {}}
+                        >
+                          <span>{needs.name}</span>
+                        </PositionItem>
+                      ) : (
+                        <PositionItem
+                        
+                          backColor={POSITIONS_COLOR[needs.name]}
+                          onClick={() => {}}
+                        >
+                          <span>{needs.name}</span>
+                        </PositionItem>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+               
+              </PositionWrap>
+            </DraftNeeds>
+            <PlayerPick>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pick</th>
+                    <th>Player</th>
+                    <th>AXN</th>
+                    <th>Pos</th>
+                    <th>College</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {myPlayerTeam?.map(player => {
+                    return (
+                      <tr key={player.id}>
+                        <td>
+                          {`${player.pick}`}: {`${player.round_index_number}`}
+                          
+                        </td>
+                        <td>{player.name}</td>
+                        <td></td>
+                        <td>{player.position}</td>
+                        <td>{player.school}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </PlayerPick>
+          </>
+        ) : (
+          <Spinner />
+        )}
       </Content>
     </Wrapper>
   );
