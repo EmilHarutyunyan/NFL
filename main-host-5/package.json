@@ -1,0 +1,81 @@
+{
+  "name": "nfl",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
+    "@hookform/resolvers": "^2.9.10",
+    "@leenguyen/react-flip-clock-countdown": "^1.4.1",
+    "@mui/material": "^5.8.7",
+    "@mui/x-data-grid": "^6.18.7",
+    "@paypal/paypal-js": "^7.0.3",
+    "@reduxjs/toolkit": "^1.8.5",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^0.27.2",
+    "chart.js": "^3.9.1",
+    "clipboard-copy": "^4.0.1",
+    "convert-html-to-pdf": "^1.0.1",
+    "copy-image-clipboard": "^2.1.2",
+    "dayjs": "^1.11.7",
+    "downloadjs": "^1.4.7",
+    "html-to-image": "^1.11.11",
+    "html2canvas": "^1.4.1",
+    "jwt-decode": "^3.1.2",
+    "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-chartjs-2": "^4.3.1",
+    "react-confetti": "^6.1.0",
+    "react-dom": "^18.2.0",
+    "react-error-boundary": "^3.1.4",
+    "react-flip-numbers": "^3.0.8",
+    "react-helmet": "^6.1.0",
+    "react-hook-form": "^7.42.1",
+    "react-horizontal-scrolling-menu": "^3.2.5",
+    "react-icons": "^4.6.0",
+    "react-redux": "^8.0.2",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1",
+    "react-table": "^7.8.0",
+    "react-toastify": "^9.0.5",
+    "socket.io-client": "^4.6.0",
+    "styled-components": "^5.3.5",
+    "web-vitals": "^2.1.4",
+    "yup": "^0.32.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "dev": "react-scripts start",
+    "build": "react-scripts build ",
+    "build-dev": "react-scripts build && react-compress",
+    "component": "generate-react component",
+    "redux": "generate-react component  --type=redux",
+    "page": "generate-react component  --type=page",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "generate-react-cli": "^8.3.0",
+    "react-compress": "^3.6.4"
+  }
+}
