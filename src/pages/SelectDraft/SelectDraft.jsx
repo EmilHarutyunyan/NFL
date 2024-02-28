@@ -27,6 +27,7 @@ import { liveEventsSession } from "../../app/features/liveDraft/liveDraftActions
 import Spinner from "../../components/Spinner/Spinner";
 import useModal from "../../hooks/useModal";
 import { createPortal } from "react-dom";
+
 import ModalCustom from "../../components/ModalCustom/ModalCustom";
 function SelectDraft() {
   const [infoHover, setInfoHover] = useState(false);
@@ -111,7 +112,7 @@ function SelectDraft() {
                     }}
                   >
                     <input
-                      type="number"
+                      type="text"
                       placeholder="Enter Session Id To Join"
                       value={sessionId}
                       onChange={(e) => setSessionId(e.target.value)}

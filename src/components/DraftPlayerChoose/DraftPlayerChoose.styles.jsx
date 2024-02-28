@@ -159,6 +159,12 @@ export const DraftPlayerItem = styled.li`
       line-height: 31px;
       color: #46484a;
     }
+    img {
+   
+      width:40px;
+      height:40px;
+      object-fit:contain;
+    }
     span {
       font-weight: 600;
       font-size: 20px;

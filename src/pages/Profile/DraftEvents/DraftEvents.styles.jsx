@@ -190,7 +190,7 @@ export const InputContainer = styled.div`
     }
   }
   .event-info {
-    span {
+    a,span {
       color: #004ea3;
       text-decoration: underline;
       cursor: pointer;
@@ -328,5 +328,62 @@ export const ChooseSubs = styled.div`
     margin: 0 auto;
     margin-top: 24px;
     cursor: pointer;
+  }
+`;
+
+export const HowImport = styled.div`
+  position: relative;
+  background-color: #fff;
+  border-radius: 10px;
+  background: #fff;
+  padding: 0 48px;
+  .modal-body {
+    padding-top: 60px;
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+  }
+  .modal-info {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .excel {
+    img {
+      max-width: 900px;
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      height: auto;
+    }
+  }
+  .close {
+    position: absolute;
+    top: 2%;
+    right: 3%;
+    cursor: pointer;
+    img {
+      width: 100%;
+      max-width: 40px;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+  }
+  h4 {
+    color: #0e1118;
+    text-align: center;
+    font-size: 38px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  p {
+    color: rgba(14, 17, 24, 0.8);
+    text-align: center;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28px;
   }
 `;

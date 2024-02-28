@@ -1,9 +1,5 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-  useTransition,
-} from "react";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
+import { v4 as uuidv4 } from "uuid";
 // Styles
 import {
   OfferHead,
@@ -21,6 +17,7 @@ import MySelectTeam from "../MySelect/MySelectTeam";
 import LivePendingCard from "../LivePendingCard";
 import { useSelector } from "react-redux";
 import {
+  changeRecentPicks,
   selectLiveDraft,
   setRecentPicks,
 } from "../../app/features/liveDraft/liveDraftSlice";
@@ -28,13 +25,14 @@ import Spinner from "../Spinner/Spinner";
 import { objectDeleteValue, toggleArrObj } from "../../utils/utils";
 import { useDispatch } from "react-redux";
 import {
+  notAvailable,
+  rejectTrade,
   selectLiveTrades,
   setLiveMyAllTrades,
   setLiveMyTrades,
   setLiveOtherAllTrades,
   setLiveOtherTrades,
   tradesAccept,
-  
 } from "../../app/features/liveTrades/liveTradesSlice";
 import changeTeamPickLive from "./modalTradesFunc";
 import { useSocket } from "../../hook/SocketContext";
@@ -47,14 +45,16 @@ const initialTrades = {
   otherTeamPick: [],
 };
 const OfferTrade = () => {
-  const { recentPicks, myEventTeam, picksTeams, eventId } =
+  const { recentPicks, myEventTeam, picksTeams, eventId,start } =
     useSelector(selectLiveDraft);
   const socket = useSocket();
   const { liveMyTrades, liveOtherTrades } = useSelector(selectLiveTrades);
 
   const [otherTeam, setOtherTeam] = useState(null);
   const [myTeamPicks, setMyTeamPicks] = useState(null);
+
   const [otherTeamPicks, setOtherTeamPicks] = useState(null);
+
   const [isPending, startTransition] = useTransition();
   const [teamTrades, setTeamTrades] = useState(initialTrades);
   const { isOpen, openModal, closeModal } = useModal();
@@ -135,41 +135,36 @@ const OfferTrade = () => {
   const handleTrades = async (teamTrades) => {
     if (teamTrades.myTeamPick.length && teamTrades.otherTeamPick.length) {
       const newTeamTrades = structuredClone(teamTrades);
-      // newTeamTrades.myTeamPick.status = "pending";
-      // newTeamTrades.otherTeamPick.status = "incoming";
       const myName = newTeamTrades.myTeamPick[0].round.name;
       const otherName = newTeamTrades.otherTeamPick[0].round.name;
-      const myPickRound = newTeamTrades.myTeamPick.map(
-        (item) => item.round.round_index_number + item.round.pick
-      );
-      const otherPickRound = newTeamTrades.otherTeamPick.map(
-        (item) => item.round.round_index_number + item.round.pick
-      );
-      // const 
-      
+      const myPickRound = newTeamTrades.myTeamPick.map((item) => {
+        return { round_index_number: item.round_index_number, pick: item.pick };
+      });
+      const otherPickRound = newTeamTrades.otherTeamPick.map((item) => {
+        return { round_index_number: item.round_index_number, pick: item.pick };
+      });
+      // const
+
       const offerDate = {
         [myName]: newTeamTrades.myTeamPick,
         [otherName]: newTeamTrades.otherTeamPick,
-        id:Math.random(),
+        id: uuidv4() + myName,
         myName,
         otherName,
         status: {
           [myName]: "pending",
           [otherName]: "incoming",
         },
-        picks: {
-          [myName]: myPickRound,
-          [otherName]: otherPickRound,
-        },
+        picks: [...myPickRound, ...otherPickRound],
+
         event_id: eventId,
       };
-      console.log("offerDate :", offerDate);
       await socket.emit("offer-trade", JSON.stringify(offerDate));
-      console.log('newTeamTrades :', newTeamTrades);
-      dispatch(setLiveMyTrades({...newTeamTrades, ...offerDate}));
+      dispatch(setLiveMyTrades({ ...newTeamTrades, ...offerDate }));
+      setTeamTrades(initialTrades);
     }
   };
-  const handleAccept = async (myTeamPick, otherTeamPick,idTrade, idx) => {
+  const handleAccept = async (myTeamPick, otherTeamPick, idTrade, idx) => {
     const myTeamData = objectDeleteValue({
       objectData: myTeamPick[0],
       deleteKey: [
@@ -193,22 +188,20 @@ const OfferTrade = () => {
       ],
     });
     const myName = myTeamPick[0].round.name;
-    const myPickRound = myTeamPick.map(item => item.round.round_index_number+item.round.pick);
-    const otherPickRound = otherTeamPick.map(
-      (item) => item.round.round_index_number + item.round.pick
-    );
+    const myPickRound = myTeamPick.map((item) => {
+      return { round_index_number: item.round_index_number, pick: item.pick };
+    });
+    const otherPickRound = otherTeamPick.map((item) => {
+      return { round_index_number: item.round_index_number, pick: item.pick };
+    });
 
     const otherName = otherTeamPick[0].round.name;
-    //  const offerDate = {
-    //    [myName]: myTeamData,
-    //    [otherName]: teamMainData,
-    //    event_id: eventId,
-    //  };
-    debugger
     const newRecentPick = changeTeamPickLive({
       teamPick: otherTeamPick.map((item) => item.index),
       myTeamPick: myTeamPick.map((item) => item.index),
       tradeValue: recentPicks,
+      myTeamData,
+      teamMainData,
     });
 
 
@@ -222,20 +215,17 @@ const OfferTrade = () => {
           [otherName]: otherTeamPick,
           myName,
           otherName,
-          id:idTrade,
+          id: idTrade,
           status: {
             [myName]: "accepted",
             [otherName]: "accepted",
           },
-          picks: {
-            [myName]: myPickRound,
-            [otherName]: otherPickRound,
-          },
+          picks: [...myPickRound, ...otherPickRound],
         },
       })
     );
-    const newLiveOtherTrades = liveOtherTrades.map((trade,id) => {
-      if(idx=== id) {
+    const newLiveOtherTrades = liveOtherTrades.map((trade, id) => {
+      if (idx === id) {
         return {
           ...trade,
 
@@ -248,62 +238,72 @@ const OfferTrade = () => {
         };
       }
       return trade;
-    })
+    });
     dispatch(setLiveOtherAllTrades(newLiveOtherTrades));
-    openModal()
+    openModal();
     // dispatch(setRecentPicks(newRecentPick.tradeValue));
   };
+
+  const handleReject = async (rejectTrade) => {
+    const newLiveOtherTrades = liveOtherTrades.filter(item => item.id !== rejectTrade.id)
+    const status = {};
+    for (const key of Object.keys(rejectTrade.status)) {
+      status[`${key}`] = "reject";
+    }
+    const rejectTradeStatus = {
+      ...rejectTrade,
+      status,
+    };
+     await socket.emit(
+       "reject-trade",
+       JSON.stringify({
+         ...rejectTradeStatus,
+       })
+     );
+    dispatch(setLiveOtherAllTrades(newLiveOtherTrades));
+
+  }
   useEffect(() => {
     if (socket) {
       socket.on("offer-trade", async (data) => {
+        
         const newRecentPicks = data;
         const myName = Object.keys(newRecentPicks)[1];
         const otherName = Object.keys(newRecentPicks)[0];
-
         if (otherName !== myEventTeam.round.name) {
           const offerDate = {
             myTeamPick: [...newRecentPicks[myName]],
             otherTeamPick: [...newRecentPicks[otherName]],
+            myName,
+            otherName,
             status: newRecentPicks.status,
             event_id: eventId,
             id: newRecentPicks.id,
+            picks: newRecentPicks.picks,
           };
           dispatch(setLiveOtherTrades(offerDate));
         }
       });
       socket.on("accept-trade", async (data) => {
-        console.log("accept-trade :", data);
+        
         const newRecentPicks = data.newRecentPick;
-        // const myName = Object.keys(newRecentPicks)[1];
-        // const otherName = Object.keys(newRecentPicks)[0];
-        // debugger;
-        // if (otherName !== myEventTeam.round.name) {
-        //   const offerDate = {
-        //     myTeamPick: [...newRecentPicks[myName]],
-        //     otherTeamPick: [...newRecentPicks[otherName]],
-        //     event_id: eventId,
-        //   };
-        //   dispatch(setLiveOtherTrades(offerDate));
-        // }
-   
-        const newMyTrades = liveMyTrades.map((trades) => {
-          if (trades.id === data.trades.id) {
-            return {
-              ...newRecentPicks.trades,
-            };
-          }
-          return trades;
-        });
-        dispatch(setLiveMyAllTrades(newMyTrades));
-        dispatch(setRecentPicks(newRecentPicks));
+        dispatch(changeRecentPicks(newRecentPicks));
+       
+        dispatch(notAvailable(data.trades));
       });
+      socket.on("reject-trade", async (data) => {
+        dispatch(rejectTrade(data));
+      });
+
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
   return (
     <Wrapper>
       <OfferHead>
         <h2>Offer Trade</h2>
         <button
+          disabled={start}
           onClick={() => {
             handleTrades(teamTrades);
           }}
@@ -431,16 +431,20 @@ const OfferTrade = () => {
         <>
           <OfferPending>
             <div className="offer-pending-head">
-              <h2>Pending trades</h2>
+              <h2>Offer trades</h2>
             </div>
           </OfferPending>
           {liveOtherTrades.map((myTrades, idx) => {
             const idTrade = myTrades.id;
+
             return (
               <React.Fragment key={idx}>
                 <LivePendingCard
                   myTrades={myTrades}
-                  isMyTrades={myTrades.status[myTrades.myName] === "accepted"}
+                  isMyTrades={
+                    myTrades.status[myTrades.myName] === "accepted" ||
+                    myTrades.status[myTrades.myName] === "no longer available"
+                  }
                   status={myTrades.status[myTrades.myName]}
                   handleAccept={() =>
                     handleAccept(
@@ -450,6 +454,7 @@ const OfferTrade = () => {
                       idx
                     )
                   }
+                  handleReject={() => handleReject(myTrades)}
                 />
               </React.Fragment>
             );

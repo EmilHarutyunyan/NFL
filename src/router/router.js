@@ -92,7 +92,7 @@ const DraftValueChart = lazy(() =>
 const Router = () => {
   const { teamSelect } = useSelector(selectDraftConfig);
   const { results } = useSelector(selectDraftResult);
-  const { success } = useSelector(selectUser);
+  const { success, userToken } = useSelector(selectUser);
 
   return (
     <>
@@ -151,7 +151,14 @@ const Router = () => {
           />
           <Route path={TEAM_NEEDS} element={<TeamNeeds />} />
           <Route path={TEAM_LIST} element={<TeamList />} />
-          <Route path={MULTI_PLAYER_FIND} element={<MultiPlayerFind />} />
+          <Route
+            path={MULTI_PLAYER_FIND}
+            element={
+              <ProtectRouter access={userToken} redirect={SIGN_IN}>
+                <MultiPlayerFind />
+              </ProtectRouter>
+            }
+          />
           <Route
             path={MULTI_PLAYER_JOIN_TEAM_ID}
             element={<MultiPlayerTeam />}
@@ -183,7 +190,11 @@ const Router = () => {
               <Route
                 index
                 path={`${PROFILE_DRAFT_EVENTS_CREATE}`}
-                element={<CreateEvents />}
+                element={
+                  <ProtectRouter access={userToken} redirect={SIGN_IN}>
+                    <CreateEvents />
+                  </ProtectRouter>
+                }
               />
               <Route path={PROFILE_DRAFT_EVENTS_MY} element={<MyEvents />}>
                 <Route index element={<EventList />} />

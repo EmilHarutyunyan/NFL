@@ -3,7 +3,12 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { API_ENDPOINT, PLAYER_MAX } from "../../../config/config";
 import axiosInstance from "../../../service/axiosInstance";
 import TokenService from "../../../service/token.service";
-import { dateFormat, dateFormatNew, getCurrentNewDate, timeDiffCalc } from "../../../utils/utils";
+import {
+  dateFormat,
+  dateFormatNew,
+  getCurrentNewDate,
+  timeDiffCalc,
+} from "../../../utils/utils";
 
 export const getLiveTeams = createAsyncThunk(
   "liveDraft/getLiveTeams",
@@ -77,7 +82,7 @@ export const getLiveDraftInfo = createAsyncThunk(
           "Content-Type": "application/json",
         },
       };
-   
+
       let myEventTeam = null;
       let nextMyEvent = false;
       const {
@@ -118,16 +123,15 @@ export const getLiveDraftInfo = createAsyncThunk(
       const picksTeamsResult = picksTeams.data?.results.map(
         (item) => item.round
       );
-      
-      const currentTime = eventTime - (eventStartTime * millisecondToMinute);
+
+      const currentTime = eventTime - eventStartTime * millisecondToMinute;
       return {
         eventPlayers: eventPlayerRes.data.results,
-        myEventTeam:{...myEventTeam,user_id:user.id},
+        myEventTeam: { ...myEventTeam, user_id: user.id },
         recentPicks: recentPicks.data?.results,
         picksTeams: picksTeamsResult,
         nextMyEvent,
         eventTime: currentTime,
-
       };
     } catch (error) {
       // return custom error message from API if any
@@ -157,10 +161,11 @@ export const liveEventsSession = createAsyncThunk(
       );
       const data = res.data.results[0];
       const startDate = dateFormat(data.date);
-  
+
       const currentDate = getCurrentNewDate();
-      
+
       const diffDate = timeDiffCalc(startDate, currentDate);
+      debugger;
       if (diffDate.diffMinute === null) {
         return rejectWithValue(diffDate.message);
       }
@@ -168,6 +173,7 @@ export const liveEventsSession = createAsyncThunk(
       return {
         eventId: data.id,
         eventInfo: data,
+        // eventStartTime: 0,
         eventStartTime: diffDate.diffMinute,
       };
     } catch (error) {

@@ -21,6 +21,7 @@ import {
 } from "../../app/features/liveDraft/liveDraftSlice";
 import { useSelector } from "react-redux";
 import { useSocket } from "../../hook/SocketContext";
+import TokenService from "../../service/token.service";
 
 const SettingsButton = React.memo(({ onClick }) => (
   <button className="settings" onClick={onClick}>
@@ -29,14 +30,13 @@ const SettingsButton = React.memo(({ onClick }) => (
   </button>
 ));
 
-const CreatorTime = ({ eventId,socket }) => {
-  const {addTime} = useSelector(selectLiveDraft)
+const CreatorTime = ({ eventId, socket }) => {
+  const { addTime } = useSelector(selectLiveDraft);
   // const {} = useSelector(selectLiveDraft)
-  const dispatch = useDispatch()
+
   const handleTime = useCallback(
     async (time) => {
       await socket.emit("time", JSON.stringify({ time, event_id: eventId }));
-      dispatch(setAddTime(time));
     },
     [addTime]
   );
@@ -72,6 +72,9 @@ const ChatButton = React.memo(({ onClick }) => (
 
 const LiveSettingChat = () => {
   const { eventId, myEventTeam, eventInfo } = useSelector(selectLiveDraft);
+  console.log("myEventTeam :", myEventTeam);
+  const user = TokenService.getUser();
+  console.log("user :", user);
   const socket = useSocket();
   const dispatch = useDispatch();
   const {
@@ -85,15 +88,12 @@ const LiveSettingChat = () => {
     closeModal: closeModalChat,
   } = useModal();
 
-;
-
   const handleOpenSetting = useCallback(() => {
     openModalSetting();
   }, [openModalSetting]);
 
   const handleOpenChat = useCallback(() => {
     openModalChat();
-
   }, [openModalChat]);
 
   const settingButton = useMemo(
@@ -108,8 +108,6 @@ const LiveSettingChat = () => {
 
   useEffect(() => {
     if (socket) {
-      console.log("join");
-
       socket.emit("join", {
         chat_id: eventId,
         data: {
@@ -118,17 +116,11 @@ const LiveSettingChat = () => {
           user_id: myEventTeam.user_id,
         },
       });
-
-      socket.emit("time", {
-        event_id: eventId,
-      });
-
       socket.on("new_message", (data) => {
         dispatch(setRoomMessages(JSON.parse(data)));
       });
       socket.on("time", (data) => {
-         console.log('data :', data);
-        
+        dispatch(setAddTime(data.time));
       });
     }
 
@@ -140,7 +132,10 @@ const LiveSettingChat = () => {
       <SettingBox>
         {settingButton}
         {!myEventTeam.round ||
-          (myEventTeam?.user_id === eventInfo?.creator?.id && <CreatorTime eventId={eventId} socket={socket} />)}
+        user.id === eventInfo?.creator?.id ||
+        myEventTeam?.user_id === eventInfo?.creator?.id ? (
+          <CreatorTime eventId={eventId} socket={socket} />
+        ) : null}
         {chatButton}
       </SettingBox>
       {isOpenSetting && (

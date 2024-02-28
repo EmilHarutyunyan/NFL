@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 // Styles
-import {BtnWrap, MultiTeamItem, MultiTeamWrap, TeamModal, Wrapper} from "./MultiPlayerTeam.styles"
+import {BtnWrap, MultiTeamItem, MultiTeamWrap, TeamItemDiv, TeamModal, Wrapper} from "./MultiPlayerTeam.styles"
 import multiTeamImg from "../../assets/img/multiTeam.png"
 import { useDispatch, useSelector } from 'react-redux'
 import { resetLiveDraft, selectLiveDraft, setMyLiveTeam } from '../../app/features/liveDraft/liveDraftSlice'
@@ -52,11 +52,30 @@ const MultiPlayerTeam = () => {
     <Wrapper>
       <h2>Choose a team</h2>
       <MultiTeamWrap>
-        {liveTeams.map((team) => {
+        {liveTeams.map((team,idx) => {
           let isActive = myLiveTeam?.id === team.id;
 
           return (
-            <MultiTeamItem
+            // <MultiTeamItem
+            //   key={team.id}
+            //   className={isActive && team.free ? "active" : null}
+            //   disabled={!team?.free}
+            //   onClick={() => {
+            //     if (team.free) dispatch(setMyLiveTeam(team));
+            //   }}
+            // >
+            //   <div>
+            //     <img
+            //       src={`https://api.nfldraftfanatics.com${team.logo}`}
+            //       alt="team"
+            //       loading="lazy"
+            //     />
+            //   </div>
+            //   <p>{team.name}</p>
+            // </MultiTeamItem>
+            <TeamItemDiv
+              // onClick={() => handleClick(item)}
+              // className={`team-item ${isChecked ? "active" : ""}`}
               key={team.id}
               className={isActive && team.free ? "active" : null}
               disabled={!team?.free}
@@ -65,14 +84,14 @@ const MultiPlayerTeam = () => {
               }}
             >
               <div>
-                <img
-                  src={`https://api.nfldraftfanatics.com${team.logo}`}
-                  alt="team"
-                  loading="lazy"
-                />
+                <span className="num">{idx + 1}</span>
+                <p className="name">{team.name}</p>
               </div>
-              <p>{team.name}</p>
-            </MultiTeamItem>
+              <img
+                src={`https://api.nfldraftfanatics.com${team.logo}`}
+                alt={team.name}
+              />
+            </TeamItemDiv>
           );
         })}
       </MultiTeamWrap>
@@ -89,7 +108,7 @@ const MultiPlayerTeam = () => {
         <ModalCustom isOpen={isOpen}>
           <TeamModal>
             <h2>
-              Thank you for choosing a team, you will receive an email shortly
+              Thank you for choosing a team, you have successfully joined the event!
             </h2>
             <button onClick={()=> {
               closeModal()

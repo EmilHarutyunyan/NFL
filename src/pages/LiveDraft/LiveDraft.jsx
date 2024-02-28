@@ -21,8 +21,6 @@ import { LIVE_RESULT, SELECT_DRAFT } from "../../router/route-path";
 import { setLiveResultBoard } from "../../app/features/liveResult/liveResultSlice";
 import { memo } from "react";
 
-import { SocketProvider } from "../../hook/SocketContext";
-
 const PickTime = memo(
   ({ firstStart }) => {
     return (
@@ -62,7 +60,6 @@ const LiveDraft = () => {
   }, []);
 
   useEffect(() => {
-    
     if (eventId) {
       dispatch(getLiveDraftInfo(eventId));
     }
@@ -105,13 +102,11 @@ const LiveDraft = () => {
 
   return (
     <Wrapper>
-      
-        <LiveSettingChat />
-        <LiveBody />
-        <LiveFooter handleOverflow={handleOverflow} />
-        {isOverflow ? <Overflow /> : null}
-       <PickTime firstStart={firstStart} /> 
-  
+      <LiveSettingChat />
+      <LiveBody />
+      <LiveFooter handleOverflow={handleOverflow} />
+      {isOverflow ? <Overflow /> : null}
+      <PickTime firstStart={firstStart} />
     </Wrapper>
   );
 };

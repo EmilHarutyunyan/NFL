@@ -1,60 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // Styles
 import { DragWrap, PlayerItem, Wrapper } from "./QueueDnD.styles";
-import { v4 as uuidv4 } from "uuid";
+
 
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { DragIcon } from "../Icons/Icons";
-const INITIAL_LIST = [
-  {
-    id: uuidv4(),
-    name: "Derrick Henry1",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry2",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry3",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry4",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry",
-  },
-  {
-    id: uuidv4(),
-    name: "Derrick Henry",
-  },
-];
+import { useSelector } from "react-redux";
+import { selectLiveDraft, setQueuePlayer } from "../../app/features/liveDraft/liveDraftSlice";
+import { useDispatch } from "react-redux";
+
 
 const Item = ({ index, item, dragItemStyle = {}, children }) => (
   <Draggable index={index} draggableId={item.id}>
@@ -79,7 +33,7 @@ const Item = ({ index, item, dragItemStyle = {}, children }) => (
 );
 
 const List = ({ list, onDragEnd, dragListStyle = {}, ...props }) => (
-  <DragDropContext onDragEnd={onDragEnd}>
+  <DragDropContext onDragEnd={onDragEnd} className="miban">
     <Droppable droppableId="droppable">
       {(provided, snapshot) => (
         <div
@@ -107,12 +61,32 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-const QueueDnD = ({ queuePlayers }) => {
-  const [list, setList] = React.useState(INITIAL_LIST);
+const QueueDnD = ({ queuePlayers = [], playerQueueHeight, queueHeight }) => {
+  // const [list, setList] = useState(queuePlayers);
+  const { queuePlayersId } = useSelector(selectLiveDraft);
+  const dispatch = useDispatch();
   const handleDragEnd = ({ destination, source }) => {
     if (!destination) return;
-    setList(reorder(list, source.index, destination.index));
+    const list = reorder(queuePlayers, source.index, destination.index);
+    dispatch(setQueuePlayer({ players: list, playersId: queuePlayersId }));
   };
+  const handleRemove = (index) => {
+    debugger;
+    const playerFilter = queuePlayers.filter(
+      (player) => player.index !== index
+    );
+    const playerIdFilter = queuePlayersId.filter(
+      (indexPlayer) => indexPlayer !== index
+    );
+    dispatch(
+      setQueuePlayer({ players: playerFilter, playersId: playerIdFilter })
+    );
+  };
+  useEffect(()=> {
+    if(queueHeight.current) {
+      playerQueueHeight(queueHeight);
+    }
+  },[queuePlayers])
 
   return (
     <Wrapper>
@@ -130,13 +104,14 @@ const QueueDnD = ({ queuePlayers }) => {
           {
             // background: "lightblue",
             // borderRadius: "16px",
+            // minHeight:"300px"
           }
         }
       >
         {(item, index, dragHandleProps) => (
           <PlayerItem {...dragHandleProps}>
             <div className="player-info">
-              <button>
+              <button onClick={() => handleRemove(item.index)}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width={24}

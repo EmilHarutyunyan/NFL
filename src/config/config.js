@@ -1,3 +1,4 @@
+// https:api.nfldraftfanatics.com/
 export const SOCKET_URL = "https://api.nfldraftfanatics.com/";
 export const API_ENDPOINT = "https://api.nfldraftfanatics.com/api/v1/";
 export const API_PLAN = "https://api.nfldraftfanatics.com/";

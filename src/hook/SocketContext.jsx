@@ -15,7 +15,8 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     // Replace 'http://localhost:3001' with your socket server endpoint
     // ws://api.nfldraftfanatics.com/
-    const newSocket = io(`https://api.nfldraftfanatics.com/`);
+    // https://api.nfldraftfanatics.com/
+    const newSocket = io(`wss://api.nfldraftfanatics.com/`);
     setSocket(newSocket);
 
     // Clean up the socket connection on component unmount

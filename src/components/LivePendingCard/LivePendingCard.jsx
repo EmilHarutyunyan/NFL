@@ -6,7 +6,12 @@ import {
   TradeTeamItem,
   TradeAction,
 } from "./LivePendingCard.styles";
-const LivePendingCard = ({ myTrades, isMyTrades, handleAccept }) => {
+const LivePendingCard = ({
+  myTrades,
+  isMyTrades,
+  handleAccept,
+  handleReject,
+}) => {
   const myName = myTrades.myTeamPick[0].round.name;
   const otherName = myTrades.otherTeamPick[0].round.name;
   return (
@@ -59,10 +64,9 @@ const LivePendingCard = ({ myTrades, isMyTrades, handleAccept }) => {
         </TradeTeamItem>
       </TradeTeam>
       {isMyTrades ? null : (
-        
         <TradeAction>
           <button onClick={handleAccept}>Accept</button>
-          <button>Reject</button>
+          <button onClick={handleReject}>Reject</button>
         </TradeAction>
       )}
     </Wrapper>

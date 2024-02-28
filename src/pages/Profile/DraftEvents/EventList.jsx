@@ -32,18 +32,18 @@ const EventList = ({ handlePage }) => {
   };
   const columns = useMemo(
     () => [
-      {
-        Header: "Event ID",
-        accessor: "event_id",
-      },
+      // {
+      //   Header: "Event ID",
+      //   accessor: "event_id",
+      // },
       {
         Header: "Name Event",
         accessor: "name",
       },
-      {
-        Header: "Session ID",
-        accessor: "session_id",
-      },
+      // {
+      //   Header: "Session ID",
+      //   accessor: "session_id",
+      // },
       {
         Header: "Date",
         accessor: "date",
@@ -107,7 +107,7 @@ const EventList = ({ handlePage }) => {
     {
       columns,
       data: myDraftEvent,
-      initialState: { pageIndex: 0 },
+      initialState: { pageIndex: 0,pageSize:5 },
     },
     usePagination
   );

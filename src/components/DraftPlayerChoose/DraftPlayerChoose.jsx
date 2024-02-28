@@ -184,7 +184,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
   };
 
   const playerChoose = (item, bpa) => {
-    debugger
+    
     let team = teamPickIndex[0] ?? fanaticIndexPosition[0];
     const teamItem = structuredClone(tradeValue.results[team - 1]);
     let playerItem = { ...item };
@@ -198,10 +198,10 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
     let playerItemsSlice = playersDraft.results.slice(0, 10);
     playerItemsSlice.push(playerItem);
     percentPlayers = upUsersCals(playerItemsSlice, pricentValue, teamName);
-    debugger
+    
     // teamName = teamName === "ers" ? "49ers" : teamName;
     playerItem = { ...item, [teamName]: item.value + pricentValue };
-    console.log('playerItem :', playerItem);
+
 
     // }
     const playerItemPos = {
@@ -336,6 +336,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                 <>
                   {playersDraft.results.length > 0 &&
                     currentTableData.playersDataSlice.map((item, idx) => {
+                   
                       return (
                         <DraftPlayerItem
                           key={idx}
@@ -353,7 +354,16 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                               <span>{item?.bpa}</span>
                             </div>
                             <div className="player-td player-adp">
-                              <p>ADP</p>
+                              <p>School</p>
+                              {item?.school_ref?.logo ? (
+                                <img
+                                  src={item?.school_ref?.logo}
+                                  alt={item.school}
+                                />
+                              ) : (
+                                <span>{item.school}</span>
+                              )}
+
                               <span>{item?.adp}</span>
                             </div>
                             {/* <div className="player-td player-adp">
@@ -363,9 +373,7 @@ const DraftPlayerChoose = ({ playersDraft, draftStatus, setThisId }) => {
                             <h4 className="player-td player-name">
                               {item.player}
                             </h4>
-                            <h4 className="player-td player-name">
-                              {item.value}
-                            </h4>
+                           
                             <h4 className="player-td player-position">
                               {item.position}
                             </h4>

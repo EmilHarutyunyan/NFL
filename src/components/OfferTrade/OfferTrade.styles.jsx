@@ -3,9 +3,13 @@ export const Wrapper = styled.div`
   max-width: 640px;
   width: 100%;
   background-color: #fff;
-  height: 743px;
+  max-height: 743px;
   overflow-x: auto;
   border-radius: 10px 10px 0px 0px;
+  button:disabled,
+  button[disabled] {
+    background-color: #cccccc;
+  }
 `;
 export const OfferHead = styled.div`
   background: #e8ebef;

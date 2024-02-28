@@ -18,7 +18,7 @@ export const DraftValueContent = styled.article`
 `;
 export const RoundColumn = styled.div`
   width: 100%;
-  max-width: 195px;
+
 
   table {
     border-collapse: collapse;

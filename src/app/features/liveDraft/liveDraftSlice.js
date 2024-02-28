@@ -9,6 +9,7 @@ import {
 } from "./liveDraftActions";
 import { toggleArrObj } from "../../../utils/utils";
 import { TIME_CONFIG } from "../../../config/config";
+import { debounce } from "@mui/material";
 const initialState = {
   loading: false,
   error: null,
@@ -58,7 +59,7 @@ const liveDraftSlice = createSlice({
     },
     setQueuePlayer: (state, { payload }) => {
       state.queuePlayers = payload.players;
-      state.queuePlayersId = payload.playersId;
+      state.queuePlayersId = payload.playersId 
     },
     setPositionPlayersPool: (state, { payload }) => {
       state.playerPollSettings.position = payload;
@@ -261,6 +262,8 @@ export const livePicksChoose = (player) => (dispatch, getState) => {
     myEventTeam,
     eventPlayers,
     roundPick,
+    queuePlayersId,
+    queuePlayers,
     addTime
   } = selectLiveDraft(getState());
 
@@ -294,7 +297,7 @@ export const livePicksChoose = (player) => (dispatch, getState) => {
     nextRound = +recentPicks[positionPicks].round_index_number;
     isFinishLive = true;
   }
-  const filterPlayer = eventPlayers.filter((pl) => pl.id !== playerPick.id);
+  const filterPlayer = eventPlayers.filter((pl) => pl.id !== +playerPick.id);
 
   // const nextPickRound =
   //   roundPick > nextRound ? TIME_CONFIG[`${}`];
@@ -307,6 +310,12 @@ export const livePicksChoose = (player) => (dispatch, getState) => {
   if (myTeam && myEventTeam) {
     dispatch(setMyPlayerTeam({ ...playerPick, pick, round_index_number }));
   }
+  const playerQueueFilter = queuePlayers.filter(
+    (playerQueue) => playerQueue.index !== player.index
+  );
+  const playerIdQueueFilter = queuePlayers.filter(
+    (index) => index !== player.index
+  );
   dispatch(setNextMyEvent(nextMyEvent));
   dispatch(setRecentPicks(recentPicksPlayer));
   let newPosition = positionPicks + 1;
@@ -314,8 +323,25 @@ export const livePicksChoose = (player) => (dispatch, getState) => {
   dispatch(setEventPlayers(filterPlayer));
   dispatch(setPickBoard(pickBoard));
   isFinishLive && dispatch(setIsFinishLiveDraft(isFinishLive));
+  dispatch(
+    setQueuePlayer({
+      players: playerQueueFilter,
+      playersId: playerIdQueueFilter,
+    })
+  );
 
   // const playerRecentPicks = recentPicks.map(team)
+};
+
+export const changeRecentPicks = (recentPicks)=>(dispatch,getState) => {
+const {
+  myEventTeam
+} = selectLiveDraft(getState());
+let nextMyEvent = false;
+debugger
+  nextMyEvent = myEventTeam.round.id === recentPicks[0].round.id;
+  dispatch(setNextMyEvent(nextMyEvent));
+  dispatch(setRecentPicks(recentPicks));
 };
 
 export default liveDraftSlice.reducer;

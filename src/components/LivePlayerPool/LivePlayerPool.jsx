@@ -16,12 +16,18 @@ import { POSITIONS_COLOR } from "../../utils/constants";
 import Search from "../Search/Search";
 import { useDispatch } from "react-redux";
 
-
 import Spinner from "../Spinner/Spinner";
-import { addQueuePlayerAction, livePicksChoose, playerPoolPositionMulti, selectLiveDraft, setEventTime } from "../../app/features/liveDraft/liveDraftSlice";
+import {
+  addQueuePlayerAction,
+  livePicksChoose,
+  playerPoolPositionMulti,
+  selectLiveDraft,
+  setEventTime,
+  setQueuePlayer,
+} from "../../app/features/liveDraft/liveDraftSlice";
 import useAudio from "../../hooks/useAudio";
 import { useSocket } from "../../hook/SocketContext";
-
+import { ArrowDown, ArrowUp } from "../Icons/Icons";
 
 const PlayerItem = ({
   players,
@@ -30,8 +36,9 @@ const PlayerItem = ({
   handlePlayerChoose,
   start,
   nextMyEvent,
+  topping,
+  handleQueMovePosition,
 }) => {
-
   return players.map((player) => {
     return (
       <tr key={player.id}>
@@ -57,6 +64,24 @@ const PlayerItem = ({
             </div>
           )}
         </td>
+        {topping !== "rank" ? (
+          <td>
+            <div className="player-que-move">
+              <div
+                className="player-que-arrow"
+                onClick={() => handleQueMovePosition("up", player.index)}
+              >
+                <ArrowUp />
+              </div>
+              <div
+                className="player-que-arrow"
+                onClick={() => handleQueMovePosition("down", player.index)}
+              >
+                <ArrowDown />
+              </div>
+            </div>
+          </td>
+        ) : null}
         <td>
           <div className="player-rank">
             <h4>Rank</h4>
@@ -83,7 +108,7 @@ const PlayerItem = ({
 };
 
 const LivePlayerPool = () => {
-  const socket = useSocket()
+  const socket = useSocket();
   const {
     eventPlayers,
     playerPollSettings: { position },
@@ -93,16 +118,56 @@ const LivePlayerPool = () => {
     nextMyEvent,
     eventId,
     isFinishLiveDraft,
+    queuePlayers,
   } = useSelector(selectLiveDraft);
 
-
-  const [isPending,startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const [players, setPlayers] = useState(eventPlayers);
   const [searchValue, setSearchValue] = useState("");
+
   const groups = useSelector(selectGroup);
-  const {isPlaying, play,stop} = useAudio()
+  const { isPlaying, play, stop } = useAudio();
+  const [topping, setTopping] = useState("rank");
   const dispatch = useDispatch();
 
+  const onOptionChange = (e) => {
+    setTopping(e.target.value);
+  };
+
+  const handleQueMovePosition = useCallback(
+    (move, index) => {
+      debugger;
+      const currentIndex = queuePlayers.findIndex(
+        (item) => item.index === index
+      );
+      const newQueuePlayers = structuredClone(queuePlayers);
+      if (currentIndex !== -1) {
+        const newIndex = move === "up" ? currentIndex - 1 : currentIndex + 1;
+
+        if (newIndex >= 0 && newIndex < queuePlayers.length) {
+          // Swap the items
+          debugger;
+          [newQueuePlayers[currentIndex], newQueuePlayers[newIndex]] = [
+            newQueuePlayers[newIndex],
+            newQueuePlayers[currentIndex],
+          ];
+
+          // // Update index values
+          // newQueuePlayers[currentIndex].index = currentIndex + 1;
+          // newQueuePlayers[newIndex].index = newIndex + 1;
+        }
+        // const newPlayersId = playersId;
+        dispatch(
+          setQueuePlayer({
+            players: newQueuePlayers,
+            playersId: queuePlayersId,
+          })
+        );
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [queuePlayers]
+  );
   const handleQueuePlayer = useCallback((player) => {
     dispatch(addQueuePlayerAction(player));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -110,18 +175,15 @@ const LivePlayerPool = () => {
 
   const handlePlayerChoose = useCallback(
     async (player) => {
-      if ((!isFinishLiveDraft && socket)) {
-        console.log("asdasdad");
-        console.log({ ...player, eventId });
+      if (!isFinishLiveDraft && socket) {
         await socket.emit("player", JSON.stringify({ ...player, eventId }));
-        
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [isFinishLiveDraft, socket]
   );
   const handleFilterPlayer = useCallback(() => {
-    startTransition(()=> {
+    startTransition(() => {
       let playersData = eventPlayers;
       if (eventPlayers.length) {
         if (searchValue) {
@@ -137,34 +199,26 @@ const LivePlayerPool = () => {
         }
       }
       setPlayers(playersData);
-    })
-  }, [
-    eventPlayers,
-    position,
-    searchValue,
-  ]);
+    });
+  }, [eventPlayers, position, searchValue]);
   useEffect(() => {
-    if(eventPlayers.length) handleFilterPlayer()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventPlayers,position,searchValue]);
+    if (eventPlayers.length) handleFilterPlayer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventPlayers, position, searchValue]);
 
   useEffect(() => {
-      if (socket) {
-        socket.on("player", async (data) => {
-          
-          await dispatch(setEventTime({time:0, manualChoose:true}));
-          const player = data;
-          console.log('player socket :', player);
-          setTimeout(()=> {
-            
-            dispatch(livePicksChoose(player));
-              !isPlaying ? play() : stop();
+    if (socket) {
+      socket.on("player", async (data) => {
+        await dispatch(setEventTime({ time: 0, manualChoose: true }));
+        const player = data;
 
-          },[1000])
-          
-        });
-      }
-  },[socket])
+        setTimeout(() => {
+          dispatch(livePicksChoose(player));
+          !isPlaying ? play() : stop();
+        }, [1000]);
+      });
+    }
+  }, [socket]);
   return (
     <Wrapper>
       <LivePickHead>
@@ -206,27 +260,38 @@ const LivePlayerPool = () => {
                 type="radio"
                 id="rank"
                 name="rank_adp"
-                defaultValue="Rank"
+                value="rank"
+                onChange={onOptionChange}
+                checked={topping === "rank"}
               />
               <label htmlFor="rank">Rank</label>
             </div>
             <div className="sort-by">
-              <input type="radio" name="rank_adp" id="adp" defaultValue="ADP" />
-              <label htmlFor="rank">ADP</label>
+              <input
+                type="radio"
+                name="rank_adp"
+                id="que"
+                onChange={onOptionChange}
+                value={"que"}
+                checked={topping === "que"}
+              />
+              <label htmlFor="rank">Que</label>
             </div>
           </PlayerFilter>
         </PlayerSettings>
-        <PlayerTable>
+        <PlayerTable topping={topping !== "rank"}>
           {players.length && !isPending ? (
             <table>
               <tbody>
                 <PlayerItem
-                  players={players}
+                  players={topping !== "rank" ? queuePlayers : players}
+                  topping={topping}
                   handleQueuePlayer={handleQueuePlayer}
                   queuePlayersId={queuePlayersId}
                   handlePlayerChoose={handlePlayerChoose}
                   start={start}
                   nextMyEvent={nextMyEvent}
+                  handleQueMovePosition={handleQueMovePosition}
                 />
               </tbody>
             </table>

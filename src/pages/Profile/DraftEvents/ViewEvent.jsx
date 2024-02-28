@@ -14,7 +14,7 @@ const ViewEvent = ({handlePage}) => {
   const {id} = useParams()
   const navigate = useNavigate();
   const {myDraftSingleEvent} = useSelector(selectDraftEvents)
-  console.log('myDraftSingleEvent :', myDraftSingleEvent);
+
   
 
   const dispatch = useDispatch()
@@ -44,7 +44,9 @@ const ViewEvent = ({handlePage}) => {
         <p>
           <span>{myDraftSingleEvent.event_id}</span>
           <svg
-            onClick={() => navigator.clipboard.writeText(`1234565456`)}
+            onClick={() =>
+              navigator.clipboard.writeText(myDraftSingleEvent.name)
+            }
             xmlns="http://www.w3.org/2000/svg"
             width={24}
             height={24}
@@ -82,13 +84,12 @@ const ViewEvent = ({handlePage}) => {
         <div className="list">
           <h3>Guests List</h3>
           <div>
-            {myDraftSingleEvent?.players.map(({user}) => {
-              
-              return <p key={user.id}>{user.username}</p>
+            {myDraftSingleEvent?.players.map(({ user }) => {
+              return <p key={user.id}>{user.username}</p>;
             })}
           </div>
         </div>
-      ): null}
+      ) : null}
     </ViewWrap>
   );
 }

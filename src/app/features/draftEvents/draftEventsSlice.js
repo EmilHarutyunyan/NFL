@@ -36,6 +36,7 @@ const draftEventsSlice = createSlice({
     [draftEventsPost.rejected]: (state, action) => {
       state.loading = false;
       state.error = true;
+      
       state.message = action.payload && "Error";
     },
 

@@ -35,8 +35,17 @@ export const EventItem = styled.div`
     align-items: center;
     gap: 5px;
   }
+  .event-name {
+        display: flex;
+    align-items: center;
+    gap: 5px;
+    .generate {
+      font-size: 0;
+      cursor: pointer;
+    }
+  }
   & div {
-    width: calc(100% / 5);
+    width: 100%;
   }
   & div:has(button) {
     text-align: right;
@@ -51,7 +60,7 @@ button[disabled]{
     background: #004ea3;
     display: flex;
     height: 42px;
-    padding: 0px 24px;
+    /* padding: 0px 24px; */
     justify-content: center;
     align-items: center;
     gap: 10px;
@@ -61,6 +70,13 @@ button[disabled]{
     font-weight: 400;
     line-height: normal;
     color: #fff;
+    min-width: 130px;
+  }
+  .actions-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
   }
 `;
 

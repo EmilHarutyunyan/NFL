@@ -128,7 +128,7 @@ export const PlayerTable = styled.div`
   }
   tr td {
     padding: 5px 0;
-    width: calc(100% / 5);
+    width: ${(props) => (props.topping ? `calc(100% / 6)` : `calc(100% / 5)`)};
   }
   .player-choose {
     width: 25px;
@@ -139,7 +139,13 @@ export const PlayerTable = styled.div`
       filter: hue-rotate(240deg);
     }
   }
-  .player-draft {
+  .player-que-move {
+    display: flex;
+  }
+  .player-que-arrow {
+    cursor: pointer;
+  }
+   .player-draft {
     cursor: pointer;
     button {
       padding: 0px 10px;

@@ -72,6 +72,7 @@ const FlipClock = () => {
     start,
     firstStart,
     manualChoose,
+    queuePlayers,
     eventId,
     addTime,
   } = useSelector(selectLiveDraft);
@@ -110,13 +111,14 @@ const FlipClock = () => {
       return;
     }
     if (!manualChoose && socket) {
-      console.log("manualChoose :", manualChoose);
-
-      // await dispatch(setEventTime({ time: 20000, manualChoose: false }));
-      await socket.emit(
-        "player",
-        JSON.stringify({ ...eventPlayers[0], eventId })
-      );
+      let player;
+      if (queuePlayers.length) {
+        player = queuePlayers[0]
+      } else {
+        player = eventPlayers[0];
+      }
+        // await dispatch(setEventTime({ time: 20000, manualChoose: false }));
+        await socket.emit("player", JSON.stringify({ ...player, eventId }));
       !isPlaying ? play() : stop();
     }
 
@@ -125,11 +127,11 @@ const FlipClock = () => {
     firstStart,
     eventTime,
     start,
-    nextMyEvent,
     manualChoose,
     socket,
     eventPlayers,
     eventId,
+
   ]);
 
   return (

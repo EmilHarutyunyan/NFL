@@ -210,7 +210,7 @@ export const draftConfigSlice = createSlice({
       state.loading = true;
     },
     [getTeams.rejected]: (state, action) => {
-      debugger
+      
       state.loading = false;
     },
     [getSetting.fulfilled]: (state, action) => {

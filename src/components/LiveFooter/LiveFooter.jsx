@@ -14,19 +14,19 @@ import {
 } from "./LiveFooter.styles";
 import QueueDnD from "../QueueDnD/QueueDnD";
 import { CircleX } from "../Icons/Icons";
-import teamImg from "../../assets/img/team.png";
+
 import OfferTrade from "../OfferTrade/OfferTrade";
 import { useSelector } from "react-redux";
 import { selectLiveDraft } from "../../app/features/liveDraft/liveDraftSlice";
-
 const LiveFooter = ({ handleOverflow }) => {
   const [isQueue, setIsQueue] = useState(false);
   const [isTrade, setIsTrade] = useState(false);
   const { queuePlayers, pickBoard, myEventTeam } = useSelector(selectLiveDraft);
-  console.log('myEventTeam :', myEventTeam);
+  const [playerHeight, setPlayerHeight] = useState(0);
 
  
   const queueHeight = useRef(null);
+
   const offerTradeHeight = useRef(null);
   const lastPickBoard = pickBoard.at(-1);
   const boardRef = useRef(null)
@@ -101,8 +101,20 @@ const LiveFooter = ({ handleOverflow }) => {
       boardRef.current.scrollLeft = boardRef.current.scrollWidth
     }
   },[pickBoard, boardRef])
+
+  const handlePlayerQueueHeight = queueHeight => {
+    if (queueHeight?.current?.offsetHeight) {
+       setPlayerHeight(queueHeight?.current?.offsetHeight);
+    }
+  }
+  useEffect(()=> {
+    if(queueHeight.current) {
+      setPlayerHeight(queueHeight?.current?.offsetHeight);
+    }
+  },[queueHeight])
+  const footerRef = useRef(null)
   return (
-    <Wrapper>
+    <Wrapper ref={footerRef}>
       <LiveFooterHead>
         {lastPickBoard ? (
           <LastPick>
@@ -131,10 +143,14 @@ const LiveFooter = ({ handleOverflow }) => {
           </SelectBox>
           <InfoTrade
             ref={queueHeight}
-            top={isQueue ? `-${queueHeight?.current?.offsetHeight}px` : "100%"}
+            top={isQueue ? `-${playerHeight}px` : "100%"}
             className={isQueue ? "active" : null}
           >
-            <QueueDnD queuePlayers={queuePlayers} />
+            <QueueDnD
+              queuePlayers={queuePlayers}
+              playerQueueHeight={handlePlayerQueueHeight}
+              queueHeight={queueHeight}
+            />
           </InfoTrade>
         </LiveSelect>
 
@@ -162,19 +178,22 @@ const LiveFooter = ({ handleOverflow }) => {
             >
               <CircleX />
             </button>
-            <InfoTrade
-              ref={offerTradeHeight}
-              top={
-                isTrade
-                  ? `-${offerTradeHeight?.current?.offsetHeight}px`
-                  : "100%"
-              }
-              className={isTrade ? "active" : null}
-            >
-              {myEventTeam.round ? <OfferTrade /> : null}
-            </InfoTrade>
           </SelectBox>
           <div>{/* <QueueDnD /> */}</div>
+          <InfoTrade
+            ref={offerTradeHeight}
+            top={
+              isTrade
+                ? `-${
+                    offerTradeHeight?.current?.offsetHeight
+                    // - footerRef?.current?.offsetHeight
+                  }px`
+                : "100%"
+            }
+            className={isTrade ? "active" : null}
+          >
+            {myEventTeam.round ? <OfferTrade /> : null}
+          </InfoTrade>
         </LiveSelect>
       </LiveFooterHead>
 

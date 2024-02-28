@@ -51,6 +51,8 @@ export const PlayerItem = styled.div`
 `;
 export const DragWrap = styled.div`
   background-color: #fff;
+
+  height: 100%;
   &:nth-child(even) {
     background-color: #e8ebef;
   }

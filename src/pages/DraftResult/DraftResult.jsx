@@ -64,6 +64,8 @@ import { POSITIONS_COLOR, TEAM_NEEDS } from "../../utils/constants";
 import Confetti from "react-confetti";
 import { selectSimulatorToSimulator } from "../../app/features/simulatorToSimulator/simulatorToSimulatorSlice";
 import { RefreshIcon } from "../../components/Icons/Icons";
+import { Helmet } from "react-helmet";
+import { copyBlobToClipboard } from "copy-image-clipboard";
 
 
 const DraftResult = () => {
@@ -72,6 +74,7 @@ const DraftResult = () => {
   const navigate = useNavigate();
   const [roundSelect, setRoundSelect] = useState(1);
   const [copyShow, setCopyShow] = useState(false);
+  const [imgBlob,setImgBlog] = useState(null)
   const {
     results,
     roundTeam,
@@ -149,25 +152,27 @@ const DraftResult = () => {
     if (domEl.current === null) {
       return;
     }
-    setCopyShow(true);
+    
     htmlToImage.toJpeg(domEl.current).then((dataUrl) => {
       loadImage(dataUrl)
         .then((png) => {
           const imgBlob = dataURLtoBlob(png);
-          const { ClipboardItem } = window;
-          try {
-            navigator.clipboard.write([
-              new ClipboardItem({
-                "image/png": imgBlob,
-              }),
-            ]);
-            setCopyShow(false);
-            console.clear();
-          } catch (error) {
-            setCopyShow(false);
-            console.clear();
-            console.error(error);
-          }
+          setCopyShow(true);
+          // const { ClipboardItem } = window;
+          setImgBlog(imgBlob)
+          // try {
+          //   navigator.clipboard.write([
+          //     new ClipboardItem({
+          //       "image/png": imgBlob,
+          //     }),
+          //   ]);
+          //   setCopyShow(false);
+          //   console.clear();
+          // } catch (error) {
+          //   setCopyShow(false);
+          //   console.clear();
+          //   console.error(error);
+          // }
         })
         .catch((err) => {
           console.log(err);
@@ -175,6 +180,15 @@ const DraftResult = () => {
     });
   }, [domEl]);
 
+  useEffect(()=> {
+    if(imgBlob) {
+      copyBlobToClipboard(imgBlob).then(res=> {
+        setCopyShow(false);
+        console.log(res);
+      });
+      
+    }
+  },[imgBlob])
   const gradingCalc = (count) => {
     if (count === 1) {
       return { grade: "A+", color: "#3ADF00" };
@@ -206,6 +220,12 @@ const DraftResult = () => {
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallBack}>
+      <Helmet>
+        <meta
+          http-equiv="Content-Security-Policy"
+          content="upgrade-insecure-requests"
+        />
+      </Helmet>
       <Wrapper className="main-container">
         <Title
           titleText="Your Mock Draft Result  "
@@ -241,8 +261,8 @@ const DraftResult = () => {
           </div>
         </ActionWrap>
         <DraftResultFull>
-          <DraftResultPick>
-            <div ref={domEl}>
+          <DraftResultPick ref={domEl}>
+            <div>
               <DraftResultHead>
                 <MockDraftWrap>
                   {teamSelect && (
@@ -339,17 +359,20 @@ const DraftResult = () => {
                     nfldraftfanatics.com
                   </a>
                 </div>
-                <div className="draft-overall">
+                {/* <div className="draft-overall">
                   <p>OVERALL DRAFT GRADE</p>
                   <div className="draft-overall-grade">
                     {gradingMiddle(countGrade)}
                   </div>
-                </div>
+                </div> */}
               </DraftResultPickFooter>
             </div>
             <DraftResultPickWrap
               backImg={markaImg}
-              style={{ borderRadius: "8px", padding: "30px 16px" }}
+              style={{
+                borderRadius: "8px",
+                padding: simSimTeam.length ? "30px 16px" : "0",
+              }}
             >
               {simSimTeam.length
                 ? simSimTeam.map((item) => {
@@ -472,7 +495,7 @@ const DraftResult = () => {
                               })}
                             </div>
                             <div className="trades-years">
-                              <h6>2024</h6>
+                              <h6>2025</h6>
                               {team.myTeam.pickYear?.map((pick) => {
                                 return <span>{pick.round} </span>;
                               })}
@@ -569,7 +592,7 @@ const DraftResult = () => {
                   );
                 })}
             </DraftResultTeam>
-            <DraftResultFooter>www.DraftSimulator.co</DraftResultFooter>
+            <DraftResultFooter>www.nfldraftfanatics.com</DraftResultFooter>
           </DraftResultWrap>
         </DraftResultFull>
 

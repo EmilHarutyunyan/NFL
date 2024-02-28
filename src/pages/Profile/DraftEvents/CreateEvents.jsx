@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { schema_event } from "./schema";
@@ -8,6 +8,7 @@ import {
   ErrorWrap,
   FormWrap,
   GenerateEventBlock,
+  HowImport,
   InputBlock,
   InputContainer,
   InputWrap,
@@ -23,9 +24,15 @@ import { useNavigate } from "react-router-dom";
 import { draftEventsPost } from "../../../app/features/draftEvents/draftEventsActions";
 import { unwrapResult } from "@reduxjs/toolkit";
 import Spinner from "../../../components/Spinner/Spinner";
+import playerFile from "../../../assets/file/2024_fall_player_list.xlsx";
+import useModal from "../../../hooks/useModal";
+import { createPortal } from "react-dom";
+import ModalCustom from "../../../components/ModalCustom/ModalCustom";
+import excelImg from "../../../assets/img/еxcel.png";
+import closeImg from "../../../assets/img/close.png";
 
 const CreateEvents = () => {
-  const { loading, error } = useSelector(selectDraftEvents);
+  const { loading, error, message } = useSelector(selectDraftEvents);
   const {
     userInfo: { twitter_link },
   } = useSelector(selectUser);
@@ -35,6 +42,7 @@ const CreateEvents = () => {
   const [eventFile, setEventFile] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isOpen, closeModal, openModal } = useModal();
   const {
     register,
     handleSubmit,
@@ -71,18 +79,16 @@ const CreateEvents = () => {
     const formData = new FormData();
 
     Object.entries(obj).forEach(([key, value]) => {
-      
       formData.append(key, value);
     });
 
     return formData;
   }
   const submitForm = async (data) => {
- 
     data.place_count = 32;
     const formData = objectToFormData(data);
    
-    
+
     dispatch(draftEventsPost(formData))
       .then(unwrapResult)
       .then((originalPromiseResult) => {
@@ -94,19 +100,57 @@ const CreateEvents = () => {
     setEventId("");
     setEventFile(null);
     reset();
-    
   };
+
+  const getFileBlobUsingURL = async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return await response.blob();
+  };
+
+  const blobToFile = (blob, name) => {
+    blob.lastModifiedDate = new Date();
+    blob.name = name;
+    return blob;
+  };
+
+  const getFileObjectFromURL = async (filePathOrUrl, convertBlob) => {
+    try {
+      const blob = await getFileBlobUsingURL(filePathOrUrl);
+
+      const options = {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      };
+      const file = new File([blob], "players-list.xlsx", options);
+      convertBlob(file);
+      // convertBlob(blobToFile(blob, "players.xlsx"));
+    } catch (error) {
+      console.error("Error fetching file:", error);
+    }
+  };
+
+  useEffect(() => {
+    const FileURL = playerFile;
+
+    getFileObjectFromURL(FileURL, function (fileObject) {
+      console.log("fileObject :", fileObject);
+      handleInputChange("file", fileObject);
+    });
+  }, []);
+
   return (
     <div>
       {!loading ? (
         <FormWrap onSubmit={handleSubmit(submitForm)}>
           {error && (
             <ErrorWrap>
-              <ErrorMessage visible={error}>{error}</ErrorMessage>
+              <ErrorMessage visible={error}>{message}</ErrorMessage>
             </ErrorWrap>
           )}
           <InputBlock>
-            <InputContainer>
+            {/* <InputContainer>
               <label>Generate Event ID</label>
               {errors?.event_id?.message && (
                 <ErrorMessage visible={errors?.event_id?.message}>
@@ -167,7 +211,7 @@ const CreateEvents = () => {
                   </span>
                 )}
               </GenerateEventBlock>
-            </InputContainer>
+            </InputContainer> */}
             <InputContainer>
               <label>Name Event</label>
               {errors?.name?.message && (
@@ -223,8 +267,9 @@ const CreateEvents = () => {
           <InputContainer>
             <h6>Upload your custom list of players</h6>
             <p className="event-info">
-              Lorem Ipsum is simply dummy <span>guide how to import</span> list
-              and typesetting industry.
+              Please click here{" "}
+              <span onClick={openModal}>guide how to import</span> and then you
+              can download the example <a href={playerFile} download>player-list.xlsx</a>
             </p>
 
             {errors?.file?.message && (
@@ -241,12 +286,14 @@ const CreateEvents = () => {
               style={{ display: "none" }}
               autoComplete="off"
               // {...register("file")}
-              onChange={(e) => {
-                const file = Array.from(e.target.files);
+              // onChange={(e) => {
+              //   const file = Array.from(e.target.files);
+              //   console.log("file :", file);
+              //   console.log("e.target.files[0] :", e.target.files[0]);
 
-                handleInputChange("file", e.target.files[0]);
-                setEventFile(...file);
-              }}
+              //   handleInputChange("file", e.target.files[0]);
+              //   setEventFile(...file);
+              // }}
             />
 
             <div className="event-file">
@@ -254,11 +301,13 @@ const CreateEvents = () => {
               {eventFile?.name ? (
                 <span>{eventFile.name}</span>
               ) : (
-                <label htmlFor="filePlayer">
-                  <span>Import list</span>
+                <label
+                // htmlFor="filePlayer"
+                >
+                  <span>player-list.xlsx </span>
                 </label>
               )}
-              {eventFile?.name && (
+              {/* {eventFile?.name && (
                 <div
                   onClick={() => {
                     setEventFile(null);
@@ -278,9 +327,13 @@ const CreateEvents = () => {
                     />
                   </svg>
                 </div>
-              )}
+              )} */}
             </div>
           </InputContainer>
+          {/* <div style={{ marginTop: "20px" }}>
+            <ProfileTitle>Player List</ProfileTitle>
+            <PlayerList />
+          </div> */}
           <BtnWrap>
             <button type="submit">Create Draft Event</button>
           </BtnWrap>
@@ -288,6 +341,34 @@ const CreateEvents = () => {
       ) : (
         <Spinner />
       )}
+      {isOpen
+        ? createPortal(
+            <ModalCustom isOpen={true}>
+              <HowImport>
+                <div className="modal-body">
+                  <div className="modal-info">
+                    <h4>How to import list of players</h4>
+                    <p>
+                      Begin by creating an Excel file similar to the sample
+                      image below. Include columns such as "Name," "Position,"
+                      "Jersey Number," and any other relevant details.
+                    </p>
+                  </div>
+                  <div className="excel">
+                    <img src={excelImg} alt="excel" />
+                  </div>
+                  <img
+                    className="close"
+                    src={closeImg}
+                    alt="close"
+                    onClick={closeModal}
+                  />
+                </div>
+              </HowImport>
+            </ModalCustom>,
+            document.querySelector("#root")
+          )
+        : null}
     </div>
   );
 };

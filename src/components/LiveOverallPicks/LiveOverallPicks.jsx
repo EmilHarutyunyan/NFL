@@ -71,7 +71,7 @@ const PlayerPickItem = ({ recentPicks }) => {
         return (
           <tr key={team.id}>
             <td>
-              {`${team.pick}`}: {`${team.round_index_number}`}
+              {`${team.round_index_number}`} : {`${team.pick}`}
             </td>
             <td></td>
             <td>

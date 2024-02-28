@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 // Styles
 import {
   Wrapper,
@@ -14,24 +14,34 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { selectDraftEvents } from "../../app/features/draftEvents/draftEventsSlice";
 import { useNavigate } from "react-router-dom";
-import { MULTI_PLAYER_JOIN_TEAM } from "../../router/route-path";
+import { LIVE_DRAFT, MULTI_PLAYER_JOIN_TEAM } from "../../router/route-path";
 import Spinner from "../../components/Spinner/Spinner";
-import { liveEventsList } from "../../app/features/liveDraft/liveDraftActions";
-import { selectLiveDraft } from "../../app/features/liveDraft/liveDraftSlice";
+import {
+  liveEventsList,
+  liveEventsSession,
+} from "../../app/features/liveDraft/liveDraftActions";
+import {
+  resetLiveDraft,
+  selectLiveDraft,
+} from "../../app/features/liveDraft/liveDraftSlice";
 import TokenService from "../../service/token.service";
+import useModal from "../../hooks/useModal";
+import { createPortal } from "react-dom";
+import ModalCustom from "../../components/ModalCustom/ModalCustom";
+import { ModalBody } from "../SelectDraft/SelectDraft.styles";
+import { BtnWrap } from "../MultiPlayerTeam/MultiPlayerTeam.styles";
 
-const MultiPlayerItem = ({ event,user }) => {
-  const { name, event_id, created_at: date, id, players } = event;
+const MultiPlayerItem = ({ event, user, handleJoinLiveDraft, navigate }) => {
+  const { name, event_id, created_at: date, id, players, creator } = event;
 
   const playersEventId = event?.players.reduce((acc, player) => {
     if (player?.user?.id) {
       acc.push(player?.user?.id);
       return acc;
     }
+    return null;
   }, []);
-  console.log("playersEventId :", playersEventId);
 
-  const navigate = useNavigate();
   const formattedDate = (date) => {
     const newDate = new Date(date);
 
@@ -48,18 +58,33 @@ const MultiPlayerItem = ({ event,user }) => {
     );
     return formattedDate;
   };
-console.log(playersEventId.includes(user.id));
+
   //  [yyyy, mm, dd, hh, mi] = date.split(/[/:\-T]/);
   return (
     <EventWrap>
       <EventItem>
-        <div>
+        <div className="event-name">
           <h3>{name}</h3>
+          <span className="generate">
+            <svg
+              onClick={() => navigator.clipboard.writeText(name)}
+              xmlns="http://www.w3.org/2000/svg"
+              width={24}
+              height={24}
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M5 22C4.45 22 3.979 21.8043 3.587 21.413C3.19567 21.021 3 20.55 3 20V6H5V20H16V22H5ZM9 18C8.45 18 7.97933 17.8043 7.588 17.413C7.196 17.021 7 16.55 7 16V4C7 3.45 7.196 2.979 7.588 2.587C7.97933 2.19567 8.45 2 9 2H18C18.55 2 19.021 2.19567 19.413 2.587C19.8043 2.979 20 3.45 20 4V16C20 16.55 19.8043 17.021 19.413 17.413C19.021 17.8043 18.55 18 18 18H9ZM9 16H18V4H9V16Z"
+                fill="#004EA3"
+              />
+            </svg>
+          </span>
         </div>
-        <div className="event-info">
+        {/* <div className="event-info">
           <h4>Event ID:</h4>
           <p>{event_id}</p>
-        </div>
+        </div> */}
         <div>
           <h4>{date ? formattedDate(date) : ""}</h4>
         </div>
@@ -67,10 +92,23 @@ console.log(playersEventId.includes(user.id));
           <h4>Place left:</h4>
           <p>{players?.length}</p>
         </div>
-        <div>
-          <button disabled={playersEventId.includes(user.id)} onClick={() => navigate(`${MULTI_PLAYER_JOIN_TEAM}/${id}`)}>
+        <div className="actions-btn">
+          <button
+            disabled={playersEventId.includes(user.id)}
+            onClick={() => navigate(`${MULTI_PLAYER_JOIN_TEAM}/${id}`)}
+          >
             Choose Team
           </button>
+          {creator.id === user.id ? (
+            <button onClick={() => handleJoinLiveDraft(name)}>Join</button>
+          ) : (
+            <button
+              disabled={!playersEventId.includes(user.id)}
+              onClick={() => handleJoinLiveDraft(name)}
+            >
+              Join
+            </button>
+          )}
         </div>
       </EventItem>
     </EventWrap>
@@ -79,13 +117,42 @@ console.log(playersEventId.includes(user.id));
 
 const MultiPlayerFind = () => {
   const [searchValue, setSearchValue] = useState("");
-  const { eventList, loading } = useSelector(selectLiveDraft);
+  const { eventList, loading,eventId,message } = useSelector(selectLiveDraft);
+  const { isOpen, openModal, closeModal } = useModal();
   const dispatch = useDispatch();
   const user = TokenService.getUser();
-  console.log("user :", user);
+  const navigate = useNavigate();
   useEffect(() => {
     dispatch(liveEventsList());
   }, []);
+   useEffect(() => {
+     if (message) {
+       openModal();
+     }
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [message]);
+   useEffect(() => {
+     if (eventId) {
+       navigate(`${LIVE_DRAFT}/${eventId}`);
+     }
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [eventId]);
+
+  const handleJoinLiveDraft = useCallback(
+    (name) => {
+      dispatch(liveEventsSession(name));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+  const handleCloseModal = useCallback(async () => {
+    closeModal();
+    await dispatch(resetLiveDraft());
+    await dispatch(liveEventsList()); 
+    // dispatch(resetLiveDraft());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+   
   if (loading) {
     return <Spinner />;
   }
@@ -100,13 +167,21 @@ const MultiPlayerFind = () => {
           }}
         />
         <div>
-          <input type="date" />
+          <input type="date" onChange={(e) => console.log(e.target.value)} />
         </div>
       </SearchWrap>
       <div className="event-content">
         {eventList.length > 0 ? (
           eventList.map((event, idx) => {
-            return <MultiPlayerItem event={event} key={idx} user={user} />;
+            return (
+              <MultiPlayerItem
+                event={event}
+                key={idx}
+                user={user}
+                handleJoinLiveDraft={handleJoinLiveDraft}
+                navigate={navigate}
+              />
+            );
           })
         ) : (
           <p>Not Event</p>
@@ -124,6 +199,19 @@ const MultiPlayerFind = () => {
           }}
         />
       </PaginationWrap> */}
+      {isOpen
+        ? createPortal(
+            <ModalCustom isOpen={isOpen}>
+              <ModalBody>
+                <h2>{message}</h2>
+                <BtnWrap>
+                  <button onClick={handleCloseModal}>Close</button>
+                </BtnWrap>
+              </ModalBody>
+            </ModalCustom>,
+            document.body
+          )
+        : null}
     </Wrapper>
   );
 };

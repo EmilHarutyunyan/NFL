@@ -109,17 +109,17 @@ const DraftValueChart = () => {
                       <tr>
                         <th>Selection</th>
                         {showHide.team ? null : <th>Team</th>}
-                        <th>Value</th>
+                        {/* <th>Value</th> */}
                       </tr>
                     </thead>
                     <tbody>
                       {tableData[`${round}`].map((item, idx) => {
-                      
+                         let value = +item?.value && 0;
                           return (
                             <tr key={idx}>
                               <td>{item?.index}</td>
                               {showHide.team ? null : <td>{item?.city}</td>}
-                              <td>{item?.value}</td>
+                              <td>{value.toFixed(2)}</td>
                             </tr>
                           );
                        
